@@ -14,7 +14,7 @@ with open(path.join(this_directory, "README.md"), encoding="utf-8") as f:
 
 logger = logging.getLogger(__name__)
 spec = util.spec_from_file_location(
-    "checkov.version", os.path.join("checkov", "version.py")
+    "checkov3.version", os.path.join("checkov", "version.py")
 )
 # noinspection PyUnresolvedReferences
 mod = util.module_from_spec(spec)
@@ -80,13 +80,13 @@ setup(
     ],
     dependency_links=[],  # keep it empty, needed for pipenv-setup
     license="Apache License 2.0",
-    name="checkov",
+    name="checkov3",
     version=version,
     python_requires=">=3.7",
     description="Infrastructure as code static analysis",
     author="bridgecrew",
     author_email="meet@bridgecrew.io",
-    url="https://github.com/bridgecrewio/checkov",
+    url="https://github.com/rotem-avni/checkov3",
     packages=setuptools.find_packages(exclude=["tests*", "integration_tests*"]),
     include_package_data=True,
     package_dir={
