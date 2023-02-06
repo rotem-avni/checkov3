@@ -80,6 +80,17 @@ def get_generic_ast_mock():
     {'token': {'FakeTokStr': ['', None]}, 'transfo': 'NoTransfo'}]}]}
 
 
+def get_raw_rule():
+    return {'id': 'checks.CKV_SAST_1', 'patterns': [{'pattern': 'set_port($ARG)'}, {
+        'metavariable-comparison': {'metavariable': '$ARG', 'comparison': '$ARG < 1024'}}],
+                'message': 'module setting superuser port', 'languages': ['python'], 'severity': 'INFO',
+                'metadata': {'cwe': ['CWE-289: Authentication Bypass by Alternate Name'], 'name': 'superuser port',
+                             'category': 'security', 'technology': ['gorilla'], 'confidence': 'MEDIUM',
+                             'license': 'Commons Clause License Condition v1.0[LGPL-2.1-only]',
+                             'references': ['https://cwe.mitre.org/data/definitions/289.html'],
+                             'subcategory': ['audit'], 'impact': 'MEDIUM', 'likelihood': 'LOW'}}
+
+
 def test_sast_runner_python():
     runner = Runner()
     source = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code')
@@ -103,14 +114,20 @@ def test_sast_runner_get_semgrep_output():
     checks_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'checks')
     source_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code')
     output = runner._get_semgrep_output([source_dir], [checks_dir], output_handler)
-    assert 1 == 2
+    raw_rule = get_raw_rule()
+    rule = Rule(raw=raw_rule)
+    assert output.matches[rule][0].match.location.path == f'{source_dir}/file.py'
+    assert output.matches[rule][0].match.location.start.line == 2
+    assert output.matches[rule][0].match.location.end.line == 2
+    assert output.matches[rule][0].severity == RuleSeverity.INFO
+    assert output.matches[rule][0].rule_id == 'checks.CKV_SAST_1'
 
 
 def test_sast_runner_create_report():
     file = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code', 'file.py')
-    raw_rule = {'id': 'checkov.sast.checks.rules.python.CKV_SAST_1', 'patterns': [{'pattern': 'set_port($ARG)'}, {'metavariable-comparison': {'metavariable': '$ARG', 'comparison': '$ARG < 1024'}}], 'message': 'module setting superuser port', 'languages': ['python'], 'severity': 'INFO', 'metadata': {'cwe': ['CWE-289: Authentication Bypass by Alternate Name'], 'name': 'superuser port', 'category': 'security', 'technology': ['gorilla'], 'confidence': 'MEDIUM', 'license': 'Commons Clause License Condition v1.0[LGPL-2.1-only]', 'references': ['https://cwe.mitre.org/data/definitions/289.html'], 'subcategory': ['audit'], 'impact': 'MEDIUM', 'likelihood': 'LOW'}}
+    raw_rule = get_raw_rule()
     rule = Rule(raw_rule)
-    rule_match = core.CoreMatch(rule_id=core.RuleId(value='checkov.sast.checks.rules.python.CKV_SAST_1'),
+    rule_match = core.CoreMatch(rule_id=core.RuleId(value='checks.CKV_SAST_1'),
                                 location=core.Location(path=file,
                                                        start=core.Position(line=2, col=1, offset=25),
                                                        end=core.Position(line=2, col=14, offset=38)),
