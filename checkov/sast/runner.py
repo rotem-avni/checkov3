@@ -6,6 +6,7 @@ from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.severities import get_severity
 from checkov.common.models.enums import CheckResult
 from checkov.common.output.report import Report
+from checkov.common.typing import _CheckResult
 from checkov.runner_filter import RunnerFilter
 from checkov.common.output.record import Record
 from checkov.sast.checks.registry import registry
@@ -104,10 +105,10 @@ class Runner():
                 file_path = file_abs_path.split('/')[-1]
                 severity = get_severity(SEMGREP_SEVERITY_TO_CHECKOV_SEVERITY.get(rule.severity))
                 file_line_range = [match.start.line, match.end.line]
-                check_result = {'result': CheckResult.FAILED, 'evaluated_keys': {}}
+                check_result = _CheckResult(result=CheckResult.FAILED)
 
-                record = Record(check_id=check_id, check_name=check_name, resource=None, evaluations={},
-                                check_class=None, check_result=check_result, code_block=code_block,
+                record = Record(check_id=check_id, check_name=check_name, resource="", evaluations={},
+                                check_class="", check_result=check_result, code_block=code_block,
                                 file_path=file_path, file_line_range=file_line_range,
                                 file_abs_path=file_abs_path, severity=severity)
                 report.add_record(record)
