@@ -38,6 +38,8 @@ SEMGREP_SEVERITY_TO_CHECKOV_SEVERITY = {
     RuleSeverity.INFO: 'LOW',
 }
 
+SUPPORT_FILE_EXT = ['py', 'java', 'js']
+
 
 @dataclass
 class SemgrepOutput:
@@ -56,7 +58,10 @@ class Runner():
     check_type = CheckType.SAST  # noqa: CCE003  # a static attribute
 
     def should_scan_file(self, file: str) -> bool:
-        return True
+        for ext in SUPPORT_FILE_EXT:
+            if file.endswith(ext):
+                return True
+        return False
 
     def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]] = None, files: Optional[List[str]] = None,
             runner_filter: Optional[RunnerFilter] = None, collect_skip_comments: bool = True) -> Report:
