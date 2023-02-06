@@ -46,7 +46,6 @@ def test_get_checks_returned_check_number():
                 "github_actions",
                 "OpenAPI",
                 "gitlab_ci",
-                "sast",
             },
         ),
         (
@@ -71,7 +70,6 @@ def test_get_checks_returned_check_number():
                 "github_actions",
                 "OpenAPI",
                 "gitlab_ci",
-                "sast",
             },
         ),
         (["terraform"], {"Terraform"}),

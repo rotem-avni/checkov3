@@ -58,8 +58,12 @@ class Runner():
     def should_scan_file(self, file: str) -> bool:
         return True
 
-    def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]], files: Optional[List[str]],
-            runner_filter: RunnerFilter, collect_skip_comments: bool = True) -> Report:
+    def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]], files: Optional[List[str]] = None,
+            runner_filter: Optional[RunnerFilter] = None, collect_skip_comments: bool = True) -> Report:
+        if not runner_filter:
+            logger.warning('no runner filter')
+            return Report(self.check_type)
+
         StringIO()
         output_settings = OutputSettings(output_format=OutputFormat.JSON)
         output_handler = OutputHandler(output_settings)
