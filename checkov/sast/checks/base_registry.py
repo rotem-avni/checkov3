@@ -3,7 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import yaml
-from typing import List, Any
+from typing import List, Any, Optional
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.checks.base_check_registry import BaseCheckRegistry
 from checkov.sast.enums import SastLanguages
@@ -17,15 +17,17 @@ class Registry(BaseCheckRegistry):
         self.rules: List[str] = []
         self.checks_dir = checks_dir
         self.logger = logging.getLogger(__name__)
-        
+
     def extract_entity_details(self, entity: dict[str, Any]) -> tuple[str, str, dict[str, Any]]:
-        return '', '', ''
+        return '', '', {}
 
-    def load_rules(self, sast_languages: List[SastLanguages]) -> None:
-        self._load_checks_from_dir(self.checks_dir, sast_languages)
+    def load_rules(self, sast_languages: Optional[List[SastLanguages]]) -> None:
+        if sast_languages:
+            self._load_checks_from_dir(self.checks_dir, sast_languages)
 
-    def load_external_rules(self, dir: str, sast_languages: List[SastLanguages]) -> None:
-        self._load_checks_from_dir(dir, sast_languages)
+    def load_external_rules(self, dir: str, sast_languages: Optional[List[SastLanguages]]) -> None:
+        if sast_languages:
+            self._load_checks_from_dir(dir, sast_languages)
 
     def _load_checks_from_dir(self, directory: str, sast_languages: List[SastLanguages]) -> None:
         dir = os.path.expanduser(directory)
