@@ -94,6 +94,7 @@ def get_raw_rule():
 def test_sast_runner_python():
     runner = Runner()
     source = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code')
+    assert source == '11'
     report = runner.run(source, runner_filter=RunnerFilter(framework=['sast_python']))
     assert report.check_type == CheckType.SAST
     assert len(report.failed_checks) == 1
@@ -116,6 +117,7 @@ def test_sast_runner_get_semgrep_output():
     output = runner._get_semgrep_output([source_dir], [checks_dir], output_handler)
     raw_rule = get_raw_rule()
     rule = Rule(raw=raw_rule)
+    assert list(output.matches.keys())[0].id == 'asc'
     assert output.matches[rule][0].match.location.path == f'{source_dir}/file.py'
     assert output.matches[rule][0].match.location.start.line == 2
     assert output.matches[rule][0].match.location.end.line == 2

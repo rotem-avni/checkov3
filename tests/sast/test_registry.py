@@ -1,4 +1,4 @@
-from checkov.common.sast.enums import SastLanguages
+from checkov.sast.enums import SastLanguages
 from checkov.sast.checks.base_registry import Registry
 import pathlib
 import os
