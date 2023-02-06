@@ -9,6 +9,7 @@ from semgrep.output import OutputSettings, OutputHandler
 from semgrep.constants import OutputFormat, RuleSeverity
 import semgrep.output_from_core as core
 import pathlib
+import json
 import os
 
 
@@ -18,7 +19,7 @@ def get_generic_ast_mock():
              'charpos': 25,
              'line': 2,
              'column': 0,
-             'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+             'file': '/source_code/file.py'}},
            'transfo': 'NoTransfo'}],
          {'id_info_id': 1,
           'id_hidden': 'false',
@@ -29,20 +30,20 @@ def get_generic_ast_mock():
           'charpos': 33,
           'line': 2,
           'column': 8,
-          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+          'file': '/source_code/file.py'}},
         'transfo': 'NoTransfo'},
        [{'Arg': {'L': {'Int': [{'some': 443},
             {'token': {'OriginTok': {'str': '443',
                'charpos': 34,
                'line': 2,
                'column': 9,
-               'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+               'file': '/source_code/file.py'}},
              'transfo': 'NoTransfo'}]}}}],
        {'token': {'OriginTok': {'str': ')',
           'charpos': 37,
           'line': 2,
           'column': 12,
-          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+          'file': '/source_code/file.py'}},
         'transfo': 'NoTransfo'}]]},
     {'token': {'FakeTokStr': ['', None]}, 'transfo': 'NoTransfo'}]},
   {'ExprStmt': [{'Call': [{'N': {'Id': [['set_port',
@@ -50,7 +51,7 @@ def get_generic_ast_mock():
              'charpos': 60,
              'line': 4,
              'column': 0,
-             'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+             'file': '/source_code/file.py'}},
            'transfo': 'NoTransfo'}],
          {'id_info_id': 2,
           'id_hidden': 'false',
@@ -61,20 +62,20 @@ def get_generic_ast_mock():
           'charpos': 68,
           'line': 4,
           'column': 8,
-          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+          'file': '/source_code/file.py'}},
         'transfo': 'NoTransfo'},
        [{'Arg': {'L': {'Int': [{'some': 8080},
             {'token': {'OriginTok': {'str': '8080',
                'charpos': 69,
                'line': 4,
                'column': 9,
-               'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+               'file': '/source_code/file.py'}},
              'transfo': 'NoTransfo'}]}}}],
        {'token': {'OriginTok': {'str': ')',
           'charpos': 73,
           'line': 4,
           'column': 13,
-          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+          'file': '/source_code/file.py'}},
         'transfo': 'NoTransfo'}]]},
     {'token': {'FakeTokStr': ['', None]}, 'transfo': 'NoTransfo'}]}]}
 
@@ -148,8 +149,9 @@ def test_sast_runner_get_code_block():
 
 def test_sast_runner():
     runner = Runner()
-    source = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code')
-    external_dir_checks = os.path.join(pathlib.Path(__file__).parent.resolve(), 'external_checks')
+    cur_dir = pathlib.Path(__file__).parent.resolve()
+    source = os.path.join(cur_dir, 'source_code')
+    external_dir_checks = os.path.join(cur_dir, 'external_checks')
     report = runner.run(source, runner_filter=RunnerFilter(framework=['sast']), external_checks_dir=[external_dir_checks])
     assert report.check_type == CheckType.SAST
     assert len(report.failed_checks) == 3
@@ -191,6 +193,8 @@ def test_code_block_cut_ident():
 
 
 def test_get_generic_ast():
-    path = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code', 'file.py')
+    cur_dir = pathlib.Path(__file__).parent.resolve()
+    path = os.path.join(cur_dir, 'source_code', 'file.py')
     result = Runner._get_generic_ast(SastLanguages.PYTHON, path)
-    assert get_generic_ast_mock() == result
+    result_json = json.dumps(result).replace(str(cur_dir), '')
+    assert json.dumps(get_generic_ast_mock()) == result_json
