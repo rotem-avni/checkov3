@@ -19,7 +19,7 @@ SubscriptionCategoryMapping = {
     CustomerSubscription.IAC: (CodeCategoryType.IAC, CodeCategoryType.SUPPLY_CHAIN),
     CustomerSubscription.SCA: (CodeCategoryType.OPEN_SOURCE, CodeCategoryType.IMAGES),
     CustomerSubscription.SECRETS: (CodeCategoryType.SECRETS,),
-    CustomerSubscription.SAST: (CodeCategoryType.SAST,),
+    CustomerSubscription.SAST: (CodeCategoryType.SAST,)
 }
 
 CategoryToSubscriptionMapping = {}

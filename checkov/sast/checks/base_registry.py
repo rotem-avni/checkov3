@@ -6,9 +6,8 @@ import yaml
 from typing import List, Any, Optional
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.checks.base_check_registry import BaseCheckRegistry
-from checkov.sast.enums import SastLanguages
-
-CHECKS_POSSIBLE_ENDING = [".yaml", ".yml"]
+from checkov.sast.consts import SastLanguages
+from checkov.common.checks_infra.registry import CHECKS_POSSIBLE_ENDING
 
 
 class Registry(BaseCheckRegistry):
@@ -19,6 +18,7 @@ class Registry(BaseCheckRegistry):
         self.logger = logging.getLogger(__name__)
 
     def extract_entity_details(self, entity: dict[str, Any]) -> tuple[str, str, dict[str, Any]]:
+        # TODO
         return '', '', {}
 
     def load_rules(self, sast_languages: Optional[List[SastLanguages]]) -> None:

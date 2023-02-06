@@ -10,3 +10,10 @@ class SastLanguages(Enum):
     PYTHON = 'python'
     JAVA = 'java'
     JAVASCRIPT = 'javascript'
+    
+
+SUPPORT_FILE_EXT = {
+    SastLanguages.PYTHON: ['py'],
+    SastLanguages.JAVA: ['java'],
+    SastLanguages.JAVASCRIPT: ['js']
+}

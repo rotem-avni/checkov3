@@ -114,7 +114,7 @@ DEFAULT_RUNNERS = [
     circleci_pipelines_runner(),
     azure_pipelines_runner(),
     ansible_runner(),
-    sast_runner(),
+    sast_runner()
 ]
 
 

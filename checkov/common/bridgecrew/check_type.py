@@ -32,6 +32,7 @@ class CheckType:
     SAST = 'sast'
 
 
+@dataclass
 class SastType:
     SAST_PYTHON = 'sast_python'
     SAST_JAVA = 'sast_java'

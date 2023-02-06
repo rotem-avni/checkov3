@@ -10,7 +10,7 @@ from checkov.common.typing import _CheckResult
 from checkov.runner_filter import RunnerFilter
 from checkov.common.output.record import Record
 from checkov.sast.checks.registry import registry
-from checkov.sast.enums import SastLanguages
+from checkov.sast.consts import SastLanguages, SUPPORT_FILE_EXT
 from semgrep.semgrep_main import main as run_semgrep
 from semgrep.output import OutputSettings, OutputHandler
 from semgrep.constants import OutputFormat, RuleSeverity, EngineType, DEFAULT_TIMEOUT
@@ -38,8 +38,6 @@ SEMGREP_SEVERITY_TO_CHECKOV_SEVERITY = {
     RuleSeverity.INFO: 'LOW',
 }
 
-SUPPORT_FILE_EXT = ['py', 'java', 'js']
-
 
 @dataclass
 class SemgrepOutput:
@@ -58,9 +56,10 @@ class Runner():
     check_type = CheckType.SAST  # noqa: CCE003  # a static attribute
 
     def should_scan_file(self, file: str) -> bool:
-        for ext in SUPPORT_FILE_EXT:
-            if file.endswith(ext):
-                return True
+        for extensions in SUPPORT_FILE_EXT.values():
+            for extension in extensions:
+                if file.endswith(extension):
+                    return True
         return False
 
     def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]] = None, files: Optional[List[str]] = None,

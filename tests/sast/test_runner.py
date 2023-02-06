@@ -1,6 +1,6 @@
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.models.enums import CheckResult
-from checkov.sast.enums import SastLanguages
+from checkov.sast.consts import SastLanguages
 from checkov.sast.runner import Runner
 from semgrep.rule_match import RuleMatch
 from semgrep.rule import Rule
