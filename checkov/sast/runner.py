@@ -54,7 +54,7 @@ class Runner():
     check_type = CheckType.SAST  # noqa: CCE003  # a static attribute
 
     def run(self, root_folder: str | None, external_checks_dir: list[str] | None = None, files: list[str] | None = None,
-            runner_filter: RunnerFilter | None = None, collect_skip_comments: bool = True) -> Report:
+            runner_filter: RunnerFilter = RunnerFilter(), collect_skip_comments: bool = True) -> Report:
         StringIO()
         output_settings = OutputSettings(output_format=OutputFormat.JSON)
         output_handler = OutputHandler(output_settings)
