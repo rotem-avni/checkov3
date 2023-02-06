@@ -14,14 +14,14 @@ CHECKS_POSSIBLE_ENDING = [".yaml", ".yml"]
 class Registry(BaseCheckRegistry):
     def __init__(self, checks_dir: str) -> None:
         super().__init__(report_type=CheckType.SAST)
-        self.checks: List[str] = []
+        self.rules: List[str] = []
         self.checks_dir = checks_dir
         self.logger = logging.getLogger(__name__)
 
-    def load_checks(self, sast_languages: List[SastLanguages]) -> None:
+    def load_rules(self, sast_languages: List[SastLanguages]) -> None:
         self._load_checks_from_dir(self.checks_dir, sast_languages)
 
-    def load_external_checks(self, dir: str, sast_languages: List[SastLanguages]) -> None:
+    def load_external_rules(self, dir: str, sast_languages: List[SastLanguages]) -> None:
         self._load_checks_from_dir(dir, sast_languages)
 
     def _load_checks_from_dir(self, directory: str, sast_languages: List[SastLanguages]) -> None:
@@ -45,4 +45,4 @@ class Registry(BaseCheckRegistry):
                             if lang in [lan.value for lan in sast_languages]:
                                 checks.add(os.path.join(root, file))
                                 break
-        self.checks += list(checks)
+        self.rules += list(checks)

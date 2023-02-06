@@ -59,16 +59,16 @@ class Runner():
         output_settings = OutputSettings(output_format=OutputFormat.JSON)
         output_handler = OutputHandler(output_settings)
 
-        registry.load_checks(runner_filter.sast_languages)
+        registry.load_rules(runner_filter.sast_languages)
         if external_checks_dir:
             for external_checks in external_checks_dir:
-                registry.load_external_checks(external_checks, runner_filter.sast_languages)
+                registry.load_external_rules(external_checks, runner_filter.sast_languages)
 
         if root_folder:
             targets = [root_folder]
         if files:
             targets = files
-        config = registry.checks
+        config = registry.rules
         if not config:
             logger.warning('no valid checks')
             return Report(self.check_type)
