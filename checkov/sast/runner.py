@@ -153,7 +153,7 @@ class Runner():
             runner = StreamingSemgrepCore(cmd, 1)
             runner.vfs_map = {}
             returncode = runner.execute()
-            output_json = core_runner._extract_core_output([], returncode, " ".join(cmd), runner.stdout, runner.stderr)
+            output_json: Dict[str, Any] = core_runner._extract_core_output([], returncode, " ".join(cmd), runner.stdout, runner.stderr)
             return output_json
         except Exception as e:
             logger.error(f'Cant parse AST for this file: {target}, for {language.value}: {str(e)}')
