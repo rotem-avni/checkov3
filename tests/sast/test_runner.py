@@ -80,7 +80,6 @@ def get_generic_ast_mock():
 
 
 def test_sast_runner_python():
-    checks_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'checks')
     runner = Runner()
     source = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code')
     report = runner.run(source, runner_filter=RunnerFilter(framework=['sast_python']))
@@ -107,10 +106,11 @@ def test_sast_runner_get_semgrep_output():
 
 
 def test_sast_runner_create_report():
+    file = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code', 'file.py')
     raw_rule = {'id': 'checkov.sast.checks.rules.python.CKV_SAST_1', 'patterns': [{'pattern': 'set_port($ARG)'}, {'metavariable-comparison': {'metavariable': '$ARG', 'comparison': '$ARG < 1024'}}], 'message': 'module setting superuser port', 'languages': ['python'], 'severity': 'INFO', 'metadata': {'cwe': ['CWE-289: Authentication Bypass by Alternate Name'], 'name': 'superuser port', 'category': 'security', 'technology': ['gorilla'], 'confidence': 'MEDIUM', 'license': 'Commons Clause License Condition v1.0[LGPL-2.1-only]', 'references': ['https://cwe.mitre.org/data/definitions/289.html'], 'subcategory': ['audit'], 'impact': 'MEDIUM', 'likelihood': 'LOW'}}
     rule = Rule(raw_rule)
     rule_match = core.CoreMatch(rule_id=core.RuleId(value='checkov.sast.checks.rules.python.CKV_SAST_1'),
-                                location=core.Location(path='/Users/arosenfeld/Desktop/fff/file.py',
+                                location=core.Location(path=file,
                                                        start=core.Position(line=2, col=1, offset=25),
                                                        end=core.Position(line=2, col=14, offset=38)),
                                 extra=core.CoreMatchExtra(metavars=core.Metavars(value={'$ARG': core.MetavarValue(start=core.Position(line=2, col=10, offset=34), end=core.Position(line=2, col=13, offset=37), abstract_content='443', propagated_value=None)}),
@@ -134,7 +134,7 @@ def test_sast_runner_create_report():
     assert report.failed_checks[0].file_path == 'file.py'
     assert report.failed_checks[0].check_name == 'superuser port'
     assert report.failed_checks[0].code_block == [(2, 'set_port(443)\n')]
-    assert report.failed_checks[0].file_abs_path == '/Users/arosenfeld/Desktop/fff/file.py'
+    assert report.failed_checks[0].file_abs_path == file
     assert report.failed_checks[0].file_line_range == [2, 2]
     assert report.failed_checks[0].check_result.get('result') == CheckResult.FAILED
 

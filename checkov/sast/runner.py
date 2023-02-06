@@ -58,7 +58,7 @@ class Runner():
     def should_scan_file(self, file: str) -> bool:
         return True
 
-    def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]], files: Optional[List[str]] = None,
+    def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]] = None, files: Optional[List[str]] = None,
             runner_filter: Optional[RunnerFilter] = None, collect_skip_comments: bool = True) -> Report:
         if not runner_filter:
             logger.warning('no runner filter')
