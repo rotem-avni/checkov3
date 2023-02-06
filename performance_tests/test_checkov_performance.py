@@ -10,7 +10,6 @@ from checkov.common.util.banner import banner
 from checkov.kubernetes.runner import Runner as k8_runner
 from checkov.runner_filter import RunnerFilter
 from checkov.terraform.runner import Runner as tf_runner
-from checkov.sast.runner import Runner as sast_runner
 
 # Ensure repo_name is a cloned repository into performance_tests directory.
 # Thresholds are in ms, and are set to the current maximum duration of checkov on the repository
