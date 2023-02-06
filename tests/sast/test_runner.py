@@ -1,5 +1,6 @@
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.models.enums import CheckResult
+from checkov.sast.enums import SastLanguages
 from checkov.sast.runner import Runner
 from semgrep.rule_match import RuleMatch
 from semgrep.rule import Rule
@@ -9,6 +10,73 @@ from semgrep.constants import OutputFormat, RuleSeverity
 import semgrep.output_from_core as core
 import pathlib
 import os
+
+
+def get_generic_ast_mock():
+    return {'Pr': [{'ExprStmt': [{'Call': [{'N': {'Id': [['set_port',
+          {'token': {'OriginTok': {'str': 'set_port',
+             'charpos': 25,
+             'line': 2,
+             'column': 0,
+             'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+           'transfo': 'NoTransfo'}],
+         {'id_info_id': 1,
+          'id_hidden': 'false',
+          'id_resolved': {'ref@': None},
+          'id_type': {'ref@': None},
+          'id_svalue': {'ref@': None}}]}},
+      [{'token': {'OriginTok': {'str': '(',
+          'charpos': 33,
+          'line': 2,
+          'column': 8,
+          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+        'transfo': 'NoTransfo'},
+       [{'Arg': {'L': {'Int': [{'some': 443},
+            {'token': {'OriginTok': {'str': '443',
+               'charpos': 34,
+               'line': 2,
+               'column': 9,
+               'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+             'transfo': 'NoTransfo'}]}}}],
+       {'token': {'OriginTok': {'str': ')',
+          'charpos': 37,
+          'line': 2,
+          'column': 12,
+          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+        'transfo': 'NoTransfo'}]]},
+    {'token': {'FakeTokStr': ['', None]}, 'transfo': 'NoTransfo'}]},
+  {'ExprStmt': [{'Call': [{'N': {'Id': [['set_port',
+          {'token': {'OriginTok': {'str': 'set_port',
+             'charpos': 60,
+             'line': 4,
+             'column': 0,
+             'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+           'transfo': 'NoTransfo'}],
+         {'id_info_id': 2,
+          'id_hidden': 'false',
+          'id_resolved': {'ref@': None},
+          'id_type': {'ref@': None},
+          'id_svalue': {'ref@': None}}]}},
+      [{'token': {'OriginTok': {'str': '(',
+          'charpos': 68,
+          'line': 4,
+          'column': 8,
+          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+        'transfo': 'NoTransfo'},
+       [{'Arg': {'L': {'Int': [{'some': 8080},
+            {'token': {'OriginTok': {'str': '8080',
+               'charpos': 69,
+               'line': 4,
+               'column': 9,
+               'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+             'transfo': 'NoTransfo'}]}}}],
+       {'token': {'OriginTok': {'str': ')',
+          'charpos': 73,
+          'line': 4,
+          'column': 13,
+          'file': '/Users/arosenfeld/Desktop/dev/checkov3/tests/sast/source_code/file.py'}},
+        'transfo': 'NoTransfo'}]]},
+    {'token': {'FakeTokStr': ['', None]}, 'transfo': 'NoTransfo'}]}]}
 
 
 def test_sast_runner_python():
@@ -79,7 +147,6 @@ def test_sast_runner_get_code_block():
 
 
 def test_sast_runner():
-    checks_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'checks')
     runner = Runner()
     source = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code')
     external_dir_checks = os.path.join(pathlib.Path(__file__).parent.resolve(), 'external_checks')
@@ -99,7 +166,7 @@ def test_sast_runner():
     assert report.failed_checks[1].severity.name == 'HIGH'
     assert report.failed_checks[1].file_path == 'file.java'
     assert report.failed_checks[1].check_name == 'seam log injection'
-    assert report.failed_checks[1].code_block == [(31, '                log.info("request: method="+httpRequest.getMethod()+", URL="+httpRequest.getRequestURI());\n')]
+    assert report.failed_checks[1].code_block == [(31, 'log.info("request: method="+httpRequest.getMethod()+", URL="+httpRequest.getRequestURI());\n')]
     assert report.failed_checks[1].file_abs_path == os.path.join(source, 'file.java')
     assert report.failed_checks[1].file_line_range == [31, 31]
     assert report.failed_checks[1].check_result.get('result') == CheckResult.FAILED
@@ -108,7 +175,7 @@ def test_sast_runner():
     assert report.failed_checks[2].severity.name == 'HIGH'
     assert report.failed_checks[2].file_path == 'file.java'
     assert report.failed_checks[2].check_name == 'seam log injection'
-    assert report.failed_checks[2].code_block == [(40, '        log.info("Current logged in user : " + user.getUsername());\n')]
+    assert report.failed_checks[2].code_block == [(40, 'log.info("Current logged in user : " + user.getUsername());\n')]
     assert report.failed_checks[2].file_abs_path == os.path.join(source, 'file.java')
     assert report.failed_checks[2].file_line_range == [40, 40]
     assert report.failed_checks[2].check_result.get('result') == CheckResult.FAILED
@@ -121,3 +188,9 @@ def test_code_block_cut_ident():
     assert code_block_cut_ident[0][1] == 'def func():'
     assert code_block_cut_ident[1][0] == 2
     assert code_block_cut_ident[1][1] == '    hi = 0'
+
+
+def test_get_generic_ast():
+    path = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code', 'file.py')
+    result = Runner._get_generic_ast(SastLanguages.PYTHON, path)
+    assert get_generic_ast_mock() == result
