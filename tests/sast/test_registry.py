@@ -8,24 +8,15 @@ def test_sast_registry_only_python():
     checks_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'checks')
     registry = Registry(checks_dir)
 
-    sast_langs = [SastLanguages.PYTHON]
-    registry.load_checks( sast_langs)
-    assert registry.checks == [os.path.join(checks_dir, 'python_rule.yaml')]
+    registry.load_rules([SastLanguages.PYTHON])
+    assert registry.rules == [os.path.join(checks_dir, 'python_rule.yaml')]
 
 
-def test_sast_registry_only_java():
+def test_sast_registry_with_external_dir():
     checks_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'checks')
+    external_checks_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'external_checks')
     registry = Registry(checks_dir)
 
-    sast_langs = [SastLanguages.JAVA]
-    registry.load_checks(sast_langs)
-    assert registry.checks == [os.path.join(checks_dir, 'java_rule.yaml')]
-
-
-def test_sast_registry_all():
-    checks_dir = os.path.join(pathlib.Path(__file__).parent.resolve(), 'checks')
-    registry = Registry(checks_dir)
-
-    sast_langs = [SastLanguages.JAVA, SastLanguages.PYTHON]
-    registry.load_checks(sast_langs)
-    assert registry.checks == [os.path.join(checks_dir, 'java_rule.yaml'), os.path.join(checks_dir, 'python_rule.yaml')]
+    registry.load_rules([SastLanguages.PYTHON])
+    registry.load_external_rules(external_checks_dir, [SastLanguages.JAVA])
+    assert registry.rules == [ os.path.join(checks_dir, 'python_rule.yaml'), os.path.join(external_checks_dir, 'java_rule.yaml')]
