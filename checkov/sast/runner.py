@@ -18,12 +18,10 @@ from pathlib import Path
 
 
 if TYPE_CHECKING:
-    import semgrep.output_from_core as core
     from semgrep.rule_match import RuleMatchMap, RuleMatch
     from semgrep.target_manager import FileTargetingLog
     from semgrep.profile_manager import ProfileManager
-    from semgrep.profiling import ProfilingData
-    from semgrep.parsing_data import ParsingData
+    from semgrep.output_extra import OutputExtra
     from semgrep.error import SemgrepError
     from semgrep.rule import Rule
 
@@ -42,14 +40,11 @@ SEMGREP_SEVERITY_TO_CHECKOV_SEVERITY = {
 class SemgrepOutput:
     matches: RuleMatchMap
     errors: List[SemgrepError]
-    all_targets: Set[Path]
     renamed_targets: Set[Path]
     target_manager_ignore_log: FileTargetingLog
     filtered_rules: List[Rule]
     profiler: ProfileManager
-    profiling_data: ProfilingData
-    parsing_data: ParsingData
-    explanations: List[core.MatchingExplanation]
+    OutputExtra: OutputExtra
     shown_severities: Collection[RuleSeverity]
     target_manager_lockfile_scan_info: Dict[str, int]
 
@@ -85,20 +80,17 @@ class Runner():
     def _get_semgrep_output(targets: List[str], config: List[str], output_handler: OutputHandler) -> SemgrepOutput:
         (filtered_matches_by_rule,
          semgrep_errors,
-         all_targets,
          renamed_targets,
          target_manager_ignore_log,
          filtered_rules,
          profiler,
-         profiling_data,
-         parsing_data,
-         explanations,
+         output_extra,
          shown_severities,
          target_manager_lockfile_scan_info) = run_semgrep(output_handler=output_handler, target=targets,
                                                           pattern="", lang="", configs=config, **{})
-        semgrep_output = SemgrepOutput(filtered_matches_by_rule, semgrep_errors, all_targets, renamed_targets,
-                                       target_manager_ignore_log, filtered_rules, profiler, profiling_data,
-                                       parsing_data, explanations, shown_severities, target_manager_lockfile_scan_info)
+        semgrep_output = SemgrepOutput(filtered_matches_by_rule, semgrep_errors, renamed_targets,
+                                       target_manager_ignore_log, filtered_rules, profiler,
+                                       output_extra, shown_severities, target_manager_lockfile_scan_info)
         return semgrep_output
 
     def _create_report(self, filtered_matches_by_rule: Dict[Rule, List[RuleMatch]]) -> Report:
