@@ -94,7 +94,6 @@ def get_raw_rule():
 def test_sast_runner_python():
     runner = Runner()
     source = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code')
-    assert source == '11'
     report = runner.run(source, runner_filter=RunnerFilter(framework=['sast_python']))
     assert report.check_type == CheckType.SAST
     assert len(report.failed_checks) == 1
