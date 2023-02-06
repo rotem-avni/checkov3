@@ -157,4 +157,4 @@ class Runner():
             return output_json
         except Exception as e:
             logger.error(f'Cant parse AST for this file: {target}, for {language.value}: {str(e)}')
-            return {}
+        return {}
