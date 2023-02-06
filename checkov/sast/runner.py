@@ -13,7 +13,7 @@ from checkov.sast.checks.registry import registry
 from semgrep.semgrep_main import main as run_semgrep
 from semgrep.output import OutputSettings, OutputHandler
 from semgrep.constants import OutputFormat, RuleSeverity
-from typing import Collection, List, Set, Dict, Tuple, TYPE_CHECKING
+from typing import Collection, List, Set, Dict, Tuple, Optional, TYPE_CHECKING
 from io import StringIO
 from pathlib import Path
 
@@ -53,8 +53,8 @@ class SemgrepOutput:
 class Runner():
     check_type = CheckType.SAST  # noqa: CCE003  # a static attribute
 
-    def run(self, root_folder: str | None, external_checks_dir: list[str] | None = None, files: list[str] | None = None,
-            runner_filter: RunnerFilter = RunnerFilter(), collect_skip_comments: bool = True) -> Report:
+    def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]], files: Optional[List[str]],
+            runner_filter: RunnerFilter, collect_skip_comments: bool = True) -> Report:
         StringIO()
         output_settings = OutputSettings(output_format=OutputFormat.JSON)
         output_handler = OutputHandler(output_settings)
