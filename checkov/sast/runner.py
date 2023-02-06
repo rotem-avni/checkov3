@@ -10,10 +10,12 @@ from checkov.common.typing import _CheckResult
 from checkov.runner_filter import RunnerFilter
 from checkov.common.output.record import Record
 from checkov.sast.checks.registry import registry
+from checkov.sast.enums import SastLanguages
 from semgrep.semgrep_main import main as run_semgrep
 from semgrep.output import OutputSettings, OutputHandler
-from semgrep.constants import OutputFormat, RuleSeverity
-from typing import Collection, List, Set, Dict, Tuple, Optional, TYPE_CHECKING
+from semgrep.constants import OutputFormat, RuleSeverity, EngineType, DEFAULT_TIMEOUT
+from semgrep.core_runner import StreamingSemgrepCore, SemgrepCore, CoreRunner
+from typing import Collection, List, Set, Dict, Tuple, Optional, Any, TYPE_CHECKING
 from io import StringIO
 from pathlib import Path
 
@@ -52,6 +54,9 @@ class SemgrepOutput:
 
 class Runner():
     check_type = CheckType.SAST  # noqa: CCE003  # a static attribute
+
+    def should_scan_file(self, file: str) -> bool:
+        return True
 
     def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]], files: Optional[List[str]],
             runner_filter: RunnerFilter, collect_skip_comments: bool = True) -> Report:
@@ -138,3 +143,19 @@ class Runner():
         for item in code_block:
             code_block_cut_ident.append((item[0], item[1][min_ident:]))
         return code_block_cut_ident
+
+    @staticmethod
+    def _get_generic_ast(language: SastLanguages, target: str) -> Optional[Dict[str, Any]]:
+        try:
+            core_runner = CoreRunner(jobs=None, engine=EngineType.OSS, timeout=DEFAULT_TIMEOUT, max_memory=0,
+                                    interfile_timeout=0, timeout_threshold=0, optimizations="none", core_opts_str=None)
+            cmd = [SemgrepCore.path()] + ['-json', '-full_token_info', '-dump_ast', target, '-lang', language.value]
+            runner = StreamingSemgrepCore(cmd, 1)
+            runner.vfs_map = {}
+            returncode = runner.execute()
+            output_json = core_runner._extract_core_output([], returncode, " ".join(cmd), runner.stdout, runner.stderr)
+            return output_json
+        except Exception as e:
+            logger.error(f'Cant parse AST for this file: {target}, for {language.value}: {str(e)}')
+            return None
+        
