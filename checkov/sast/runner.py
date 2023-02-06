@@ -145,10 +145,10 @@ class Runner():
         return code_block_cut_ident
 
     @staticmethod
-    def _get_generic_ast(language: SastLanguages, target: str) -> Optional[Dict[str, Any]]:
+    def _get_generic_ast(language: SastLanguages, target: str) -> Dict[str, Any]:
         try:
             core_runner = CoreRunner(jobs=None, engine=EngineType.OSS, timeout=DEFAULT_TIMEOUT, max_memory=0,
-                                    interfile_timeout=0, timeout_threshold=0, optimizations="none", core_opts_str=None)
+                                     interfile_timeout=0, timeout_threshold=0, optimizations="none", core_opts_str=None)
             cmd = [SemgrepCore.path()] + ['-json', '-full_token_info', '-dump_ast', target, '-lang', language.value]
             runner = StreamingSemgrepCore(cmd, 1)
             runner.vfs_map = {}
@@ -157,5 +157,4 @@ class Runner():
             return output_json
         except Exception as e:
             logger.error(f'Cant parse AST for this file: {target}, for {language.value}: {str(e)}')
-            return None
-        
+            return {}
