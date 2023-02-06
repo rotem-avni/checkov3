@@ -81,7 +81,7 @@ def get_generic_ast_mock():
 
 
 def get_raw_rule():
-    return {'id': 'checks.CKV_SAST_1', 'patterns': [{'pattern': 'set_port($ARG)'}, {
+    return {'id': 'tests.sast.checks.CKV_SAST_1', 'patterns': [{'pattern': 'set_port($ARG)'}, {
         'metavariable-comparison': {'metavariable': '$ARG', 'comparison': '$ARG < 1024'}}],
                 'message': 'module setting superuser port', 'languages': ['python'], 'severity': 'INFO',
                 'metadata': {'cwe': ['CWE-289: Authentication Bypass by Alternate Name'], 'name': 'superuser port',
@@ -117,19 +117,18 @@ def test_sast_runner_get_semgrep_output():
     output = runner._get_semgrep_output([source_dir], [checks_dir], output_handler)
     raw_rule = get_raw_rule()
     rule = Rule(raw=raw_rule)
-    assert list(output.matches.keys())[0].id == 'asc'
     assert output.matches[rule][0].match.location.path == f'{source_dir}/file.py'
     assert output.matches[rule][0].match.location.start.line == 2
     assert output.matches[rule][0].match.location.end.line == 2
     assert output.matches[rule][0].severity == RuleSeverity.INFO
-    assert output.matches[rule][0].rule_id == 'checks.CKV_SAST_1'
+    assert output.matches[rule][0].rule_id == 'tests.sast.checks.CKV_SAST_1'
 
 
 def test_sast_runner_create_report():
     file = os.path.join(pathlib.Path(__file__).parent.resolve(), 'source_code', 'file.py')
     raw_rule = get_raw_rule()
     rule = Rule(raw_rule)
-    rule_match = core.CoreMatch(rule_id=core.RuleId(value='checks.CKV_SAST_1'),
+    rule_match = core.CoreMatch(rule_id=core.RuleId(value='tests.sast.checks.CKV_SAST_1'),
                                 location=core.Location(path=file,
                                                        start=core.Position(line=2, col=1, offset=25),
                                                        end=core.Position(line=2, col=14, offset=38)),
