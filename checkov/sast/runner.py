@@ -13,7 +13,6 @@ from checkov.sast.checks.registry import registry
 from semgrep.semgrep_main import main as run_semgrep
 from semgrep.output import OutputSettings, OutputHandler
 from semgrep.constants import OutputFormat, RuleSeverity
-from semgrep.output_extra import OutputExtra
 from typing import Collection, List, Set, Dict, Tuple, TYPE_CHECKING
 from io import StringIO
 from pathlib import Path
@@ -23,6 +22,7 @@ if TYPE_CHECKING:
     from semgrep.rule_match import RuleMatchMap, RuleMatch
     from semgrep.target_manager import FileTargetingLog
     from semgrep.profile_manager import ProfileManager
+    from semgrep.output_extra import OutputExtra
     from semgrep.error import SemgrepError
     from semgrep.rule import Rule
 
@@ -45,7 +45,7 @@ class SemgrepOutput:
     target_manager_ignore_log: FileTargetingLog
     filtered_rules: List[Rule]
     profiler: ProfileManager
-    OutputExtra: OutputExtra
+    outputExtra: OutputExtra
     shown_severities: Collection[RuleSeverity]
     target_manager_lockfile_scan_info: Dict[str, int]
 
