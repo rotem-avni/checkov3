@@ -347,7 +347,7 @@ class RunnerFilter(object):
 
     @staticmethod
     def get_sast_languages(frameworks: Optional[List[str]]) -> Set[SastLanguages]:
-        langs = set()
+        langs: Set[SastLanguages] = set()
         if not frameworks:
             return langs
         for framework in frameworks:
