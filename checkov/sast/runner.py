@@ -129,11 +129,7 @@ class Runner():
 
     @staticmethod
     def _get_code_block(lines: List[str], start: int) -> List[Tuple[int, str]]:
-        code_block = []
-        index = start
-        for line in lines:
-            code_block.append((index, line))
-            index += 1
+        code_block = [(index, line) for index, line in enumerate(lines, start=start)]
         return Runner._cut_code_block_ident(code_block)
 
     @staticmethod
@@ -157,12 +153,12 @@ class Runner():
         try:
             core_runner = CoreRunner(jobs=None, engine=EngineType.OSS, timeout=DEFAULT_TIMEOUT, max_memory=0,
                                      interfile_timeout=0, timeout_threshold=0, optimizations="none", core_opts_str=None)
-            cmd = [SemgrepCore.path()] + ['-json', '-full_token_info', '-dump_ast', target, '-lang', language.value]
+            cmd = [SemgrepCore.path(), '-json', '-full_token_info', '-dump_ast', target, '-lang', language.value]
             runner = StreamingSemgrepCore(cmd, 1)
             runner.vfs_map = {}
             returncode = runner.execute()
             output_json: Dict[str, Any] = core_runner._extract_core_output([], returncode, " ".join(cmd), runner.stdout, runner.stderr)
             return output_json
-        except Exception as e:
-            logger.error(f'Cant parse AST for this file: {target}, for {language.value}: {str(e)}')
+        except Exception:
+            logger.error(f'Cant parse AST for this file: {target}, for {language.value}', exc_info=True)
         return {}
