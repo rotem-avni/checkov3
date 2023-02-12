@@ -3,9 +3,11 @@ from __future__ import annotations
 import logging
 import os
 import yaml
-from typing import List, Any, Optional, Set
+from typing import List, Any, Optional, Set, Dict
 from checkov.common.bridgecrew.check_type import CheckType
+from checkov.sast.checks.base_check import BaseSastCheck
 from checkov.common.checks.base_check_registry import BaseCheckRegistry
+from checkov.runner_filter import RunnerFilter
 from checkov.sast.consts import SastLanguages
 from checkov.common.checks_infra.registry import CHECKS_POSSIBLE_ENDING
 
@@ -16,10 +18,14 @@ class Registry(BaseCheckRegistry):
         self.rules: List[str] = []
         self.checks_dir = checks_dir
         self.logger = logging.getLogger(__name__)
+        self.runner_filter: Optional[RunnerFilter] = None
 
     def extract_entity_details(self, entity: dict[str, Any]) -> tuple[str, str, dict[str, Any]]:
         # TODO
         return '', '', {}
+    
+    def set_runner_filter(self, runner_filter: RunnerFilter) -> None:
+        self.runner_filter = runner_filter
 
     def load_rules(self, sast_languages: Optional[Set[SastLanguages]]) -> None:
         if sast_languages:
@@ -46,8 +52,21 @@ class Registry(BaseCheckRegistry):
                         logging.warning(f'cant parse rule file {file}')
                         continue
                     for rule in rules:
+                        check = Registry._get_check_from_rule(rule)
+                        if not check:
+                            break
+                        if not self.runner_filter.should_run_check(check):
+                            break
                         for lang in rule.get('languages', []):
                             if lang in [lan.value for lan in sast_languages]:
                                 checks.add(os.path.join(root, file))
                                 break
         self.rules += list(checks)
+
+    def _get_check_from_rule(rule: Dict[str, Any]) -> Optional[BaseSastCheck]:
+        name = rule.get('metadata', {}).get('name', '')
+        id = rule.get('id', '')
+        if not name or not id:
+            return None
+        check = BaseSastCheck(name, id)
+        return check
