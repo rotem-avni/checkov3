@@ -41,7 +41,7 @@ performance_configurations = {
         }
     },
     'sast_python': {
-        'repo_name': 'sast-python-code',
+        'repo_name': 'Python-Mini-Projects',
         'threshold': {
             "Darwin": 550.0,
             "Linux": 300.0,
