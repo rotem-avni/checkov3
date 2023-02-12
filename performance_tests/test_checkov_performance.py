@@ -47,6 +47,22 @@ performance_configurations = {
             "Linux": 300.0,
             "Windows": 500.0,
         }
+    },
+    'sast_javascript': {
+        'repo_name': 'NodeJs',
+        'threshold': {
+            "Darwin": 550.0,
+            "Linux": 300.0,
+            "Windows": 500.0,
+        }
+    },
+    'sast_java': {
+        'repo_name': 'Mini-Project-using-Java',
+        'threshold': {
+            "Darwin": 550.0,
+            "Linux": 300.0,
+            "Windows": 500.0,
+        }
     }
 }
 
@@ -140,13 +156,13 @@ def test_k8_performance(benchmark):
 )
 def test_sast_performance(benchmark):
     def run_sast_scan(lang_key):
-            current_dir = os.path.dirname(os.path.realpath(__file__))
-            test_files_dir = os.path.join(current_dir, repo_name)
-            runner_filter = RunnerFilter(framework=[lang_key])
-            runner_registry = RunnerRegistry(banner, runner_filter, sast_runner())
-            reports = runner_registry.run(root_folder=test_files_dir)
-            assert len(reports) > 0
-    
+        current_dir = os.path.dirname(os.path.realpath(__file__))
+        test_files_dir = os.path.join(current_dir, repo_name)
+        runner_filter = RunnerFilter(framework=[lang_key])
+        runner_registry = RunnerRegistry(banner, runner_filter, sast_runner())
+        reports = runner_registry.run(root_folder=test_files_dir)
+        assert len(reports) > 0
+
     for sast_lang in SastLanguages.list():
         lang_key = f'sast_{sast_lang}'
         repo_name = performance_configurations.get(lang_key, {}).get('repo_name')
