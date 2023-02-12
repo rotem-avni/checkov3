@@ -36,6 +36,8 @@ class Registry(BaseCheckRegistry):
             self._load_checks_from_dir(dir, sast_languages)
 
     def _load_checks_from_dir(self, directory: str, sast_languages: Set[SastLanguages]) -> None:
+        if not self.runner_filter:
+            return
         dir = os.path.expanduser(directory)
         self.logger.debug(f'Loading external checks from {dir}')
         checks = set()
