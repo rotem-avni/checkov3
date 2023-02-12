@@ -153,6 +153,9 @@ jobs:
       - name: Clone kubernetes-yaml-templates
         run: git clone https://github.com/dennyzhang/kubernetes-yaml-templates.git
         working-directory: ${{ env.working-directory }}
+      - name: Clone sast-python-code
+        run: git clone https://github.com/alimoustafa2000/Python-Mini-Projects.git
+        working-directory: ${{ env.working-directory }}
       - name: Run performance tests
         run: |
           pipenv run pytest
