@@ -5,7 +5,6 @@ import pytest
 import time
 
 from checkov.cloudformation.runner import Runner as cfn_runner
-from checkov.sast.consts import SastLanguages
 from checkov.common.runners.runner_registry import RunnerRegistry
 from checkov.common.util.banner import banner
 from checkov.kubernetes.runner import Runner as k8_runner
@@ -183,7 +182,7 @@ def test_sast_python_performance(benchmark):
     timer=time.time,
     warmup=False
 )
-def test_sast_python_performance(benchmark):
+def test_sast_javascript_performance(benchmark):
     lang_key = 'sast_javascript'
     repo_name = performance_configurations.get(lang_key, {}).get('repo_name')
     repo_threshold = performance_configurations.get(lang_key, {}).get('threshold', {}).get(SYSTEM_NAME)
@@ -203,7 +202,7 @@ def test_sast_python_performance(benchmark):
     timer=time.time,
     warmup=False
 )
-def test_sast_python_performance(benchmark):
+def test_sast_java_performance(benchmark):
     lang_key = 'sast_java'
     repo_name = performance_configurations.get(lang_key, {}).get('repo_name')
     repo_threshold = performance_configurations.get(lang_key, {}).get('threshold', {}).get(SYSTEM_NAME)
