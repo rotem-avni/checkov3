@@ -23,7 +23,7 @@ class Registry(BaseCheckRegistry):
     def extract_entity_details(self, entity: dict[str, Any]) -> tuple[str, str, dict[str, Any]]:
         # TODO
         return '', '', {}
-    
+
     def set_runner_filter(self, runner_filter: RunnerFilter) -> None:
         self.runner_filter = runner_filter
 
@@ -36,8 +36,6 @@ class Registry(BaseCheckRegistry):
             self._load_checks_from_dir(dir, sast_languages)
 
     def _load_checks_from_dir(self, directory: str, sast_languages: Set[SastLanguages]) -> None:
-        if not self.runner_filter:
-            return
         dir = os.path.expanduser(directory)
         self.logger.debug(f'Loading external checks from {dir}')
         checks = set()
@@ -54,10 +52,7 @@ class Registry(BaseCheckRegistry):
                         logging.warning(f'cant parse rule file {file}')
                         continue
                     for rule in rules:
-                        check = Registry._get_check_from_rule(rule)
-                        if not check:
-                            break
-                        if not self.runner_filter.should_run_check(check):
+                        if self._should_skip_check(rule):
                             break
                         for lang in rule.get('languages', []):
                             if lang in [lan.value for lan in sast_languages]:
@@ -65,10 +60,22 @@ class Registry(BaseCheckRegistry):
                                 break
         self.rules += list(checks)
 
+    @staticmethod
     def _get_check_from_rule(rule: Dict[str, Any]) -> Optional[BaseSastCheck]:
         name = rule.get('metadata', {}).get('name', '')
         id = rule.get('id', '')
         if not name or not id:
+            logging.warning('Sast check has no name or ID')
             return None
         check = BaseSastCheck(name, id)
         return check
+
+    def _should_skip_check(self, rule: Dict[str, Any]) -> bool:
+        if not self.runner_filter:
+            return False
+        check = Registry._get_check_from_rule(rule)
+        if not check:
+            return True
+        if self.runner_filter.should_run_check(check):
+            return False
+        return True

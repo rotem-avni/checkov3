@@ -1,7 +1,7 @@
 from checkov.common.models.enums import CheckCategories
 
 
-class BaseSastCheck():
+class BaseSastCheck:
     def __init__(self, name: str, id: str, severity = None) -> None:
         self.name = name
         self.id = id
