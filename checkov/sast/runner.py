@@ -18,6 +18,8 @@ from semgrep.core_runner import StreamingSemgrepCore, SemgrepCore, CoreRunner
 from typing import Collection, List, Set, Dict, Tuple, Optional, Any, TYPE_CHECKING
 from io import StringIO
 from pathlib import Path
+import tempfile
+import shutil
 
 
 if TYPE_CHECKING:
@@ -53,6 +55,9 @@ class SemgrepOutput:
 
 
 class Runner():
+    def __init__(self) -> None:
+        self.generic_ast = None
+        self.original_lines = {}
     check_type = CheckType.SAST  # noqa: CCE003  # a static attribute
 
     def should_scan_file(self, file: str) -> bool:
@@ -87,7 +92,10 @@ class Runner():
             logger.warning('no valid checks')
             return Report(self.check_type)
 
-        semgrep_output = Runner._get_semgrep_output(targets=targets, config=config, output_handler=output_handler)
+        self.generic_ast = self._get_generic_ast(SastLanguages.PYTHON, targets[0])
+        temp_file = self.get_func_call_tokens(self.generic_ast, targets[0])
+
+        semgrep_output = Runner._get_semgrep_output(targets=[temp_file], config=config, output_handler=output_handler)
         report = self._create_report(semgrep_output.matches)
         return report
 
@@ -125,9 +133,21 @@ class Runner():
                                 check_class="", check_result=check_result, code_block=code_block,
                                 file_path=file_path, file_line_range=file_line_range,
                                 file_abs_path=file_abs_path, severity=severity)
+                self.fix_record(record)
                 report.add_record(record)
         return report
 
+    def fix_record(self, record: Record):
+        data = self.original_lines.get(record.file_abs_path)
+        if not data:
+            return
+        start_line = record.file_line_range[0] - 1
+        if data.get(start_line):
+            record.file_abs_path = data.get('file_name')
+            record.file_path = record.file_abs_path.split('/')[-1]
+            record.code_block = [(start_line + 1, data.get(start_line).get('original'))]
+
+        
     @staticmethod
     def _get_code_block(lines: List[str], start: int) -> List[Tuple[int, str]]:
         code_block = [(index, line) for index, line in enumerate(lines, start=start)]
@@ -163,3 +183,63 @@ class Runner():
         except Exception:
             logger.error(f'Cant parse AST for this file: {target}, for {language.value}', exc_info=True)
         return {}
+
+
+    def get_func_call_tokens(self, generic_ast, file):
+        nodes = find_func_call_assignments(generic_ast['Pr'])
+        func_to_search = get_func_to_search(nodes)
+        value = get_return_value(generic_ast['Pr'], func_to_search)
+        line, column, old_content = get_something(nodes, func_to_search)
+        offset = len(old_content)
+        _, filename = tempfile.mkstemp()
+        shutil.copyfile(file, filename)
+        with open(filename, "r") as sources:
+            lines = sources.readlines()
+        original_line = lines[line-1]
+        lines[line-1] = original_line[:column] + str(value) + original_line[column+offset:]
+        self.original_lines[filename] = {'file_name': file, line-1: {'original': original_line, 'new': lines[line-1]}}
+        out = open(filename, 'w')
+        out.writelines(lines)
+        out.close()
+        return filename
+
+
+def find_func_call_assignments(node):
+    for current_node in node:
+        if not "ExprStmt" in current_node:
+            continue
+        for a in current_node.values():
+            for b in a:
+                if not "Assign" in b:
+                    continue
+                nodes = list(b.values())
+                for c in nodes:
+                    if len(c) != 3:
+                        continue
+                    if "N" in c[0] and "token" in c[1] and "Call" in c[2]:
+                        return c
+    
+                    
+def get_func_to_search(nodes):
+    for node in nodes:
+        if "Call" not in node:
+            continue
+        return node['Call'][0]['N']['Id'][0][0]
+    
+    
+def get_return_value(node, func_to_search):
+    for current_node in node:
+        if not "DefStmt" in current_node:
+            continue
+        if current_node['DefStmt'][0]['name']['EN']['Id'][0][0] == func_to_search:
+            return current_node['DefStmt'][1]['FuncDef']['fbody']['FBStmt']['Block'][1][0]['Return'][1]['some']['L']['Int'][0]['some']
+        
+
+def get_something(nodes, func_to_search):
+    for node in nodes:
+        if "Call" not in node:
+            continue
+        line = node['Call'][0]['N']['Id'][0][1]['token']['OriginTok']['line']
+        column = node['Call'][0]['N']['Id'][0][1]['token']['OriginTok']['column']
+        old_content = func_to_search + node['Call'][1][0]['token']['OriginTok']['str'] + node['Call'][1][2]['token']['OriginTok']['str']
+        return line, column, old_content
