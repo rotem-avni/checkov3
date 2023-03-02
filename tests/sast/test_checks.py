@@ -63,6 +63,10 @@ def test_DataIntegrityInTransmition():
     run_check(lang="java", check="DataIntegrityInTransmition")
 
 
+def test_TestTaintMode():
+    run_check(lang="python", check="TestTaintMode")
+
+
 @pytest.fixture(autouse=True)
 def setup():
     global CHECK_ID_MAP
