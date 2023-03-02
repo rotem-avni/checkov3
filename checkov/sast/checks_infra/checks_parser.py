@@ -18,7 +18,7 @@ class SastCheckParser:
         try:
             semgrep_rule = self._parse_rule_metadata(raw_check, check_file, semgrep_rule)
             check_definition = raw_check['definition']
-            if raw_check.get('mode') == 'taint':
+            if raw_check.get('mode', '') == 'taint':
                 semgrep_rule['mode'] = 'taint'
                 semgrep_rule.update(self._parse_taint_mode_definition(check_definition))
             else:
@@ -148,6 +148,8 @@ class SastCheckParser:
         if isinstance(definition_value, dict) and (definition_value.get(BqlConditionType.AND) or definition_value.get(BqlConditionType.OR)):
             return self._parse_definition(definition_value)
         else:
+            if not isinstance(definition_value, str):
+                raise ValueError(f'unexpected definition value: {definition_value}')
             return self._parse_pattern_cond_type(operator, definition_value)
 
     def _get_definitions_list_items(self, definitions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
