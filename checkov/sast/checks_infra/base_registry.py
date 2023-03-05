@@ -33,15 +33,16 @@ class Registry(BaseCheckRegistry):
     def set_runner_filter(self, runner_filter: RunnerFilter) -> None:
         self.runner_filter = runner_filter
 
-    def load_rules(self, sast_languages: Optional[Set[SastLanguages]]) -> None:
+    def load_rules(self, sast_languages: Optional[Set[SastLanguages]]) -> int:
         if sast_languages:
-            self._load_checks_from_dir(self.checks_dir, sast_languages)
+            return self._load_checks_from_dir(self.checks_dir, sast_languages)
+        return 0
 
     def load_external_rules(self, dir: str, sast_languages: Optional[Set[SastLanguages]]) -> None:
         if sast_languages:
             self._load_checks_from_dir(dir, sast_languages)
 
-    def _load_checks_from_dir(self, directory: str, sast_languages: Set[SastLanguages]) -> None:
+    def _load_checks_from_dir(self, directory: str, sast_languages: Set[SastLanguages]) -> int:
         dir = os.path.expanduser(directory)
         self.logger.debug(f'Loading external checks from {dir}')
         rules = {}  # constructed as a dict of {rule_id: rule_object} to avoid duplications
@@ -65,6 +66,7 @@ class Registry(BaseCheckRegistry):
                             rules[parsed_rule['id']] = parsed_rule
                             break
         self.rules += rules.values()
+        return len(self.rules)
 
     @staticmethod
     def _get_check_from_rule(rule: Dict[str, Any]) -> Optional[BaseSastCheck]:

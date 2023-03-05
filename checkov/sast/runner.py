@@ -75,7 +75,10 @@ class Runner():
         output_handler = OutputHandler(output_settings)
 
         self.registry.set_runner_filter(runner_filter)
-        self.registry.load_rules(runner_filter.sast_languages)
+        rules_loaded = self.registry.load_rules(runner_filter.sast_languages)
+        if not rules_loaded:
+            logger.warning('No valid rules were found for SAST')
+            return [Report(self.check_type)]
         if external_checks_dir:
             for external_checks in external_checks_dir:
                 self.registry.load_external_rules(external_checks, runner_filter.sast_languages)
@@ -86,9 +89,10 @@ class Runner():
             logger.warning('no valid checks')
             return [Report(self.check_type)]
 
+        targets = []
         if root_folder:
             targets = [root_folder]
-        if files:
+        elif files:
             targets = files
 
         semgrep_output = Runner._get_semgrep_output(targets=targets, config=config, output_handler=output_handler)
