@@ -3,6 +3,7 @@ from __future__ import annotations
 import logging
 import os
 import pathlib
+import sys
 from dataclasses import dataclass
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.severities import get_severity
@@ -66,6 +67,11 @@ class Runner():
     def run(self, root_folder: Optional[str], external_checks_dir: Optional[List[str]] = None,
             files: Optional[List[str]] = None,
             runner_filter: Optional[RunnerFilter] = None, collect_skip_comments: bool = True) -> list[Report]:
+
+        if sys.platform.startswith('win'):
+            # TODO: Enable SAST for windows runners
+            return [Report(self.check_type)]
+
         if not runner_filter:
             logger.warning('no runner filter')
             return [Report(self.check_type)]
@@ -75,7 +81,7 @@ class Runner():
         output_handler = OutputHandler(output_settings)
 
         self.registry.set_runner_filter(runner_filter)
-        rules_loaded = self.registry.load_rules(runner_filter.sast_languages)
+        rules_loaded = self.registry.load_rules(runner_filter.framework, runner_filter.sast_languages)
         if not rules_loaded:
             logger.warning('No valid rules were found for SAST')
             return [Report(self.check_type)]

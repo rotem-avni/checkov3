@@ -33,9 +33,10 @@ class Registry(BaseCheckRegistry):
     def set_runner_filter(self, runner_filter: RunnerFilter) -> None:
         self.runner_filter = runner_filter
 
-    def load_rules(self, sast_languages: Optional[Set[SastLanguages]]) -> int:
-        if sast_languages:
-            return self._load_checks_from_dir(self.checks_dir, sast_languages)
+    def load_rules(self, frameworks: List[str], sast_languages: Optional[Set[SastLanguages]]) -> int:
+        actual_sast_languages = sast_languages if 'all' not in frameworks else SastLanguages.set()
+        if actual_sast_languages:
+            return self._load_checks_from_dir(self.checks_dir, actual_sast_languages)
         return 0
 
     def load_external_rules(self, dir: str, sast_languages: Optional[Set[SastLanguages]]) -> None:
