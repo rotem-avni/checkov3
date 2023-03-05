@@ -63,8 +63,8 @@ def test_DataIntegrityInTransmition():
     run_check(lang="java", check="DataIntegrityInTransmition")
 
 
-def test_TestTaintMode():
-    run_check(lang="python", check="TestTaintMode")
+def test_RESTWebServiceSecurity():
+    run_check(lang="java", check="RESTWebServiceSecurity")
 
 
 @pytest.fixture(autouse=True)
