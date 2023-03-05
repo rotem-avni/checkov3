@@ -4,7 +4,7 @@ import logging
 import os
 
 import yaml
-from typing import List, Any, Optional, Set, Dict
+from typing import List, Any, Optional, Set, Dict, Iterable
 
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.sast.checks_infra.base_check import BaseSastCheck
@@ -33,7 +33,7 @@ class Registry(BaseCheckRegistry):
     def set_runner_filter(self, runner_filter: RunnerFilter) -> None:
         self.runner_filter = runner_filter
 
-    def load_rules(self, frameworks: List[str], sast_languages: Optional[Set[SastLanguages]]) -> int:
+    def load_rules(self, frameworks: Iterable[str], sast_languages: Optional[Set[SastLanguages]]) -> int:
         actual_sast_languages = sast_languages if 'all' not in frameworks else SastLanguages.set()
         if actual_sast_languages:
             return self._load_checks_from_dir(self.checks_dir, actual_sast_languages)

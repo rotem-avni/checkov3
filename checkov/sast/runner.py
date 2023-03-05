@@ -14,10 +14,13 @@ from checkov.runner_filter import RunnerFilter
 from checkov.sast.checks_infra.base_registry import Registry
 from checkov.sast.consts import SastLanguages, SUPPORT_FILE_EXT, SEMGREP_SEVERITY_TO_CHECKOV_SEVERITY, \
     FILE_EXT_TO_SAST_LANG
-from semgrep.semgrep_main import main as run_semgrep
-from semgrep.output import OutputSettings, OutputHandler
-from semgrep.constants import OutputFormat, RuleSeverity, EngineType, DEFAULT_TIMEOUT
-from semgrep.core_runner import StreamingSemgrepCore, SemgrepCore, CoreRunner
+
+if not sys.platform.startswith('win'):
+    # TODO: Enable SAST for windows runners
+    from semgrep.semgrep_main import main as run_semgrep
+    from semgrep.output import OutputSettings, OutputHandler
+    from semgrep.constants import OutputFormat, RuleSeverity, EngineType, DEFAULT_TIMEOUT
+    from semgrep.core_runner import StreamingSemgrepCore, SemgrepCore, CoreRunner
 from typing import Collection, List, Set, Dict, Tuple, Optional, Any, TYPE_CHECKING
 from io import StringIO
 from pathlib import Path
