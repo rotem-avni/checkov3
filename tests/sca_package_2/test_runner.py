@@ -4,6 +4,7 @@ from mock.mock import MagicMock
 from pytest_mock import MockerFixture
 from packaging import version as packaging_version
 
+from checkov.common.bridgecrew.code_categories import CodeCategoryType
 from checkov.common.bridgecrew.platform_integration import bc_integration, FileToPersist
 from checkov.runner_filter import RunnerFilter
 from checkov.sca_package_2.runner import Runner
@@ -132,7 +133,6 @@ def test_run(sca_package_2_report):
     assert cve_record is not None
     assert cve_record.bc_check_id == "BC_CVE_2020_29652"
     assert cve_record.check_id == "CKV_CVE_2020_29652"
-    assert cve_record.check_class == "mock.mock.MagicMock"  # not the real one
     assert cve_record.check_name == "SCA package scan"
     assert cve_record.check_result == {"result": CheckResult.FAILED}
     assert cve_record.code_block == [(0, "golang.org/x/crypto: v0.0.1")]
@@ -194,6 +194,7 @@ def test_run(sca_package_2_report):
 def test_runner_honors_enforcement_rules(mocker: MockerFixture, scan_result_2):
     # given
     bc_integration.bc_api_key = "abcd1234-abcd-1234-abcd-1234abcd1234"
+    bc_integration.timestamp = "something something"  # Avoids trying to upload to S3
     scanner_mock = MagicMock()
     scanner_mock.return_value.scan.return_value = scan_result_2
     mocker.patch("checkov.sca_package_2.runner.Scanner", side_effect=scanner_mock)
@@ -203,7 +204,12 @@ def test_runner_honors_enforcement_rules(mocker: MockerFixture, scan_result_2):
     filter = RunnerFilter(framework=['sca_package'], use_enforcement_rules=True)
     # this is not quite a true test, because the checks don't have severities. However, this shows that the check registry
     # passes the report type properly to RunnerFilter.should_run_check, and we have tests for that method
-    filter.enforcement_rule_configs = {CheckType.SCA_PACKAGE: Severities[BcSeverities.OFF]}
+    filter.enforcement_rule_configs = {
+        CheckType.SCA_PACKAGE: {
+            CodeCategoryType.LICENSES: Severities[BcSeverities.OFF],
+            CodeCategoryType.VULNERABILITIES: Severities[BcSeverities.OFF]
+        }
+    }
     report = runner.run(root_folder=EXAMPLES_DIR, runner_filter=filter)
 
     # then
@@ -238,6 +244,7 @@ def test_run_license_policy(mocker: MockerFixture, scan_result_2):
 def test_run_with_empty_scan_result(mocker: MockerFixture):
     # given
     bc_integration.bc_api_key = "abcd1234-abcd-1234-abcd-1234abcd1234"
+    bc_integration.timestamp = "something something"  # Avoids trying to upload to S3
     scanner_mock = MagicMock()
     scanner_mock.return_value.scan.return_value = dict()
     mocker.patch("checkov.sca_package_2.runner.Scanner", side_effect=scanner_mock)
