@@ -1,0 +1,29 @@
+metadata:
+  id: CKV3_SAST_25
+  name: 'Ensure creating temp file done with secure permissions'
+  category: 'sast'
+  cwe: 'CWE-378: Creation of Temporary File With Insecure Permissions'
+scope:
+  languages:
+    - javascript
+definition:
+  - or:
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $FS = require('fs');
+        ...
+        $FS.writeFileSync($FILE_PATH,$OPTIONS,...)
+  - cond_type: variable
+    variable: $OPTIONS
+    operator: pattern_match
+    value:
+      - and:
+        - cond_type: pattern
+          operator: not_equals
+          value: >
+            {secureOptions: $CONST.S_IXUSR | $CONST.S_IXGRP | $CONST.S_IXOTH}
+  - cond_type: "variable"
+    variable: "$FILE_PATH"
+    operator: "regex_match"
+    value: "(?i)(.*temp.*)"
