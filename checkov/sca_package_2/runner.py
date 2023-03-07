@@ -101,11 +101,11 @@ class Runner(BaseRunner[None]):
             report.set_error_status(ErrorStatus.ERROR)
             return report
 
-        report = self.add_scan_results_to_report(runner_filter, scan_results)
+        report = self.create_report(runner_filter, scan_results)
 
         return report
 
-    def add_scan_results_to_report(self, runner_filter: RunnerFilter, scan_results: dict[str, Any]) -> Report:
+    def create_report(self, runner_filter: RunnerFilter, scan_results: dict[str, Any]) -> Report:
         report = Report(self.check_type)
         for path, result in scan_results.items():
             if not result:

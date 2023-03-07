@@ -1082,18 +1082,18 @@ def sca_package_2_report(package_mocker: MockerFixture, scan_result_2: Dict[str,
 
 @pytest.fixture(scope='package')
 def sca_package_report_dt(scan_results_dt: Dict[str, Any]) -> Report:
-    report = Runner().add_scan_results_to_report(RunnerFilter(), scan_results_dt)
+    report = Runner().create_report(RunnerFilter(), scan_results_dt)
     return report
 
 
 @pytest.fixture(scope='package')
 def sca_package_report_2_with_comma_in_licenses(scan_result_2_with_comma_in_licenses: Dict[str, Any]) -> Report:
-    return Runner().add_scan_results_to_report(RunnerFilter(), scan_result_2_with_comma_in_licenses)
+    return Runner().create_report(RunnerFilter(), scan_result_2_with_comma_in_licenses)
 
 
 def get_sca_package_2_report_with_skip(scan_result_2: Dict[str, Any]) -> Report:
     runner_filter = RunnerFilter(skip_checks=["CKV_CVE_2020_29652"])
-    return Runner().add_scan_results_to_report(runner_filter, scan_result_2)
+    return Runner().create_report(runner_filter, scan_result_2)
 
 
 @pytest.fixture(scope='package')
