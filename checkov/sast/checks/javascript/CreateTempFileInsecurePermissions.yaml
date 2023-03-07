@@ -22,6 +22,14 @@ definition:
         mode = $OPTIONS
         ...
         $FS.$FUNCTION($FILE_PATH,...,{mode})
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $FS = require('fs');
+        ...
+        mode = $OPTIONS
+        ...
+        $FS.$FUNCTION($FILE_PATH,...,mode)
   - cond_type: variable
     variable: $OPTIONS
     operator: pattern_match
@@ -38,4 +46,4 @@ definition:
   - cond_type: variable
     variable: $FUNCTION
     operator: regex_match
-    value: (writeFileSync|writeFile)
+    value: (writeFileSync|writeFile|open)
