@@ -35,6 +35,12 @@ definition:
       - cond_type: pattern
         operator: equals
         value: |
+          import('node:crypto');
+          ...
+          randomBytes($KEY_SIZE,...)
+      - cond_type: pattern
+        operator: equals
+        value: |
           $RAND = new brorand.Rand(...);
           ...
           $RAND.generate($KEY_SIZE)

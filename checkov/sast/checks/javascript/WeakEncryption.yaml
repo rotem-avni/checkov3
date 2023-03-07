@@ -11,16 +11,29 @@ scope:
 definition:
   - or:
       - and:
-        - cond_type: pattern
-          operator: equals
-          value: |
-            $PACKAGE = require('node-forge');
-            ...
-            $PACKAGE.cipher.createCipher($ENCRYPTION,...);
+        - or:
+          - cond_type: pattern
+            operator: equals
+            value: |
+              $PACKAGE = require('node-forge');
+              ...
+              $PACKAGE.cipher.createCipher($ENCRYPTION,...);
+          - cond_type: pattern
+            operator: equals
+            value: |
+              $PACKAGE = require('crypto');
+              ...
+              $PACKAGE.createCipher($ENCRYPTION,...);
+          - cond_type: pattern
+            operator: equals
+            value: |
+              import('node:crypto');
+              ...
+              createCipheriv($ENCRYPTION,...)
         - cond_type: "variable"
           variable: "$ENCRYPTION"
           operator: "regex_match"
-          value: "('DES|'3DES)"
+          value: "('DES|'3DES|'des|'3des)"
       - cond_type: pattern
         operator: equals
         value: CryptoJS.DES.encrypt(...)
