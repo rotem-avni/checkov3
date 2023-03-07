@@ -8,7 +8,7 @@ from checkov.common.graph.checks_infra.enums import Operators
 class SastLanguages(Enum):
     @classmethod
     def list(cls) -> List[Any]:
-        return list(map(lambda c: c.value, cls))  # type: ignore
+        return list(map(lambda c: c.value, cls))
 
     @classmethod
     def set(cls) -> Set["SastLanguages"]:
