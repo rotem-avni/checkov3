@@ -33,4 +33,4 @@ definition:
   - cond_type: variable
     variable: $FUNCTION
     operator: regex_match
-    value: (hkdf)
+    value: (hkdf|hkdfSync)
