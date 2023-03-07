@@ -1,0 +1,21 @@
+metadata:
+  id: CKV3_SAST_28
+  name: Uses a one-way cryptographic hash against an input that should not be reversible, such as a password, without 
+    using a salt as part of the input.
+  category: sast
+  cwe: "CWE-759: Use of a One-Way Hash without a Salt"
+scope:
+  languages:
+    - javascript
+definition:
+  - or:
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $CRYPTO = require('crypto');
+        ...
+        $CRYPTO.$FUNCTION($PARAM_ONE,$PARAM_TWO,'',...);
+  - cond_type: variable
+    variable: $FUNCTION
+    operator: regex_match
+    value: (hkdf)
