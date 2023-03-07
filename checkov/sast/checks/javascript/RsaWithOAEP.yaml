@@ -1,0 +1,27 @@
+metadata:
+  id: CKV3_SAST_27
+  name: Ensure that use of RSA Algorithm is not being done without Optimal Asymmetric Encryption Padding (OAEP),
+    which might weaken the encryption. Padding schemes are often used wit
+  category: sast
+  cwe: "CWE-780: Use of RSA Algorithm without OAEP"
+scope:
+  languages:
+    - javascript
+definition:
+  - or:
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $CRYPTO = require('crypto');
+        ...
+        $KEY = $OPTIONS;
+        ...
+        $FS.publicEncrypt(...,$KEY,...);
+  - cond_type: variable
+    variable: $OPTIONS
+    operator: pattern_match
+    value:
+      - cond_type: pattern
+        operator: equals
+        value: >
+          {padding: $CRYPTO.$CONST.RSA_NO_PADDING}
