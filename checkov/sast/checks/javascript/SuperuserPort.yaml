@@ -1,0 +1,46 @@
+metadata:
+  id: CKV3_SAST_25
+  name: 'Ensure superuser port is not set'
+  guidelines: 'module setting superuser port'
+  category: 'sast'
+  cwe: 'CWE-289: Authentication Bypass by Alternate Name'
+scope:
+  languages:
+    - javascript
+definition:
+  - or:
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+          require("express");
+          ...
+          $APP = express();
+          ...
+          $APP.listen($PORT,...)
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+          import {...,NestFactory,...} from '@nestjs/core';
+          ...
+          $APP = await NestFactory.create(...)
+          ...
+          $APP.listen($PORT,...)
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+          $NEXT = require('next')
+          ...
+          $APP = $NEXT({...,port: $PORT,...})
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+          $NEXT = require('next')
+          ...
+          port = $PORT;
+          ...
+          $APP = $NEXT({...,port,...})
+
+  - cond_type: "variable"
+    variable: "$PORT"
+    operator: less_than
+    value: 1024
