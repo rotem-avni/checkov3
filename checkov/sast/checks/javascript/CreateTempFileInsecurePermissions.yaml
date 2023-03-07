@@ -13,7 +13,15 @@ definition:
       value: |
         $FS = require('fs');
         ...
-        $FS.writeFileSync($FILE_PATH,$OPTIONS,...)
+        $FS.$FUNCTION($FILE_PATH,$OPTIONS,...)
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $FS = require('fs');
+        ...
+        mode = $OPTIONS
+        ...
+        $FS.$FUNCTION($FILE_PATH,...,{mode})
   - cond_type: variable
     variable: $OPTIONS
     operator: pattern_match
@@ -23,7 +31,11 @@ definition:
           operator: not_equals
           value: >
             {secureOptions: $CONST.S_IXUSR | $CONST.S_IXGRP | $CONST.S_IXOTH}
-  - cond_type: "variable"
-    variable: "$FILE_PATH"
-    operator: "regex_match"
+  - cond_type: variable
+    variable: $FILE_PATH
+    operator: regex_match
     value: "(?i)(.*temp.*)"
+  - cond_type: variable
+    variable: $FUNCTION
+    operator: regex_match
+    value: (writeFileSync|writeFile)
