@@ -2,9 +2,7 @@ import os
 from pathlib import Path
 from unittest import mock
 
-from mock.mock import MagicMock
 from typing import Dict, Any, List
-from pytest_mock import MockerFixture
 
 import pytest
 
@@ -1064,20 +1062,8 @@ def scan_result_success_response() -> Dict[str, Any]:
 
 
 @pytest.fixture(scope='package')
-@mock.patch.dict(os.environ, {'CHECKOV_RUN_SCA_PACKAGE_SCAN_V2': 'true'})
-def sca_package_2_report(package_mocker: MockerFixture, scan_result_2: Dict[str, Any]) -> Report:
-    bc_integration.bc_api_key = "abcd1234-abcd-1234-abcd-1234abcd1234"
-    scanner_mock = MagicMock()
-    scanner_mock.return_value.scan.return_value = scan_result_2
-    package_mocker.patch("checkov.sca_package_2.runner.Scanner", side_effect=scanner_mock)
-    # package_mocker.patch()
-    def none() -> None:
-        pass
-
-    bc_integration.set_s3_integration = none
-
-
-    return Runner().run(root_folder=EXAMPLES_DIR)
+def sca_package_2_report(scan_result_2: Dict[str, Any]) -> Report:
+    return Runner().create_report(RunnerFilter(), scan_result_2)
 
 
 @pytest.fixture(scope='package')
