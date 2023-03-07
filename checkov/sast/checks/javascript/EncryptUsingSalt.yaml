@@ -29,7 +29,26 @@ definition:
         operator: pattern_match
         value: > 
           ''
-
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        const {...,$FUNCTION,...} = await import('node:crypto');
+        ...
+        $FUNCTION($PARAM_ONE,$PARAM_TWO,'',...);
+    - and:
+      - cond_type: "pattern"
+        operator: "equals"
+        value: |
+          const {...,$FUNCTION,...} = await import('node:crypto');
+          ...
+          salt = $SALT_VALUE
+          ...
+          $FUNCTION($PARAM_ONE,$PARAM_TWO,salt,...);
+      - cond_type: variable
+        variable: $SALT_VALUE
+        operator: pattern_match
+        value: > 
+          ''
   - cond_type: variable
     variable: $FUNCTION
     operator: regex_match
