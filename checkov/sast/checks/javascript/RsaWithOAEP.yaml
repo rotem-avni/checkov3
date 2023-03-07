@@ -16,7 +16,7 @@ definition:
         ...
         $KEY = $OPTIONS;
         ...
-        $FS.publicEncrypt(...,$KEY,...);
+        $CRYPTO.$FUNCTION(...,$KEY,...);
   - cond_type: variable
     variable: $OPTIONS
     operator: pattern_match
@@ -25,3 +25,7 @@ definition:
         operator: equals
         value: >
           {padding: $CRYPTO.$CONST.RSA_NO_PADDING}
+  - cond_type: variable
+    variable: $FUNCTION
+    operator: regex_match
+    value: (publicEncrypt|privateEncrypt)
