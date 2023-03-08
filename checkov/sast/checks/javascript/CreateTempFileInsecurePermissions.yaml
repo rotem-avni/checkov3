@@ -39,10 +39,10 @@ definition:
           operator: not_equals
           value: >
             {secureOptions: $CONST.S_IXUSR | $CONST.S_IXGRP | $CONST.S_IXOTH}
-  - cond_type: variable
+  - cond_type: pattern
     variable: $FILE_PATH
     operator: regex_match
-    value: "(?i)(.*temp.*)"
+    value: (?i)(temp)
   - cond_type: variable
     variable: $FUNCTION
     operator: regex_match

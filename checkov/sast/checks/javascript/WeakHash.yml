@@ -1,0 +1,37 @@
+metadata:
+  id: CKV3_SAST_29
+  name: Ensure that Hashing is not done with weak algorithm
+  category: sast
+  cwe: "CWE-328: Use of Weak Hash"
+scope:
+  languages:
+    - javascript
+definition:
+  - or:
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        import $CRYPTO from 'node:crypto';
+        ...
+        $CRYPTO.$FUNCTION($ALGO,...);
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $CRYPTO = require('crypto');
+        ...
+        $CRYPTO.$FUNCTION($ALGO,...);
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        const {...,$FUNCTION,...} = await import('node:crypto');
+        ...
+        $FUNCTION($ALGO,...);
+
+  - cond_type: variable
+    variable: $FUNCTION
+    operator: regex_match
+    value: (createHash|createHmac)
+  - cond_type: pattern
+    variable: $ALGO
+    operator: regex_match
+    value: (sha1|md2|md4|md5|ripemd160)

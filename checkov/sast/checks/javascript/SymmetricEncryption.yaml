@@ -16,10 +16,10 @@ definition:
             $PACKAGE = require('node-forge');
             ...
             $PACKAGE.cipher.createCipher($ENCRYPTION,...);
-        - cond_type: "variable"
-          variable: "$ENCRYPTION"
-          operator: "regex_match"
-          value: "(.DES|.3DES)"
+        - cond_type: pattern
+          variable: $ENCRYPTION
+          operator: regex_match
+          value: (DES|3DES)
       - cond_type: pattern
         operator: equals
         value: CryptoJS.DES.encrypt(...)
