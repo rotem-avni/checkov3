@@ -49,7 +49,49 @@ definition:
         operator: pattern_match
         value: > 
           ''
+
+  - or:
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $CRYPTO = require('crypto');
+        ...
+        $CRYPTO.$FUNCTION($PARAM,'',...);
+    - and:
+      - cond_type: "pattern"
+        operator: "equals"
+        value: |
+          $CRYPTO = require('crypto');
+          ...
+          salt = $SALT_VALUE
+          ...
+          $CRYPTO.$FUNCTION($PARAM,salt,...);
+      - cond_type: variable
+        variable: $SALT_VALUE
+        operator: pattern_match
+        value: > 
+          ''
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        const {...,$FUNCTION,...} = await import('node:crypto');
+        ...
+        $FUNCTION($PARAM,'',...);
+    - and:
+      - cond_type: "pattern"
+        operator: "equals"
+        value: |
+          const {...,$FUNCTION,...} = await import('node:crypto');
+          ...
+          salt = $SALT_VALUE
+          ...
+          $FUNCTION($PARAM,salt,...);
+      - cond_type: variable
+        variable: $SALT_VALUE
+        operator: pattern_match
+        value: > 
+          ''
   - cond_type: variable
     variable: $FUNCTION
     operator: regex_match
-    value: (hkdf|hkdfSync)
+    value: (hkdf|hkdfSync|pbkdf2|pbkdf2Sync|scrypt|scryptSync)
