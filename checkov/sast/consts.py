@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import List, Any
+from typing import List, Any, Set
 
 from semgrep.constants import RuleSeverity
 from checkov.common.graph.checks_infra.enums import Operators
@@ -8,7 +8,11 @@ from checkov.common.graph.checks_infra.enums import Operators
 class SastLanguages(Enum):
     @classmethod
     def list(cls) -> List[Any]:
-        return list(map(lambda c: c.value, cls))  # type: ignore
+        return list(map(lambda c: c.value, cls))
+
+    @classmethod
+    def set(cls) -> Set["SastLanguages"]:
+        return set(cls)
 
     PYTHON = 'python'
     JAVA = 'java'
@@ -39,6 +43,10 @@ class SemgrepAttribute(str, Enum):
     METAVARIABLE_COMPARISON = 'metavariable-comparison'
     COMPARISON = 'comparison'
     REGEX = 'regex'
+    PATTERN_SOURCES = 'pattern-sources'
+    PATTERN_SINKS = 'pattern-sinks'
+    PATTERN_SANITIZERS = 'pattern-sanitizers'
+    PATTERN_PROPAGATORS = 'pattern-propagators'
 
 
 class BqlConditionType(str, Enum):
@@ -46,6 +54,10 @@ class BqlConditionType(str, Enum):
         return self.value
 
     PATTERN = "pattern"
+    PATTERN_SOURCE = 'pattern_source'
+    PATTERN_SINK = 'pattern_sink'
+    PATTERN_SANITIZER = 'pattern_sanitizer'
+    PATTERN_PROPAGATOR = 'pattern_propagator'
     VARIABLE = "variable"
     FILTER = 'filter'
     OR = 'or'
