@@ -14,6 +14,12 @@ definition:
       value: |
         $CRYPTO = require('crypto');
         ...
+        $CRYPTO.$FUNCTION($PARAM,'',...);
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $CRYPTO = require('crypto');
+        ...
         $CRYPTO.$FUNCTION($PARAM_ONE,$PARAM_TWO,'',...);
     - and:
       - cond_type: "pattern"
@@ -28,6 +34,20 @@ definition:
         variable: $SALT_VALUE
         operator: pattern_match
         value: > 
+          ''
+    - and:
+      - cond_type: "pattern"
+        operator: "equals"
+        value: |
+          $CRYPTO = require('crypto');
+          ...
+          salt = $SALT_VALUE
+          ...
+          $CRYPTO.$FUNCTION($PARAM,salt,...);
+      - cond_type: variable
+        variable: $SALT_VALUE
+        operator: pattern_match
+        value: >
           ''
     - cond_type: "pattern"
       operator: "equals"
@@ -44,28 +64,6 @@ definition:
           salt = $SALT_VALUE
           ...
           $FUNCTION($PARAM_ONE,$PARAM_TWO,salt,...);
-      - cond_type: variable
-        variable: $SALT_VALUE
-        operator: pattern_match
-        value: > 
-          ''
-
-  - or:
-    - cond_type: "pattern"
-      operator: "equals"
-      value: |
-        $CRYPTO = require('crypto');
-        ...
-        $CRYPTO.$FUNCTION($PARAM,'',...);
-    - and:
-      - cond_type: "pattern"
-        operator: "equals"
-        value: |
-          $CRYPTO = require('crypto');
-          ...
-          salt = $SALT_VALUE
-          ...
-          $CRYPTO.$FUNCTION($PARAM,salt,...);
       - cond_type: variable
         variable: $SALT_VALUE
         operator: pattern_match
@@ -89,7 +87,7 @@ definition:
       - cond_type: variable
         variable: $SALT_VALUE
         operator: pattern_match
-        value: > 
+        value: >
           ''
   - cond_type: variable
     variable: $FUNCTION
