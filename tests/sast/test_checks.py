@@ -109,7 +109,7 @@ def test_RESTWebServiceSecurity():
 def test_CreateTempFileInsecurePermissions():
     run_check(lang="javascript", check="CreateTempFileInsecurePermissions", check_failed_test=6)
 
-def test_EncryptionKeySize():
+def test_EncryptionKeySizeJS():
     run_check(lang="javascript", check="EncryptionKeySize", check_failed_test=8)
 
 def test_EncryptUsingSalt():
@@ -124,7 +124,7 @@ def test_InsecureHttpRequest():
 def test_RsaWithOAEP():
     run_check(lang="javascript", check="RsaWithOAEP", check_failed_test=2)
 
-def test_SuperuserPort():
+def test_SuperuserPortJS():
     run_check(lang="javascript", check="SuperuserPort", check_failed_test=4)
 
 def test_SymmetricEncryption():
