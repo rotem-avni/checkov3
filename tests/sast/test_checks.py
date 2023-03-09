@@ -116,10 +116,10 @@ def test_EncryptUsingSalt():
     run_check(lang="javascript", check="EncryptUsingSalt", check_failed_test=36)
 
 def test_InsecureHttp():
-    run_check(lang="javascript", check="CreateTempFileInsecurePermissions", check_failed_test=4)
+    run_check(lang="javascript", check="InsecureHttp", check_failed_test=4)
 
 def test_InsecureHttpRequest():
-    run_check(lang="javascript", check="CreateTempFileInsecurePermissions", check_failed_test=4)
+    run_check(lang="javascript", check="InsecureHttpRequest", check_failed_test=4)
 
 def test_RsaWithOAEP():
     run_check(lang="javascript", check="RsaWithOAEP", check_failed_test=2)
