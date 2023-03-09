@@ -106,6 +106,32 @@ def test_DataIntegrityInTransmition():
 def test_RESTWebServiceSecurity():
     run_check(lang="java", check="RESTWebServiceSecurity")
 
+def test_CreateTempFileInsecurePermissions():
+    run_check(lang="javascript", check="CreateTempFileInsecurePermissions", check_failed_test=6)
+
+def test_EncryptionKeySize():
+    run_check(lang="javascript", check="EncryptionKeySize", check_failed_test=8)
+
+def test_EncryptUsingSalt():
+    run_check(lang="javascript", check="EncryptUsingSalt", check_failed_test=36)
+
+def test_InsecureHttp():
+    run_check(lang="javascript", check="CreateTempFileInsecurePermissions", check_failed_test=4)
+
+def test_InsecureHttpRequest():
+    run_check(lang="javascript", check="CreateTempFileInsecurePermissions", check_failed_test=4)
+
+def test_RsaWithOAEP():
+    run_check(lang="javascript", check="RsaWithOAEP", check_failed_test=2)
+
+def test_SuperuserPort():
+    run_check(lang="javascript", check="SuperuserPort", check_failed_test=4)
+
+def test_SymmetricEncryption():
+    run_check(lang="javascript", check="SymmetricEncryption", check_failed_test=5)
+
+def test_WeakHash():
+    run_check(lang="javascript", check="WeakHash", check_failed_test=6)
 
 @pytest.fixture(autouse=True)
 def setup():
@@ -116,7 +142,7 @@ def setup():
     CHECK_ID_MAP = {check['metadata']['check_file'].split('.')[0]: check['id'] for check in registry.rules}
 
 
-def run_check(lang: str, check: str) -> None:
+def run_check(lang: str, check: str, check_failed_test: int = 0) -> None:
     # set path where to find test files
     test_dir_path = BASE_DIR / lang / check
 
@@ -135,6 +161,9 @@ def run_check(lang: str, check: str) -> None:
     assert len(reports) == 1
     report = reports[0]
     summary = report.get_summary()
+    if check_failed_test != 0:
+        assert summary.get("failed", 0) == check_failed_test
+
     failed_checks = {check.file_path.lstrip("/") for check in report.failed_checks}
 
     # get expected results
