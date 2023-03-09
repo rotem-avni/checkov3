@@ -9,7 +9,8 @@ import pytest
 from checkov.sast.runner import Runner
 from checkov.sast.checks_infra.registry import registry
 from checkov.runner_filter import RunnerFilter
-from tests.common.graph.checks.test_yaml_policies_base import load_yaml_data, get_expected_results_by_file_name
+from tests.common.graph.checks.test_yaml_policies_base import load_yaml_data, get_expected_results_by_file_name, \
+    extract_real_count_of_tests_by_filename
 
 BASE_DIR = Path(__file__).parent / 'checks'
 CHECK_ID_MAP: "dict[str, str]" = {}  # will be filled via setup()
@@ -138,12 +139,13 @@ def run_check(lang: str, check: str) -> None:
     failed_checks = {check.file_path.lstrip("/") for check in report.failed_checks}
 
     # get expected results
-    expected_to_fail, _ = get_expected_results_by_file_name(test_dir=test_files_dir)
+    expected_to_fail_files, _ = get_expected_results_by_file_name(test_dir=test_files_dir)
+    expected_to_fail_count = extract_real_count_of_tests_by_filename(expected_to_fail_files)
 
     # check, if results are correct
-    assert summary["failed"] == len(expected_to_fail)
+    assert summary["failed"] == expected_to_fail_count
     assert summary["passed"] == 0
     assert summary["skipped"] == 0
     assert summary["parsing_errors"] == 0
 
-    assert failed_checks == set(expected_to_fail)
+    assert failed_checks == set(expected_to_fail_files)

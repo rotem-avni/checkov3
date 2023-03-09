@@ -127,6 +127,17 @@ def get_expected_results_by_file_name(test_dir: str | Path) -> (list[str], list[
     return (expected_fail, expected_pass)
 
 
+def extract_real_count_of_tests_by_filename(files: list[str]):
+    total_count = 0
+    for fn in files:
+        name_parts = fn.split('__')
+        if len(name_parts) == 3 and name_parts[1].isdigit():
+            total_count += int(name_parts[1])
+        else:
+            total_count += 1
+    return total_count
+
+
 def get_policy_results(root_folder, policy):
     check_id = policy['metadata']['id']
     graph_runner = Runner()
