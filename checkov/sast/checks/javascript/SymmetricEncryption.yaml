@@ -1,5 +1,5 @@
 metadata:
-  id: CKV3_SAST_24
+  id: CKV3_SAST_37
   name: Ensure that encryption is not symmetric
   guidelines: Detect usage of symmetric encryptions in code, The use of asymmetric encryption is preferred.
   category: sast

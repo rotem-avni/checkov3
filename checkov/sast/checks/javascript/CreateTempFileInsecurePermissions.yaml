@@ -1,5 +1,5 @@
 metadata:
-  id: CKV3_SAST_25
+  id: CKV3_SAST_32
   name: 'Ensure creating temp file done with secure permissions'
   category: 'sast'
   cwe: 'CWE-377: Insecure Temporary File'

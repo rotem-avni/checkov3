@@ -1,0 +1,30 @@
+metadata:
+  id: CKV3_SAST_39
+  name: Ensure that HTTP connection is secure (HTTPS)
+  category: sast
+  cwe: "CWE-319: Cleartext Transmission of Sensitive Information"
+scope:
+  languages:
+    - javascript
+definition:
+  - or:
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        import axios from 'axios';
+        ...
+        axios.$FUNCTION($HTTP_URL,...);
+    - cond_type: "pattern"
+      operator: "equals"
+      value: |
+        $AXIOS = require('axios');
+        ...
+        $AXIOS.$FUNCTION($HTTP_URL,...);
+  - cond_type: variable
+    variable: $FUNCTION
+    operator: regex_match
+    value: (get|post|delete|put|patch|options|create)
+  - cond_type: pattern
+    variable: $HTTP_URL
+    operator: regex_match
+    value: (http:)

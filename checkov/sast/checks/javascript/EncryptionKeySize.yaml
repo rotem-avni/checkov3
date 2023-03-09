@@ -1,5 +1,5 @@
 metadata:
-  id: CKV3_SAST_23
+  id: CKV3_SAST_33
   name: Ensure that encryption keys are of size 16 bytes or higher
   category: sast
   cwe: "CWE-326: Inadequate Encryption Strength"

@@ -1,5 +1,5 @@
 metadata:
-  id: CKV3_SAST_28
+  id: CKV3_SAST_34
   name: Uses a one-way cryptographic hash against an input that should not be reversible, such as a password, without 
     using a salt as part of the input.
   category: sast
