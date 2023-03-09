@@ -23,7 +23,7 @@ def test_WildcardNeutralizationHandling():
     run_check(lang="python", check="WildcardNeutralizationHandling")
 
 
-def test_SuperuserPort():
+def test_SuperuserPortPython():
     run_check(lang="python", check="SuperuserPort")
 
 
@@ -110,7 +110,7 @@ def test_CreateTempFileInsecurePermissions():
     run_check(lang="javascript", check="CreateTempFileInsecurePermissions", check_failed_test=6)
 
 def test_EncryptionKeySizeJS():
-    run_check(lang="javascript", check="EncryptionKeySize", check_failed_test=8)
+    run_check(lang="javascript", check="EncryptionKeySizeJS", check_failed_test=8)
 
 def test_EncryptUsingSalt():
     run_check(lang="javascript", check="EncryptUsingSalt", check_failed_test=36)
@@ -125,7 +125,7 @@ def test_RsaWithOAEP():
     run_check(lang="javascript", check="RsaWithOAEP", check_failed_test=2)
 
 def test_SuperuserPortJS():
-    run_check(lang="javascript", check="SuperuserPort", check_failed_test=4)
+    run_check(lang="javascript", check="SuperuserPortJS", check_failed_test=4)
 
 def test_SymmetricEncryption():
     run_check(lang="javascript", check="SymmetricEncryption", check_failed_test=5)
