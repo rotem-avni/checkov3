@@ -13,13 +13,35 @@ definition:
         - cond_type: pattern
           operator: equals
           value: |
+            const {...,createCipheriv,...} = await import('node:crypto');
+            ...
+            createCipheriv($ENCRYPTION,...);
+        - cond_type: pattern
+          variable: $ENCRYPTION
+          operator: regex_match
+          value: (?i)(DES|3DES)
+      - and:
+        - cond_type: pattern
+          operator: equals
+          value: |
+            $PACKAGE = require('crypto');
+            ...
+            $PACKAGE.createCipheriv($ENCRYPTION,...);
+        - cond_type: pattern
+          variable: $ENCRYPTION
+          operator: regex_match
+          value: (?i)(DES|3DES)
+      - and:
+        - cond_type: pattern
+          operator: equals
+          value: |
             $PACKAGE = require('node-forge');
             ...
             $PACKAGE.cipher.createCipher($ENCRYPTION,...);
         - cond_type: pattern
           variable: $ENCRYPTION
           operator: regex_match
-          value: (DES|3DES)
+          value: (?i)(DES|3DES)
       - cond_type: pattern
         operator: equals
         value: CryptoJS.DES.encrypt(...)

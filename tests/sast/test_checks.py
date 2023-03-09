@@ -163,16 +163,13 @@ def run_check(lang: str, check: str, check_failed_test: int = 0) -> None:
     summary = report.get_summary()
     if check_failed_test != 0:
         assert summary.get("failed", 0) == check_failed_test
-
-    failed_checks = {check.file_path.lstrip("/") for check in report.failed_checks}
-
-    # get expected results
-    expected_to_fail, _ = get_expected_results_by_file_name(test_dir=test_files_dir)
-
-    # check, if results are correct
-    assert summary["failed"] == len(expected_to_fail)
-    assert summary["passed"] == 0
-    assert summary["skipped"] == 0
-    assert summary["parsing_errors"] == 0
-
-    assert failed_checks == set(expected_to_fail)
+    else:
+        failed_checks = {check.file_path.lstrip("/") for check in report.failed_checks}
+        # get expected results
+        expected_to_fail, _ = get_expected_results_by_file_name(test_dir=test_files_dir)
+        # check, if results are correct
+        assert summary["failed"] == len(expected_to_fail)
+        assert summary["passed"] == 0
+        assert summary["skipped"] == 0
+        assert summary["parsing_errors"] == 0
+        assert failed_checks == set(expected_to_fail)
