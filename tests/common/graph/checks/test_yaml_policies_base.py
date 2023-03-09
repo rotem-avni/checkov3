@@ -128,6 +128,13 @@ def get_expected_results_by_file_name(test_dir: str | Path) -> (list[str], list[
 
 
 def extract_real_count_of_tests_by_filename(files: list[str]):
+    """
+    >>> extract_real_count_of_tests_by_filename(['fail.json', 'fail1.json'])
+    2
+
+    >>> extract_real_count_of_tests_by_filename(['fail__11__.json', 'fail1.json'])
+    12
+    """
     total_count = 0
     for fn in files:
         name_parts = fn.split('__')
