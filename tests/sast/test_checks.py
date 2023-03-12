@@ -107,6 +107,10 @@ def test_RESTWebServiceSecurity():
     run_check(lang="java", check="RESTWebServiceSecurity")
 
 
+def test_PublicDirectoryWrite():
+    run_check(lang="java", check="PublicDirectoryWrite")
+
+
 @pytest.fixture(autouse=True)
 def setup():
     global CHECK_ID_MAP
