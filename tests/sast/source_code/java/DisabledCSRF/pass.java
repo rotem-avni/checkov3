@@ -1,6 +1,7 @@
-class Connector {
+@EnableWebSecurity
+public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @javax.jws.WebMethod
-    void connect(HttpServletRequest req){
+    protected void configure(HttpSecurity http) throws Exception {
         // http.csrf().disable(); // Compliant
     }
 }
