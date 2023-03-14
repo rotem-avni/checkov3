@@ -1,0 +1,92 @@
+mode: taint
+metadata:
+  id: CKV3_SAST_29
+  name: Ensure that pathname is limited to restricted directory
+  guidelines: The software uses an HTTP request parameter to construct a pathname that should be within a
+    restricted directory, but it does not properly neutralize absolute path sequences such as
+    "/abs/path" that can resolve to a location that is outside of that directory. See
+    http://cwe.mitre.org/data/definitions/36.html for more information.
+  category: sast
+  cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+scope:
+  languages:
+    - java
+definition:
+  - cond_type: pattern_source
+    operator: equals
+    value: (HttpServletRequest $REQ).getParameter(...)
+  - cond_type: pattern_sanitizer
+    operator: equals
+    value: org.apache.commons.io.FilenameUtils.getName(...)
+  - cond_type: pattern_sink
+    operator: equals
+    value:
+      or:
+        - and:
+          - cond_type: filter
+            attribute: pattern
+            operator: within
+            value: $U = new java.net.URI($VAR)
+          - or:
+            - cond_type: filter
+              attribute: pattern
+              operator: within
+              value: new java.io.File($U)
+            - cond_type: filter
+              attribute: pattern
+              operator: within
+              value: java.nio.file.Paths.get($U)
+          - cond_type: pattern
+            operator: equals
+            value: $VAR
+        - and:
+          - cond_type: filter
+            attribute: pattern
+            operator: within
+            value: new java.io.RandomAccessFile($INPUT,...)
+          - cond_type: pattern
+            operator: equals
+            value: $INPUT
+        - cond_type: pattern
+          operator: equals
+          value: new java.io.FileReader(...)
+        - cond_type: pattern
+          operator: equals
+          value: new javax.activation.FileDataSource(...)
+        - cond_type: pattern
+          operator: equals
+          value: new java.io.FileInputStream(...)
+        - cond_type: pattern
+          operator: equals
+          value: new java.io.File(...)
+        - cond_type: pattern
+          operator: equals
+          value: java.nio.file.Paths.get(...)
+        - cond_type: pattern
+          operator: equals
+          value: java.io.File.createTempFile(...)
+        - cond_type: pattern
+          operator: equals
+          value: java.io.File.createTempDirectory(...)
+        - cond_type: pattern
+          operator: equals
+          value: java.nio.file.Files.createTempFile(...)
+        - cond_type: pattern
+          operator: equals
+          value: java.nio.file.Files.createTempDirectory(...)
+        - and:
+          - cond_type: filter
+            attribute: pattern
+            operator: within
+            value: new java.io.FileWriter($PATH, ...)
+          - cond_type: pattern
+            operator: equals
+            value: $PATH
+        - and:
+          - cond_type: filter
+            attribute: pattern
+            operator: within
+            value: new java.io.FileOutputStream($PATH, ...)
+          - cond_type: pattern
+            operator: equals
+            value: $PATH

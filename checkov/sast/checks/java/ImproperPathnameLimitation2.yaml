@@ -1,0 +1,33 @@
+metadata:
+  id: CKV3_SAST_28
+  name: Ensure that pathname is limited to restricted directory
+  guidelines: The filename provided by the FileUpload API can be tampered with by the client to reference
+    unauthorized files. The provided filename should be properly validated to ensure it's properly
+    structured, contains no unauthorized path characters (e.g., / \), and refers to an authorized
+    file.
+  category: sast
+  cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+scope:
+  languages:
+    - java
+definition:
+  - and:
+    - cond_type: filter
+      attribute: pattern
+      operator: within
+      value:
+        $FUNC(..., HttpServletRequest $REQ, ... ) {
+            ...
+            $FILES = (ServletFileUpload $SFU).parseRequest($REQ);
+            ...
+        }
+    - cond_type: filter
+      attribute: pattern
+      operator: within
+      value: |
+        for(FileItem $ITEM : $FILES) {
+          ...
+        }
+    - cond_type: pattern
+      operator: equals
+      value: $ITEM.getName()

@@ -119,6 +119,22 @@ def test_ImproperAuthorization():
     run_check(lang="java", check="ImproperAuthorization")
 
 
+def test_ImproperPathnameLimitation1():
+    run_check(lang="java", check="ImproperPathnameLimitation1")
+
+
+def test_ImproperPathnameLimitation2():
+    run_check(lang="java", check="ImproperPathnameLimitation2")
+
+
+def test_ImproperPathnameLimitation3():
+    run_check(lang="java", check="ImproperPathnameLimitation3")
+
+
+def test_ImproperPathnameLimitation4():
+    run_check(lang="java", check="ImproperPathnameLimitation4")
+
+
 @pytest.fixture(autouse=True)
 def setup():
     global CHECK_ID_MAP

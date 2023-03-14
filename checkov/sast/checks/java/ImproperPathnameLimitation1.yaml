@@ -1,0 +1,48 @@
+metadata:
+  id: CKV3_SAST_27
+  name: Ensure that pathname is limited to restricted directory
+  guidelines: A file is opened to read its content. The filename comes from an input
+    parameter. If an unfiltered parameter is passed to this file API, files from an
+    arbitrary filesystem location could be read.
+  category: sast
+  cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+scope:
+  languages:
+    - java
+definition:
+  - cond_type: filter
+    attribute: pattern
+    operator: within
+    value: import static org.apache.commons.io.FilenameUtils;
+           ...
+  - or:
+    - cond_type: pattern
+      operator: equals
+      value: normalize(...)
+    - cond_type: pattern
+      operator: equals
+      value: getExtension(...)
+    - cond_type: pattern
+      operator: equals
+      value: isExtensions(...)
+    - cond_type: pattern
+      operator: equals
+      value: getName(...)
+    - cond_type: pattern
+      operator: equals
+      value: getBaseName(...)
+    - cond_type: pattern
+      operator: equals
+      value: org.apache.commons.io.FilenameUtils.normalize(...)
+    - cond_type: pattern
+      operator: equals
+      value: org.apache.commons.io.FilenameUtils.getExtension(...)
+    - cond_type: pattern
+      operator: equals
+      value: org.apache.commons.io.FilenameUtils.isExtensions(...)
+    - cond_type: pattern
+      operator: equals
+      value: org.apache.commons.io.FilenameUtils.getName(...)
+    - cond_type: pattern
+      operator: equals
+      value: org.apache.commons.io.FilenameUtils.getBaseName(...)

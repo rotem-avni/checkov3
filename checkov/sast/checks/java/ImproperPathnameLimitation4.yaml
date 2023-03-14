@@ -1,0 +1,61 @@
+mode: taint
+metadata:
+  id: CKV3_SAST_30
+  name: Ensure that pathname is limited to restricted directory
+  guidelines: A file is opened to write to its contents. The filename comes from an input parameter. If an
+    unfiltered parameter is passed to this file API, files at an arbitrary filesystem location
+    could be modified. This rule identifies potential path traversal vulnerabilities. In many
+    cases, the constructed file path cannot be controlled by the user.
+  category: sast
+  cwe: "CWE-22: Improper Limitation of a Pathname to a Restricted Directory ('Path Traversal')"
+scope:
+  languages:
+    - java
+definition:
+  - cond_type: pattern_source
+    operator: equals
+    value:
+      or:
+        - and:
+          - cond_type: filter
+            attribute: pattern
+            operator: within
+            value: $FUNC(String[] $ARGS) {
+                    ...
+                   }
+          - cond_type: pattern
+            operator: equals
+            value: $ARGS[$IDX]
+        - and:
+            - cond_type: filter
+              attribute: pattern
+              operator: within
+              value: FUNC(..., String $VAR, ...) {
+                      ...
+                     }
+            - cond_type: pattern
+              operator: equals
+              value: $VAR
+  - cond_type: pattern_sanitizer
+    operator: equals
+    value: org.apache.commons.io.FilenameUtils.getName(...)
+  - cond_type: pattern_sink
+    operator: equals
+    value:
+      or:
+        - and:
+          - cond_type: filter
+            attribute: pattern
+            operator: within
+            value: new java.io.FileWriter($PATH, ...)
+          - cond_type: pattern
+            operator: equals
+            value: $PATH
+        - and:
+          - cond_type: filter
+            attribute: pattern
+            operator: within
+            value: new java.io.FileOutputStream($PATH, ...)
+          - cond_type: pattern
+            operator: equals
+            value: $PATH
