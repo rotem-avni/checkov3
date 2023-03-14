@@ -10,17 +10,17 @@ scope:
     - java
 definition:
   - or:
-    - cond_type: "pattern"
-      operator: "regex_match"
+    - cond_type: pattern
+      operator: regex_match
       value: Paths.get\(("\/tmp\/.*"|"\/var\/tmp\/.*")\);
-    - cond_type: "pattern"
-      operator: "regex_match"
+    - cond_type: pattern
+      operator: regex_match
       value: new File\(("\/tmp\/.*"|"\/var\/tmp\/.*")\);
-    - cond_type: "filter"
-      attribute: "pattern"
-      operator: "within"
+    - cond_type: filter
+      attribute: pattern
+      operator: within
       value: "java.io.File.createTempFile(\"$FIRST\", \"$SECOND\");"
-    - cond_type: "filter"
-      attribute: "pattern"
-      operator: "within"
+    - cond_type: filter
+      attribute: pattern
+      operator: within
       value: "java.nio.file.Files.createTempDirectory(\"$THIRD\");"

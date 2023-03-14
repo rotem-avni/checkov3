@@ -21,9 +21,9 @@ definition:
           }
           ...
         }
-    - cond_type: "filter"
-      attribute: "pattern"
-      operator: "not_within"
+    - cond_type: filter
+      attribute: pattern
+      operator: not_within
       value: |
         class $CLAZZ implements AccessDecisionVoter {
           $TYPE vote(..., ..., ...) {
