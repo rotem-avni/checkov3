@@ -10,17 +10,17 @@ scope:
     - java
 definition:
   - or:
-    - cond_type: "pattern"
-      operator: "equals"
+    - cond_type: pattern
+      operator: equals
       value: (HttpSecurity $VAR).csrf().disable();
-    - cond_type: "pattern"
-      operator: "equals"
+    - cond_type: pattern
+      operator: equals
       value: (HttpSecurity $VAR).csrf().ignoringAntMatchers("$ROUTE");
-    - cond_type: "pattern"
-      operator: "equals"
+    - cond_type: pattern
+      operator: equals
       value: (org.springframework.security.config.annotation.web.builders.HttpSecurity $H). ... .csrf().disable();
-    - cond_type: "pattern"
-      operator: "equals"
+    - cond_type: pattern
+      operator: equals
       value: (org.springframework.security.config.annotation.web.configurers.CsrfConfigurer<HttpSecurity> $C).disable();
 
 
