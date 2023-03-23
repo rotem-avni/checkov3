@@ -13,9 +13,11 @@ def run_go_library(source_code_dir: str = '',
                    policy_dir: str = '',
                    language: str = '') -> Dict[str, Any]:
     document = {
-        "source_code_dir": source_code_dir or "/Users/arosenfeld/Desktop/dev/checkov",
-        "policy_dir": policy_dir or "/Users/arosenfeld/Desktop/dev/policies",
-        "language": language or "python",
+        "source_code_dir": source_code_dir,
+         "source_code_file": source_code_file,
+        "policy_dir": policy_dir,
+        "policy_file": policy_file,
+        "language": language,
     }
     # send the document as a byte array of json format
     entire_file_output = analyze_code(json.dumps(document).encode('utf-8'))
