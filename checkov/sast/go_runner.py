@@ -25,14 +25,14 @@ def run_go_library(source_code_file: str,
         "language": language,
     }
     # send the document as a byte array of json format
-    entire_file_output = analyze_code(json.dumps(document).encode('utf-8'))
+    analyze_code_output = analyze_code(json.dumps(document).encode('utf-8'))
 
     # we dereference the pointer to a byte array
-    entire_file_bytes = ctypes.string_at(entire_file_output)
+    analyze_code_bytes = ctypes.string_at(analyze_code_output)
 
     # convert our byte array to a string
-    entire_file_string = entire_file_bytes.decode('utf-8')
-    return json.loads(entire_file_string)
+    analyze_code_string = analyze_code_bytes.decode('utf-8')
+    return json.loads(analyze_code_string)
 
 
 def validate_params(source_code_file: str,
