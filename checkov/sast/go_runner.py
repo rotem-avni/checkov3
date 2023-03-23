@@ -27,7 +27,3 @@ def run_go_library(source_code_dir: str = '',
     entire_file_string = entire_file_bytes.decode('utf-8')
     print(entire_file_output, entire_file_bytes, entire_file_string)
     return json.loads(entire_file_string)
-
-
-# result = run_go_library()
-# print(result)
