@@ -111,7 +111,6 @@ class Runner():
                 reports.append(create_report(self.check_type, language, results))
         return reports
 
-
     @staticmethod
     def _get_generic_ast(language: SastLanguages, target: str) -> Dict[str, Any]:
         try:
