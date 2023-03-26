@@ -471,9 +471,9 @@ def test_manually_bql_to_semgrep_parsing():
     2. Uncomment the rest of the test and make it run
     3. Check the parsed rules file './parsed_semgrep_rules.yaml' to review the parsed results
     """
-    bql_policies_dir = '/Users/arielk/Desktop/bridgecrew/platform/devTools/semgrep-to-bql/output'  # absolute path to a directory that contains bql policy yaml files
+    bql_policies_dir = ''  # absolute path to a directory that contains bql policy yaml files
 
-    registry = Registry(checks_dir=bql_policies_dir)
-    registry.load_rules(['all'], None)
-    registry.temp_semgrep_rules_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'parsed_semgrep_rules.yaml')
-    registry.create_temp_rules_file()
+    # registry = Registry(checks_dir=bql_policies_dir)
+    # registry.load_rules(['all'], None)
+    # registry.temp_semgrep_rules_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'parsed_semgrep_rules.yaml')
+    # registry.create_temp_rules_file()
