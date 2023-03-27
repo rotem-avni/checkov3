@@ -53,3 +53,4 @@ class GoRunnerTest(unittest.TestCase):
                            policy_dir='somedir',
                            policy_file='',
                            language='js')
+
