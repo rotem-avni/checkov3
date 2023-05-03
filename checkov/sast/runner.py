@@ -98,18 +98,26 @@ class Runner():
     def get_semgrep_reports(self, targets: List[str], config: List[str], output_handler: OutputHandler) -> list[Report]:
         semgrep_output = get_semgrep_output(targets=targets, config=config, output_handler=output_handler)
         semgrep_results_by_language: Dict[str, List[RuleMatch]] = {}
-        for matches in semgrep_output.matches.values():
+        for rule, matches in semgrep_output.matches.items():
             for rule_match in matches:
                 match_lang = FILE_EXT_TO_SAST_LANG.get(rule_match.path.suffix.lstrip('.'), '')
                 if not match_lang or not isinstance(match_lang, SastLanguages):  # 2nd condition for typing
                     raise TypeError(f'file type {rule_match.path.suffix} is not supported by sast framework')
                 semgrep_results_by_language.setdefault(match_lang.value, []).append(rule_match)
 
+        # add empty reports for checked languages without findings
+        for target in targets:
+            suffix = target.rsplit(".", maxsplit=1)
+            if len(suffix) == 2:
+                match_lang = FILE_EXT_TO_SAST_LANG.get(suffix[1])
+                if match_lang and match_lang.value not in semgrep_results_by_language:
+                    semgrep_results_by_language[match_lang.value] = []
+
         self.registry.delete_temp_rules_file()
 
         reports = []
         for language, results in semgrep_results_by_language.items():
-            if results:
+            if isinstance(results, list):
                 reports.append(create_report(self.check_type, language, results))
         return reports
 
