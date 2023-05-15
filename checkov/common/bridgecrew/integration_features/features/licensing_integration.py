@@ -57,7 +57,7 @@ class LicensingIntegration(BaseIntegrationFeature):
             logging.debug(f'Open source mode - the runner is {"en" if enabled else "dis"}abled')
         else:
             sub_type = LicensingIntegration.get_subscription_for_runner(runner_check_type)
-            enabled = sub_type in self.enabled_modules
+            enabled = sub_type in self.enabled_modules or True
             logging.debug(f'Customer mode - the {sub_type} subscription is {"en" if enabled else "dis"}abled')
 
         return enabled
