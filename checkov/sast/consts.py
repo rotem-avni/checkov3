@@ -20,9 +20,12 @@ class SastLanguages(Enum):
     TYPESCRIPT = 'typescript'
 
 
-class SastEngines(Enum):
-    Semgrep = 'semgrep'
-    Prisma = 'prisma'
+class SastEngines(str, Enum):
+    def __str__(self) -> str:
+        return self.value
+
+    SEMGREP = 'semgrep'
+    PRISMA = 'prisma'
 
 
 class SemgrepAttribute(str, Enum):

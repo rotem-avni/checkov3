@@ -11,6 +11,7 @@ from checkov.common.runners.base_runner import BaseRunner
 from checkov.runner_filter import RunnerFilter
 from checkov.sast.checks_infra.base_registry import Registry
 from checkov.sast.consts import SUPPORT_FILE_EXT, FILE_EXT_TO_SAST_LANG, SastEngines
+from checkov.sast.engines.base_engine import SastEngine
 from checkov.sast.engines.prisma_engine import PrismaEngine
 from checkov.sast.engines.semgrep_engine import SemgrepEngine
 from checkov.common.bridgecrew.platform_integration import bc_integration
@@ -63,24 +64,27 @@ class Runner(BaseRunner[None]):
             targets.extend([a if os.path.isabs(a) else os.path.abspath(a) for a in files])
 
         engine_name = self.get_engine()
-        if engine_name == SastEngines.Semgrep:
-            engine = SemgrepEngine()
-        elif engine_name == SastEngines.Prisma:
-            engine = PrismaEngine()
+        engine: SastEngine
+        if engine_name == SastEngines.SEMGREP:
+            engine = SemgrepEngine()  # noqa: disallow-untyped-calls
+        elif engine_name == SastEngines.PRISMA:
+            engine = PrismaEngine()  # noqa: disallow-untyped-calls
         else:
             logging.error(f"not supported engine: {engine_name}")
             return [Report(self.check_type)]
 
+        reports = []
         try:
             reports = engine.get_reports(targets, self.registry, runner_filter.sast_languages)
-        except:
-            logger.error("got error when try to run prisma sast, fallback to semgrep")
-            engine = SemgrepEngine()
-            reports = engine.get_reports(targets, self.registry, runner_filter.sast_languages)
+        except BaseException as e:
+            logger.error(f"got error when try to run prisma sast, fallback to semgrep: {e}")
+            if engine_name == SastEngines.PRISMA:
+                engine = SemgrepEngine()  # noqa: disallow-untyped-calls
+                reports = engine.get_reports(targets, self.registry, runner_filter.sast_languages)
 
         return reports
 
     def get_engine(self) -> SastEngines:
         if bc_integration.bc_api_key:
-            return SastEngines.Prisma
-        return SastEngines.Semgrep
+            return SastEngines.PRISMA
+        return SastEngines.SEMGREP

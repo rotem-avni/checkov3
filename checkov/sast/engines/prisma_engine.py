@@ -18,24 +18,18 @@ from checkov.common.typing import _CheckResult
 from checkov.common.util.http_utils import request_wrapper
 from checkov.sast.checks_infra.base_registry import Registry
 from checkov.sast.common import get_code_block
-from checkov.sast.consts import SastLanguages, SEMGREP_SEVERITY_TO_CHECKOV_SEVERITY
+from checkov.sast.consts import SastLanguages
 from checkov.sast.engines.base_engine import SastEngine
 from checkov.sast.prisma_models.report import PrismaReport
 from checkov.sast.record import SastRecord
-
-# current_dir = path.dirname(path.realpath(__file__))
-# library = ctypes.cdll.LoadLibrary(path.join(current_dir, '../sast_core/library.so'))
-# analyze_code = library.analyzeCode
-# analyze_code.restype = ctypes.c_void_p
 
 logger = logging.getLogger(__name__)
 
 
 class PrismaEngine(SastEngine):
-    lib_path: str
-    check_type = CheckType.SAST
-
     def __init__(self) -> None:
+        self.lib_path = ""
+        self.check_type = CheckType.SAST
         self.prisma_sast_dir_path = Path(bridgecrew_dir) / "sast"
         self.sast_platform_base_path = "api/v1/sast"
 
@@ -45,15 +39,15 @@ class PrismaEngine(SastEngine):
             return []
 
         self.setup_sast_artifact()
-        lib_path = self.get_sast_artifact()
-        if not lib_path:
+        prisma_lib_path = self.get_sast_artifact()
+        if not prisma_lib_path:
             return []
 
-        self.lib_path = str(lib_path)
+        self.lib_path = str(prisma_lib_path)
 
-        prisma_resut = self.run_go_library(languages, source_codes=targets, policies=registry.checks_dirs_path)
+        prisma_result = self.run_go_library(languages, source_codes=targets, policies=registry.checks_dirs_path)
 
-        return prisma_resut
+        return prisma_result
 
     def setup_sast_artifact(self) -> bool:
         current_version = ""
@@ -123,8 +117,8 @@ class PrismaEngine(SastEngine):
         return files[0]
 
     def run_go_library(self, languages: Set[SastLanguages],
-                       source_codes: List[str] = [],
-                       policies: List[str] = []) -> List[Report]:
+                       source_codes: List[str],
+                       policies: List[str]) -> List[Report]:
 
         validate_params(languages, source_codes, policies)
         document = {
@@ -148,25 +142,25 @@ class PrismaEngine(SastEngine):
         d = json.loads(analyze_code_string)
         result = PrismaReport(**d)
         # result: Dict[str, Any] = json.loads(analyze_code_string)
-        return self.create_report(self.check_type, result)
+        return self.create_report(result)
 
-    def create_report(self, check_type: str, prisma_report: PrismaReport) -> List[Report]:
+    def create_report(self, prisma_report: PrismaReport) -> List[Report]:
         reports: List[Report] = []
         for lang, checks in prisma_report.rule_match.items():
-            report = Report(f'{check_type}_{lang}')
+            report = Report(f'{self.check_type}_{lang}')
             for check_id, match_rule in checks.items():
-                check_name = match_rule["check_name"]
-                check_cwe = match_rule["check_cwe"]
+                check_name = match_rule.check_name
+                check_cwe = match_rule.check_cwe
                 check_owasp = "TBD"  # match.metadata.get('owasp')
                 check_result = _CheckResult(result=CheckResult.FAILED)
-                severity = get_severity(match_rule["severity"])
+                severity = get_severity(match_rule.severity)
 
-                for match in match_rule["matches"]:
-                    file_abs_path = match["location"]["path"]
+                for match in match_rule.matches:
+                    location = match.location
+                    file_abs_path = location.path
                     file_path = file_abs_path.split('/')[-1]
-                    location = match["location"]
-                    file_line_range = [location["start"]["row"], location["end"]["row"]]
-                    code_block = get_code_block(location['code_block'].split('\n'), location["start"]["row"])
+                    file_line_range = [location.start.row, location.end.row]
+                    code_block = get_code_block(location.code_block.split('\n'), location.start.row)
 
                     record = SastRecord(check_id=check_id, check_name=check_name, resource="", evaluations={},
                                         check_class="", check_result=check_result, code_block=code_block,

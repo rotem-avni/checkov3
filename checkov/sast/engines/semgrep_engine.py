@@ -16,13 +16,10 @@ from checkov.common.typing import _CheckResult
 from checkov.common.models.enums import CheckResult
 from checkov.sast.engines.base_engine import SastEngine
 
-if TYPE_CHECKING:
-    from semgrep.rule_match import RuleMatch
-
 if not sys.platform.startswith('win'):
     # TODO: Enable SAST for windows runners
     from semgrep.output import OutputSettings, OutputHandler
-    from semgrep.constants import OutputFormat, EngineType, DEFAULT_TIMEOUT
+    from semgrep.constants import OutputFormat, EngineType, DEFAULT_TIMEOUT, RuleSeverity
     from semgrep.core_runner import StreamingSemgrepCore, SemgrepCore, CoreRunner
     from semgrep.semgrep_main import main as run_semgrep
 
@@ -33,10 +30,6 @@ if TYPE_CHECKING:
     from semgrep.output_extra import OutputExtra
     from semgrep.error import SemgrepError
     from semgrep.rule import Rule
-
-    if not sys.platform.startswith('win'):
-        from semgrep.output import OutputHandler, OutputSettings
-        from semgrep.constants import RuleSeverity, OutputFormat
 
 from pathlib import Path
 from checkov.sast.record import SastRecord
@@ -58,7 +51,9 @@ class SemgrepOutput:
 
 
 class SemgrepEngine(SastEngine):
-    check_type = CheckType.SAST
+
+    def __init__(self) -> None:
+        self.check_type = CheckType.SAST
 
     def get_reports(self, targets: List[str], registry: Registry, languages: Set[SastLanguages]) -> List[Report]:
 

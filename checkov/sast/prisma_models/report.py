@@ -1,115 +1,62 @@
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
+from pydantic import BaseModel
 
 from checkov.sast.consts import SastLanguages
 
 
-class Profiler:
-    policies_patterns_parse_time: float
-    source_code_parse_time: float
-    memory: float
-    policy_match_time: Dict[str, float]
-    source_code_match_time: Dict[str, float]
-
-    def __init__(self, policies_patterns_parse_time: float = 0, source_code_parse_time: float = 0,
-                 policy_match_time: Dict[str, float] = {}, source_code_match_time: Dict[str, float] = {},
-                 memory: float = 0) -> None:
-        self.policies_patterns_parse_time = policies_patterns_parse_time
-        self.source_code_parse_time = source_code_parse_time
-        self.policy_match_time = policy_match_time
-        self.source_code_match_time = source_code_match_time
-        self.memory = memory
+class Profiler(BaseModel):
+    policies_patterns_parse_time: float  # noqa: CCE003
+    source_code_parse_time: float  # noqa: CCE003
+    memory: float  # noqa: CCE003
+    policy_match_time: Optional[Dict[str, float]]  # noqa: CCE003
+    source_code_match_time: Optional[Dict[str, float]]  # noqa: CCE003
 
 
-class Point:
-    row: int
-    column: int
-
-    def __init__(self, row: int, column: int) -> None:
-        self.row = row
-        self.column = column
+class Point(BaseModel):
+    row: int  # noqa: CCE003
+    column: int  # noqa: CCE003
 
 
-class Flow:
-    path: str
-    start: Point
-    end: Point
-
-    def __init__(self, path: str, start: Point, end: Point) -> None:
-        self.path = path
-        self.start = start
-        self.end = end
+class Flow(BaseModel):
+    path: str  # noqa: CCE003
+    start: Point  # noqa: CCE003
+    end: Point  # noqa: CCE003
 
 
-class MatchLocation:
-    path: str
-    start: Point
-    end: Point
-
-    def __init__(self, path: str, start: Point, end: Point) -> None:
-        self.path = path
-        self.start = start
-        self.end = end
+class MatchLocation(BaseModel):
+    path: str  # noqa: CCE003
+    start: Point  # noqa: CCE003
+    end: Point  # noqa: CCE003
+    code_block: str  # noqa: CCE003
 
 
-class MatchMetavariable:
-    path: str
-    start: Point
-    end: Point
-    data_flow: List[Flow]
-
-    def __init__(self, path: str, start: Point, end: Point, data_flow: List[Flow] = []) -> None:
-        self.path = path
-        self.start = start
-        self.end = end
-        self.data_flow = data_flow
+class MatchMetavariable(BaseModel):
+    path: str  # noqa: CCE003
+    start: Point  # noqa: CCE003
+    end: Point  # noqa: CCE003
+    data_flow: List[Flow]  # noqa: CCE003
 
 
-class MatchMetadata:
-    """
-    MatchMetadata class containing metavariables and variables.
-    """
-    metavariables: Dict[str, MatchMetavariable]
-    variables: Dict[str, Any]
-
-    def __init__(self, metavariables: Dict[str, MatchMetavariable], variables: Dict[str, Any]) -> None:
-        self.metavariables = metavariables
-        self.variables = variables
+class MatchMetadata(BaseModel):
+    metavariables: Dict[str, MatchMetavariable]  # noqa: CCE003
+    variables: Dict[str, Any]  # noqa: CCE003
 
 
-class Match:
-    match_location: MatchLocation
-    match_metadata: MatchMetadata
-
-    def __init__(self, match_location: MatchLocation, match_metadata: MatchMetadata) -> None:
-        self.match_location = match_location
-        self.match_metadata = match_metadata
+class Match(BaseModel):
+    location: MatchLocation  # noqa: CCE003
+    metadata: MatchMetadata  # noqa: CCE003
 
 
-class RuleMatch:
-    check_id: str
-    check_name: str
-    check_cwe: str
-    check_owasp: str
-    severity: str
-    matches: List[Match]
-
-    def __init__(self, check_id: str, check_name: str, check_cwe: str, check_owasp: str, severity: str,
-                 matches: List[Match]) -> None:
-        self.check_id = check_id
-        self.check_name = check_name
-        self.check_cwe = check_cwe
-        self.check_owasp = check_owasp
-        self.severity = severity
-        self.matches = matches
+class RuleMatch(BaseModel):
+    check_id: str  # noqa: CCE003
+    check_name: str  # noqa: CCE003
+    check_cwe: str  # noqa: CCE003
+    check_owasp: str  # noqa: CCE003
+    severity: str  # noqa: CCE003
+    matches: List[Match]  # noqa: CCE003
 
 
-class PrismaReport:
-    rule_match: Dict[SastLanguages, Dict[str, RuleMatch]]
-    errors: List[str]
-    profiler: Profiler
-
-    def __init__(self, rule_match: Dict[SastLanguages, Dict[str, RuleMatch]], errors: List[str],
-                 profiler: Profiler) -> None:
-        self.rule_match = rule_match
-        self.errors = errors
-        self.profiler = profiler
+class PrismaReport(BaseModel):
+    rule_match: Dict[SastLanguages, Dict[str, RuleMatch]]  # noqa: CCE003
+    errors: List[str]  # noqa: CCE003
+    profiler: Profiler  # noqa: CCE003
