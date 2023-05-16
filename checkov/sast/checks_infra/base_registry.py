@@ -38,7 +38,7 @@ class Registry(BaseCheckRegistry):
         self.runner_filter = runner_filter
 
     def add_external_dirs(self, external_dirs: Optional[List[str]]) -> None:
-        if external_dirs and len(external_dirs) > 0:
+        if external_dirs:
             for path in external_dirs:
                 if os.path.exists(path):
                     if not os.path.isabs(path):

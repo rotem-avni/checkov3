@@ -20,7 +20,7 @@ def run_check(check_name: str, lang: str) -> None:
     check_source_code = str(Path(__file__).parent / lang / check_name)
     reports = runner.run(
         root_folder=check_source_code,
-        runner_filter=RunnerFilter(checks=CHECK_ID_MAP[check_name_with_lang]),
+        runner_filter=RunnerFilter(checks=CHECK_ID_MAP[check_name_with_lang], framework=["sast"]),
         external_checks_dir=[str(Path(__file__).parent.parent.parent / "checks" / lang)],
     )
 

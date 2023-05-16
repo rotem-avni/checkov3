@@ -8,6 +8,8 @@ import stat
 from pathlib import Path
 from typing import Optional, List, Set
 
+from cachetools import cached, TTLCache
+
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.platform_integration import bc_integration
 from checkov.common.bridgecrew.platform_key import bridgecrew_dir
@@ -67,6 +69,7 @@ class PrismaEngine(SastEngine):
         status: bool = self.download_sast_artifacts(current_version)
         return status
 
+    @cached(TTLCache(maxsize=1, ttl=300))
     def download_sast_artifacts(self, current_version: str) -> bool:
         try:
             machine = platform.uname().machine
