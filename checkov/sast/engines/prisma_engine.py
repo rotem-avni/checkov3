@@ -128,6 +128,12 @@ class PrismaEngine(SastEngine):
             "source_codes": source_codes,
             "policies": policies,
             "languages": [a.value for a in languages],
+            "auth": {
+                "api_key": bc_integration.bc_api_key,
+                "platform_url": bc_integration.api_url,
+                "client_name": bc_integration.bc_source.name,
+                "version": bc_integration.bc_source_version
+            }
         }
 
         library = ctypes.cdll.LoadLibrary(self.lib_path)
