@@ -34,7 +34,7 @@ class MatchMetavariable(BaseModel):
     path: Optional[str]  # noqa: CCE003
     start: Optional[Point]  # noqa: CCE003
     end: Optional[Point]  # noqa: CCE003
-    data_flow: Optional[List[Flow]] # noqa: CCE003
+    data_flow: Optional[List[Flow]]  # noqa: CCE003
     code_block: Optional[str]  # noqa: CCE003
 
 
