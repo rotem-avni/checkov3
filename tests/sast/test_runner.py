@@ -107,6 +107,7 @@ def test_sast_runner_python():
     assert python_record.check_result.get('result') == CheckResult.FAILED
 
 
+
 def test_sast_runner():
     runner = Runner()
     runner.registry.temp_semgrep_rules_path = os.path.join(pathlib.Path(__file__).parent.resolve(),
