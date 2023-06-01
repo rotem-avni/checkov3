@@ -150,6 +150,7 @@ def test_sast_runner():
     assert java_report.failed_checks[1].check_result.get('result') == CheckResult.FAILED
 
 
+
 def test_get_generic_ast():
     cur_dir = pathlib.Path(__file__).parent.resolve()
     path = os.path.join(cur_dir, 'source_code', 'external_check', 'fail.py')
