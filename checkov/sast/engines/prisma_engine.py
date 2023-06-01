@@ -164,7 +164,7 @@ class PrismaEngine(SastEngine):
     def create_report(self, prisma_report: PrismaReport) -> List[Report]:
         reports: List[Report] = []
         for lang, checks in prisma_report.rule_match.items():
-            report = Report(f'{self.check_type}_{lang}')
+            report = Report(f'{self.check_type.upper()} - {lang.value.title()}')
             for check_id, match_rule in checks.items():
                 check_name = match_rule.check_name
                 check_cwe = match_rule.check_cwe
