@@ -31,11 +31,10 @@ class MatchLocation(BaseModel):
 
 
 class MatchMetavariable(BaseModel):
-    path: Optional[str]  # noqa: CCE003
-    start: Optional[Point]  # noqa: CCE003
-    end: Optional[Point]  # noqa: CCE003
-    data_flow: Optional[List[Flow]]  # noqa: CCE003
-    code_block: Optional[str]  # noqa: CCE003
+    path: str  # noqa: CCE003
+    start: Point  # noqa: CCE003
+    end: Point  # noqa: CCE003
+    data_flow: List[Flow]  # noqa: CCE003
 
 
 class MatchMetadata(BaseModel):
