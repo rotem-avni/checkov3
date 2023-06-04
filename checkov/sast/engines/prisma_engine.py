@@ -66,7 +66,10 @@ class PrismaEngine(SastEngine):
                 if match:
                     current_version = match.groups()[0]
 
+        if os.getenv("SAST_ARTIFACT_PATH"):
+            return True
         status: bool = self.download_sast_artifacts(current_version)
+
         return status
 
     @cached(TTLCache(maxsize=1, ttl=300))
@@ -111,6 +114,10 @@ class PrismaEngine(SastEngine):
             self.prisma_sast_dir_path.mkdir(exist_ok=True)
 
     def get_sast_artifact(self) -> Optional[Path]:
+        env_variable_path = os.getenv("SAST_ARTIFACT_PATH")
+        if env_variable_path and os.path.isfile(env_variable_path):
+            return Path(env_variable_path)
+
         files = [(self.prisma_sast_dir_path / f) for f in os.listdir(self.prisma_sast_dir_path) if
                  (self.prisma_sast_dir_path / f).is_file() and "library" in f]
 
