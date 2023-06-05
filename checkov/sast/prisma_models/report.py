@@ -5,8 +5,8 @@ from checkov.sast.consts import SastLanguages
 
 
 class Profiler(BaseModel):
-    duration: str
-    memory: int
+    duration: str   # noqa: CCE003
+    memory: int     # noqa: CCE003
 
 
 class Point(BaseModel):

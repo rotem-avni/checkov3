@@ -169,7 +169,7 @@ class PrismaEngine(SastEngine):
         return self.create_report(result)
 
     def create_report(self, prisma_report: PrismaReport) -> List[Report]:
-        logging.debug(f"Printing Prisma-SAST profiling data")
+        logging.debug("Printing Prisma-SAST profiling data")
         logging.debug(prisma_report.profiler)
         reports: List[Report] = []
         for lang, checks in prisma_report.rule_match.items():
