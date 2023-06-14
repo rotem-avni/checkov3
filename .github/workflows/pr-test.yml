@@ -61,6 +61,7 @@ jobs:
       - name: Unit tests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IS_TEST: true
         run: |
           pipenv run python -m pytest tests
 
