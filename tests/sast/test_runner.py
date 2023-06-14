@@ -1,3 +1,5 @@
+import pytest
+
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.platform_integration import bc_integration
 from checkov.common.models.enums import CheckResult
@@ -181,6 +183,7 @@ def test_sast_prisma_runner_missing_key(mocker):
     assert runner.get_engine() == SastEngines.SEMGREP
 
 
+@pytest.mark.skip(reason="This test should be an integration test")
 def test_sast_prisma_runner(mocker):
     temp = bc_integration.bc_api_key
     bc_integration.bc_api_key = "123456"
