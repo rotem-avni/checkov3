@@ -16,6 +16,7 @@ if TYPE_CHECKING:
     import argparse
 
 
+
 class ExtArgumentParser(configargparse.ArgumentParser):
     def __init__(self, *args: Any, **kwargs: Any) -> None:
         super().__init__(*args, **kwargs)
