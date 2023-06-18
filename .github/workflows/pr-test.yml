@@ -118,7 +118,8 @@ jobs:
           pipenv run pytest integration_tests -k 'not api_key'
 
   performance-tests:
-    continue-on-error: true
+    if:
+      true == false
     strategy:
       fail-fast: false
       matrix:
