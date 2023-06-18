@@ -12,6 +12,8 @@ permissions:
 
 jobs:
   bandit:
+    if:
+      true == false
     runs-on: [self-hosted, public, linux, x64]
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab  # v3
@@ -22,6 +24,8 @@ jobs:
         with:
           path: 'checkov'
   trufflehog-secrets:
+    if:
+      true == false
     runs-on: [self-hosted, public, linux, x64]
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab  # v3
@@ -32,6 +36,8 @@ jobs:
         with:
           scanArguments: "--regex --entropy=False --exclude_paths .github/exclude-patterns.txt --max_depth=1"
   checkov-secrets:
+    if:
+      true == false
     runs-on: [self-hosted, public, linux, x64]
     steps:
       - uses: actions/checkout@8e5e7e5ab8b370d6c329ec480221332ada57f0ab  # v3

@@ -14,7 +14,6 @@ permissions:
 
 jobs:
   start-security-scan:
-    if: true==false
     runs-on: ubuntu-latest
     environment: scan-security
     steps:
