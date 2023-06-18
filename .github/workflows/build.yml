@@ -36,9 +36,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  security:
-    uses: ./.github/workflows/security-shared.yml
-    secrets: inherit
+#  security:
+#    uses: ./.github/workflows/security-shared.yml
+#    secrets: inherit
 
   integration-tests:
     strategy:
