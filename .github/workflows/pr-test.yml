@@ -2,8 +2,7 @@ name: PR Test
 
 on: pull_request
 
-permissions:
-  contents: read
+permissions: read-all
 
 jobs:
   lint:
@@ -54,14 +53,11 @@ jobs:
           python -m pip install --no-cache-dir --upgrade pipenv
       - name: Install dependencies
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python ${{ matrix.python }}
           pipenv install --dev -v
       - name: Unit tests
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          IS_TEST: true
         run: |
           pipenv run python -m pytest tests
 
@@ -92,8 +88,6 @@ jobs:
           python -m pip install --no-cache-dir --upgrade pipenv
       - name: Build & install checkov package
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python ${{ matrix.python }}
           pipenv run pip install pytest pytest-xdist
           pipenv run python setup.py sdist bdist_wheel
@@ -118,8 +112,6 @@ jobs:
           pipenv run pytest integration_tests -k 'not api_key'
 
   performance-tests:
-    if:
-      true == false
     strategy:
       fail-fast: false
       matrix:
@@ -146,8 +138,6 @@ jobs:
           python -m pip install --no-cache-dir --upgrade pipenv
       - name: Build & install checkov package
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python ${{ matrix.python }}
           # 'py' package is used in 'pytest-benchmark', but 'pytest' removed it in their latest version         
           pipenv run pip install pytest pytest-benchmark py
@@ -200,8 +190,6 @@ jobs:
 
       - name: Build & install checkov package
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python ${{ env.PYTHON_VERSION }}     
           pipenv run pip install pytest pytest-xdist
           pipenv run python setup.py sdist bdist_wheel
@@ -210,4 +198,3 @@ jobs:
         run: |
           pipenv run pytest
         working-directory: ${{ env.WORKING_DIRECTORY }}
-

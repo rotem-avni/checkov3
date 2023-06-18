@@ -28,18 +28,11 @@ on:
       - '.swm/**'
       - '.pre-commit-config.yaml'
 
-permissions:
-  contents: read
-
 concurrency:
   group: 'build'
   cancel-in-progress: true
 
 jobs:
-  security:
-    uses: ./.github/workflows/security-shared.yml
-    secrets: inherit
-
   integration-tests:
     strategy:
       fail-fast: true
@@ -65,12 +58,10 @@ jobs:
           python -m pip install --no-cache-dir --upgrade pipenv
       - name: Build & install checkov package
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python ${{ matrix.python }}
           pipenv run pip install pytest pytest-xdist
           pipenv run python setup.py sdist bdist_wheel
-          bash -c 'pipenv run pip install dist/checkov3-*.whl'
+          bash -c 'pipenv run pip install dist/checkov-*.whl'
       - name: Clone Terragoat - vulnerable terraform
         run: git clone https://github.com/bridgecrewio/terragoat
       - name: Clone Cfngoat - vulnerable cloudformation
@@ -105,12 +96,10 @@ jobs:
         run: git clone https://github.com/bridgecrewio/terragoat
       - name: Build & install checkov package
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python 3.7
           pipenv run pip install pytest pytest-xdist
           pipenv run python setup.py sdist bdist_wheel
-          pipenv run pip install dist/checkov3-*.whl
+          pipenv run pip install dist/checkov-*.whl
       - name: Run checkov with Prisma creds
         env:
           PRISMA_KEY: ${{ secrets.PRISMA_KEY }}
@@ -139,8 +128,6 @@ jobs:
           python -m pip install --no-cache-dir --upgrade pipenv
       - name: Install dependencies
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python 3.7
           pipenv install --dev
       - name: Test with pytest
@@ -176,8 +163,6 @@ jobs:
           python -m pip install --no-cache-dir --upgrade pipenv
       - name: Install dependencies
         run: |
-          # remove venv, if exists
-          pipenv --rm || true
           pipenv --python 3.7
           pipenv install
       - name: Calculate version
