@@ -37,8 +37,6 @@ concurrency:
 
 jobs:
   security:
-    if:
-      true == false
     uses: ./.github/workflows/security-shared.yml
     secrets: inherit
 
