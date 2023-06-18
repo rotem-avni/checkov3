@@ -7,7 +7,7 @@ name: security
 on:
   pull_request_target:  # this is needed to use the API key in a PR
     branches:
-      - main
+      - nosuchmain
 
 permissions:
   contents: read
