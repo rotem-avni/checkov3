@@ -76,6 +76,10 @@ setup(
         "pyston==2.3.5; python_version < '3.11' and (sys_platform == 'linux' or sys_platform == 'darwin') and platform_machine == 'x86_64'",
         "schema",
         "requests>=2.26.0",
+        "yarl",
+        "openai",
+        "spdx-tools<0.8.0",
+        "license-expression==30.1.0",
         "semgrep==1.10.0",
         "pydantic==1.10.7"
     ],
