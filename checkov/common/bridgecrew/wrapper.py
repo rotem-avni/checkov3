@@ -25,7 +25,7 @@ if TYPE_CHECKING:
     from mypy_boto3_s3.client import S3Client
 
     from checkov.common.output.report import Report
-
+# rotem
 checkov_results_prefix = 'checkov_results'
 check_reduced_keys = (
     'check_id', 'check_result', 'resource', 'file_path',
