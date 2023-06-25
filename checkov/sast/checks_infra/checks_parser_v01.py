@@ -10,7 +10,7 @@ from checkov.sast.consts import COMPARISON_VALUES, COMPARISON_VALUE_TO_SYMBOL, S
 from checkov.common.util.type_forcers import force_list
 
 
-class SastCheckParser:
+class SastCheckParserV01:
     def parse_raw_check_to_semgrep(self, raw_check: Dict[str, Dict[str, Any]], check_file: str | None = None) -> Dict[str, Any]:
         semgrep_rule: Dict[str, Any] = {}
         if not self._raw_check_is_valid(raw_check):

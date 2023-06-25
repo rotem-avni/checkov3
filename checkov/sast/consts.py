@@ -58,6 +58,21 @@ class SemgrepAttribute(str, Enum):
     PATTERN_PROPAGATORS = 'pattern-propagators'
 
 
+class BqlVersion(str, Enum):
+    def __str__(self) -> str:
+        return self.value
+
+    V0_1 = '0.1'
+    V0_2 = '0.2'
+
+
+def get_bql_version_from_string(str):
+    for version in BqlVersion:
+        if version.value == str:
+            return version
+    return None
+
+
 class BqlConditionType(str, Enum):
     def __str__(self) -> str:
         return self.value
