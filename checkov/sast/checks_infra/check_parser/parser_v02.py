@@ -1,66 +1,12 @@
 from __future__ import annotations
 
-import logging
 from typing import Dict, Any
 
-from checkov.sast.consts import SemgrepAttribute, CHECKOV_SEVERITY_TO_SEMGREP_SEVERITY
+from checkov.sast.consts import SemgrepAttribute
+from checkov.sast.checks_infra.check_parser.base_parser import BaseSastCheckParser
 
 
-class SastCheckParserV02:
-    def parse_raw_check_to_semgrep(self, raw_check: Dict[str, Dict[str, Any]], check_file: str | None = None) -> Dict[str, Any]:
-        semgrep_rule: Dict[str, Any] = {}
-        if not self._raw_check_is_valid(raw_check):
-            logging.error(f'cant parse the following policy: {raw_check}')
-        try:
-            semgrep_rule = self._parse_rule_metadata(raw_check, check_file, semgrep_rule)
-            check_definition = raw_check['definition']
-            if raw_check.get('mode', '') == 'taint':
-                semgrep_rule['mode'] = 'taint'
-                semgrep_rule.update(self._parse_taint_definition(check_definition))
-            else:
-                semgrep_rule.update(self._parse_definition(check_definition))
-        except Exception as e:
-            logging.error(f'the policy in file {check_file} is misconfigured so it could not be parsed properly.\n{e}')
-
-        return semgrep_rule
-
-    # todo make common to both parsers
-    def _raw_check_is_valid(self, raw_check: Dict[str, Any]) -> bool:
-        metadata = raw_check.get('metadata')
-        if not metadata:
-            raise AttributeError('BQL policy is missing the metadata field')
-        if not metadata.get('id'):
-            raise AttributeError('BQL policy metadata is missing an id value')
-        if not raw_check.get('scope', {}).get('languages'):
-            raise AttributeError('BQL policy metadata is missing languages')
-        else:
-            return True
-
-    # todo make common to both parsers -> make the version parsers a subclass of the sastparser?
-    def _parse_rule_metadata(self, bql_policy: Dict[str, Any], check_file: str | None, semgrep_rule: Dict[str, Any]) \
-            -> Dict[str, Any]:
-        metadata = bql_policy['metadata']
-        semgrep_rule[str(SemgrepAttribute.ID)] = metadata['id']
-        semgrep_rule[str(SemgrepAttribute.MESSAGE)] = metadata.get('guidelines', '')
-
-        languages = bql_policy['scope']['languages']
-        semgrep_rule[str(SemgrepAttribute.LANGUAGES)] = languages
-        metadata_obj = {
-            'name': metadata['name']
-        }
-        # add optional metadata fields
-        semgrep_rule[str(SemgrepAttribute.SEVERITY)] = CHECKOV_SEVERITY_TO_SEMGREP_SEVERITY[metadata.get('severity', 'MEDIUM')]
-        if check_file:
-            metadata_obj['check_file'] = check_file
-        cwe = metadata.get('cwe')
-        if cwe:
-            metadata_obj[SemgrepAttribute.CWE.value] = cwe
-        owasp = metadata.get('owasp')
-        if owasp:
-            metadata_obj[SemgrepAttribute.OWASP.value] = owasp
-        semgrep_rule['metadata'] = metadata_obj
-        return semgrep_rule
-
+class SastCheckParserV02(BaseSastCheckParser):
     def _parse_definition(self, definition: Dict[str, Any], conf: Dict[str, Any] | None = None) -> Dict[str, Any]:
         if not isinstance(definition, dict):
             raise TypeError(f'bad definition type, got {type(definition)} instead of dict')
@@ -124,7 +70,7 @@ class SastCheckParserV02:
 
         return {cond_type: metavar_conf}
 
-    def _parse_taint_definition(self, definition: Dict[str, Any]) -> Dict[str, Any]:
+    def _parse_taint_mode_definition(self, definition: Dict[str, Any]) -> Dict[str, Any]:
         conf: Dict[str, Any] = {
             str(SemgrepAttribute.PATTERN_SOURCES): [],
             str(SemgrepAttribute.PATTERN_SINKS): []

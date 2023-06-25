@@ -2,7 +2,7 @@ import os
 import pathlib
 import yaml
 
-from checkov.sast.checks_infra.checks_parser_v02 import SastCheckParserV02
+from checkov.sast.checks_infra.check_parser.parser_v02 import SastCheckParserV02
 
 cur_dir = pathlib.Path(__file__).parent.resolve()
 policy_dir = os.path.join(cur_dir / 'checks' / 'v02')

@@ -1,7 +1,4 @@
-import os
-
-from checkov.sast.checks_infra.base_registry import Registry
-from checkov.sast.checks_infra.checks_parser_v01 import SastCheckParserV01
+from checkov.sast.checks_infra.check_parser.parser_v01 import SastCheckParserV01
 
 
 def test_metadata_parsing():
