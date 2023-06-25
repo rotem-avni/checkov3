@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Dict, Any
 
-from checkov.sast.consts import SemgrepAttribute
+from checkov.sast.consts import SemgrepAttribute, BqlV2ConditionType
 from checkov.sast.checks_infra.check_parser.base_parser import BaseSastCheckParser
 
 
@@ -11,64 +11,88 @@ class SastCheckParserV02(BaseSastCheckParser):
         if not isinstance(definition, dict):
             raise TypeError(f'bad definition type, got {type(definition)} instead of dict')
 
-        conf: Dict[str, Any] = {'patterns': []}
+        conf: Dict[str, Any] = {str(BqlV2ConditionType.PATTERNS): []}
 
-        if definition.get('patterns'):
-            conf['patterns'].extend(self._parse_definition(definition['patterns'])['patterns'])
         for k, v in definition.items():
-            if k == 'or':
+            if k == BqlV2ConditionType.OR:
                 ors = []
                 for or_cond in v:
                     ors.append(self._parse_definition(or_cond))
-                conf['patterns'].append({SemgrepAttribute.PATTERN_EITHER.value: ors})
+                conf[str(BqlV2ConditionType.PATTERNS)].append({SemgrepAttribute.PATTERN_EITHER.value: ors})
 
-            elif k == 'and':
+            elif k == BqlV2ConditionType.AND:
                 for and_cond in v:
-                    conf['patterns'].append(self._parse_definition(and_cond))
-            elif k == 'pattern':
-                conf['patterns'].append({SemgrepAttribute.PATTERN.value: v.replace('<ANY>', '...')})
-            elif k == 'regex':
-                conf['patterns'].append({SemgrepAttribute.PATTERN_REGEX.value: v.replace('<ANY>', '...')})
-            elif k == 'conditions':
+                    conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_definition(and_cond))
+
+            elif k == BqlV2ConditionType.CONDITIONS:
                 for condition in v:
-                    if condition.get('metavariable'):
-                        conf['patterns'].append(self._parse_metavariable_condition(condition))
+                    if condition.get(str(BqlV2ConditionType.METAVARIABLE)):
+                        conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_metavariable_condition(condition))
                     else:
                         for ck, cv in condition.items():
-                            conf['patterns'].append(self._parse_single_condition(ck, cv))
+                            conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_single_condition(ck, cv))
+
+            elif k == BqlV2ConditionType.PATTERNS:
+                conf[str(BqlV2ConditionType.PATTERNS)].extend(self._parse_definition(v)['patterns'])
+
+            else:
+                conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_single_condition(k, v))
+
 
         return conf
 
     def _parse_single_condition(self, key: str, value: str) -> Dict[str, str]:
-        value = value.replace('<ANY>', '...')
-        if key in ['pattern', 'source', 'sink', 'sanitizer', 'propagator']:
-            return {str(SemgrepAttribute.PATTERN.value): value}
-        elif key == 'regex':
-            return {str(SemgrepAttribute.PATTERN_REGEX.value): value}
-        elif key == 'not_pattern':
-            return {str(SemgrepAttribute.PATTERN_NOT.value): value}
-        elif key == 'not_regex':
-            return {str(SemgrepAttribute.PATTERN_NOT_REGEX.value): value}
-        elif key == 'within':
-            return {str(SemgrepAttribute.PATTERN_INSIDE.value): value}
-        elif key == 'not_within':
-            return {str(SemgrepAttribute.PATTERN_NOT_INSIDE.value): value}
+        attribute = ''
+        if key in [
+            BqlV2ConditionType.PATTERN,
+            BqlV2ConditionType.SOURCE,
+            BqlV2ConditionType.SINK,
+            BqlV2ConditionType.SANITIZER,
+            BqlV2ConditionType.PROPAGATOR
+        ]:
+            attribute = str(SemgrepAttribute.PATTERN)
+        elif key == BqlV2ConditionType.REGEX:
+            attribute = str(SemgrepAttribute.PATTERN_REGEX)
+        elif key == BqlV2ConditionType.NOT_PATTERN:
+            attribute = str(SemgrepAttribute.PATTERN_NOT)
+        elif key == BqlV2ConditionType.NOT_REGEX:
+            attribute = str(SemgrepAttribute.PATTERN_NOT_REGEX)
+        elif key == BqlV2ConditionType.WITHIN:
+            attribute = str(SemgrepAttribute.PATTERN_INSIDE)
+        elif key == BqlV2ConditionType.NOT_WITHIN:
+            attribute = str(SemgrepAttribute.PATTERN_NOT_INSIDE)
+        else:
+            raise AttributeError(f'unsupported definition field: {key}')
 
-        return {}
+        return {attribute: value.replace('<ANY>', '...')}
 
     def _parse_metavariable_condition(self, cond: Dict[str, str]) -> Dict[str, Any]:
         metavar_conf = {}
         cond_type = ''
         for k, v in cond.items():
             metavar_conf[k] = v
-            if k == 'pattern' or k == 'patterns':
-                cond_type = SemgrepAttribute.METAVARIABLE_PATTERN.value
-            elif k == 'regex':
-                cond_type = SemgrepAttribute.METAVARIABLE_REGEX.value
-            elif k == 'comparison':
-                cond_type = SemgrepAttribute.METAVARIABLE_COMPARISON.value
+            if k in [BqlV2ConditionType.PATTERN, BqlV2ConditionType.PATTERNS]:
+                cond_type = str(SemgrepAttribute.METAVARIABLE_PATTERN)
+            elif k == BqlV2ConditionType.REGEX:
+                cond_type = str(SemgrepAttribute.METAVARIABLE_REGEX)
+            elif k == BqlV2ConditionType.COMPARISON:
+                cond_type = str(SemgrepAttribute.METAVARIABLE_COMPARISON)
 
         return {cond_type: metavar_conf}
+
+    def _parse_taint_field(self, key, value):
+        parsed_list = []
+        if isinstance(value, list):
+            for item in value:
+                if isinstance(item, str):
+                    parsed_list.append(self._parse_single_condition(key[:-1], item))
+                elif isinstance(item, dict):
+                    parsed_list.append(self._parse_definition(item))
+
+        else:
+            parsed_list.append(self._parse_single_condition(key, value))
+
+        return parsed_list
 
     def _parse_taint_mode_definition(self, definition: Dict[str, Any]) -> Dict[str, Any]:
         conf: Dict[str, Any] = {
@@ -76,45 +100,23 @@ class SastCheckParserV02(BaseSastCheckParser):
             str(SemgrepAttribute.PATTERN_SINKS): []
         }
         for k, v in definition.items():
-            if k == 'source':
-                conf[SemgrepAttribute.PATTERN_SOURCES].append(self._parse_single_condition(k, v))
-            elif k == 'sources':
-                for source in v:
-                    if isinstance(source, str):
-                        conf[SemgrepAttribute.PATTERN_SOURCES].append(self._parse_single_condition('source', source))
-                    elif isinstance(source, dict):
-                        conf[SemgrepAttribute.PATTERN_SOURCES].append(self._parse_definition(source))
-            elif k == 'sink':
-                conf[SemgrepAttribute.PATTERN_SINKS].append(self._parse_single_condition(k, v))
-            elif k == 'sinks':
-                for sink in v:
-                    if isinstance(sink, str):
-                        conf[SemgrepAttribute.PATTERN_SINKS].append(self._parse_single_condition('sink', sink))
-                    elif isinstance(sink, dict):
-                        conf[SemgrepAttribute.PATTERN_SINKS].append(self._parse_definition(sink))
-            elif k == 'sanitizer':
-                if SemgrepAttribute.PATTERN_SANITIZERS.value not in conf.keys():
-                    conf[str(SemgrepAttribute.PATTERN_SANITIZERS)] = []
-                conf[SemgrepAttribute.PATTERN_SANITIZERS].append(self._parse_single_condition(k, v))
-            elif k == 'sanitizers':
-                if SemgrepAttribute.PATTERN_SANITIZERS.value not in conf.keys():
-                    conf[str(SemgrepAttribute.PATTERN_SANITIZERS)] = []
-                for sanitizer in v:
-                    if isinstance(sanitizer, str):
-                        conf[SemgrepAttribute.PATTERN_SANITIZERS].append(self._parse_single_condition('sanitizer', sanitizer))
-                    elif isinstance(sanitizer, dict):
-                        conf[SemgrepAttribute.PATTERN_SANITIZERS].append(self._parse_definition(sanitizer))
-            elif k == 'propagator':
-                if SemgrepAttribute.PATTERN_PROPAGATORS.value not in conf.keys():
-                    conf[str(SemgrepAttribute.PATTERN_PROPAGATORS)] = []
-                conf[SemgrepAttribute.PATTERN_PROPAGATORS].append(self._parse_single_condition(k, v))
-            elif k == 'propagators':
-                if SemgrepAttribute.PATTERN_PROPAGATORS.value not in conf.keys():
-                    conf[str(SemgrepAttribute.PATTERN_PROPAGATORS)] = []
-                for propagator in v:
-                    if isinstance(propagator, str):
-                        conf[SemgrepAttribute.PATTERN_PROPAGATORS].append(self._parse_single_condition('propagator', propagator))
-                    elif isinstance(propagator, dict):
-                        conf[SemgrepAttribute.PATTERN_PROPAGATORS].append(self._parse_definition(propagator))
+            if k in [BqlV2ConditionType.SOURCE, BqlV2ConditionType.SOURCES]:
+                conf[SemgrepAttribute.PATTERN_SOURCES].extend(self._parse_taint_field(k, v))
+
+            elif k in [BqlV2ConditionType.SINK, BqlV2ConditionType.SINKS]:
+                conf[SemgrepAttribute.PATTERN_SINKS].extend(self._parse_taint_field(k, v))
+
+            elif k in [BqlV2ConditionType.SANITIZER, BqlV2ConditionType.SANITIZERS]:
+                sanitizers_key = str(SemgrepAttribute.PATTERN_SANITIZERS)
+                conf.setdefault(sanitizers_key, [])
+                conf[sanitizers_key].extend(self._parse_taint_field(k, v))
+
+            elif k in [BqlV2ConditionType.PROPAGATOR, BqlV2ConditionType.PROPAGATORS]:
+                propagators_key = str(SemgrepAttribute.PATTERN_PROPAGATORS)
+                conf.setdefault(propagators_key, [])
+                conf[SemgrepAttribute.PATTERN_PROPAGATORS].extend(self._parse_taint_field(k, v))
+
+            else:
+                raise AttributeError(f'unsupported definition field: {k}')
 
         return conf

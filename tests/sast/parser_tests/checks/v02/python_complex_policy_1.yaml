@@ -23,12 +23,12 @@ definition:
             <ANY>
             $VAR.check_hostname = True
     - patterns:
-      or:
-        - pattern: |
-            $VAR = ssl
-            <ANY>
-            $VAR.check_hostname = False
-        - pattern: |
-            $VAR = ssl
-            <ANY>
-            $VAR.check_hostname = False
+        or:
+          - pattern: |
+              $VAR = ssl
+              <ANY>
+              $VAR.check_hostname = False
+          - pattern: |
+              $VAR = ssl
+              <ANY>
+              $VAR.check_hostname = False

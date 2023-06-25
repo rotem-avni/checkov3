@@ -5,7 +5,7 @@ from typing import Dict, Any, List
 from checkov.common.graph.checks_infra.enums import Operators
 from checkov.sast.consts import COMPARISON_VALUES, COMPARISON_VALUE_TO_SYMBOL, SemgrepAttribute, \
     PATTERN_OPERATOR_TO_SEMGREP_ATTR, VARIABLE_OPERATOR_TO_SEMGREP_ATTR, \
-    FILTER_OPERATOR_TO_SEMGREP_ATTR, BqlConditionType
+    FILTER_OPERATOR_TO_SEMGREP_ATTR, BqlV1ConditionType
 from checkov.sast.checks_infra.check_parser.base_parser import BaseSastCheckParser
 from checkov.common.util.type_forcers import force_list
 
@@ -20,12 +20,12 @@ class SastCheckParserV01(BaseSastCheckParser):
             definition = definitions[0]
             if not isinstance(definition, dict):
                 raise TypeError(f'bad definition type, got {type(definition)} instead of dict')
-            if definition.get(str(BqlConditionType.OR)):
+            if definition.get(str(BqlV1ConditionType.OR)):
                 return {str(SemgrepAttribute.PATTERN_EITHER): self._get_definitions_list_items(
-                    definition[str(BqlConditionType.OR)])}
-            elif definition.get(str(BqlConditionType.AND)):
+                    definition[str(BqlV1ConditionType.OR)])}
+            elif definition.get(str(BqlV1ConditionType.AND)):
                 return {str(SemgrepAttribute.PATTERNS): self._get_definitions_list_items(
-                    definition[str(BqlConditionType.AND)])}
+                    definition[str(BqlV1ConditionType.AND)])}
             else:
                 return self._parse_single_definition(definition)
         return conf
@@ -41,16 +41,16 @@ class SastCheckParserV01(BaseSastCheckParser):
         if not definition_value:
             raise AttributeError(f'BQL policy condition type: {cond_type} is missing a definition value')
 
-        if cond_type == BqlConditionType.PATTERN:
+        if cond_type == BqlV1ConditionType.PATTERN:
             return self._parse_pattern_cond_type(operator, definition_value)
 
-        elif cond_type == BqlConditionType.VARIABLE:
+        elif cond_type == BqlV1ConditionType.VARIABLE:
             return self._parse_variable_cond_type(operator, definition, definition_value)
 
-        elif cond_type == BqlConditionType.FILTER:
+        elif cond_type == BqlV1ConditionType.FILTER:
             return self._parse_filter_cond_type(operator, definition_value)
 
-        elif cond_type in [BqlConditionType.PATTERN_SINK, BqlConditionType.PATTERN_SANITIZER, BqlConditionType.PATTERN_SOURCE]:
+        elif cond_type in [BqlV1ConditionType.PATTERN_SINK, BqlV1ConditionType.PATTERN_SANITIZER, BqlV1ConditionType.PATTERN_SOURCE]:
             return self._parse_taint_cond_type(operator, definition_value)
 
         return {}
@@ -93,7 +93,7 @@ class SastCheckParserV01(BaseSastCheckParser):
         return {semgrep_attr: definition_value}
 
     def _parse_taint_cond_type(self, operator: str, definition_value: str | Dict[str, Any]) -> Dict[str, Any]:
-        if isinstance(definition_value, dict) and (definition_value.get(BqlConditionType.AND) or definition_value.get(BqlConditionType.OR)):
+        if isinstance(definition_value, dict) and (definition_value.get(BqlV1ConditionType.AND) or definition_value.get(BqlConditionType.OR)):
             return self._parse_definition(definition_value)
         else:
             if not isinstance(definition_value, str):
@@ -103,12 +103,12 @@ class SastCheckParserV01(BaseSastCheckParser):
     def _get_definitions_list_items(self, definitions: List[Dict[str, Any]]) -> List[Dict[str, Any]]:
         conf = []
         for definition in definitions:
-            if definition.get(str(BqlConditionType.OR)):
+            if definition.get(str(BqlV1ConditionType.OR)):
                 conf.append({SemgrepAttribute.PATTERN_EITHER.value: self._get_definitions_list_items(
-                    definition[str(BqlConditionType.OR)])})
-            elif definition.get(str(BqlConditionType.AND)):
+                    definition[str(BqlV1ConditionType.OR)])})
+            elif definition.get(str(BqlV1ConditionType.AND)):
                 conf.append({SemgrepAttribute.PATTERNS.value: self._get_definitions_list_items(
-                    definition[str(BqlConditionType.AND)])})
+                    definition[str(BqlV1ConditionType.AND)])})
             else:
                 conf.append(self._parse_definition(definition))
 
@@ -132,13 +132,13 @@ class SastCheckParserV01(BaseSastCheckParser):
             if not definition_value:
                 raise AttributeError(f'BQL policy condition type: {cond_type} is missing a definition value')
 
-            if cond_type == BqlConditionType.PATTERN_SOURCE:
+            if cond_type == BqlV1ConditionType.PATTERN_SOURCE:
                 conf[str(SemgrepAttribute.PATTERN_SOURCES)].append(self._parse_definition(definition))
-            elif cond_type == BqlConditionType.PATTERN_SINK:
+            elif cond_type == BqlV1ConditionType.PATTERN_SINK:
                 conf[str(SemgrepAttribute.PATTERN_SINKS)].append(self._parse_definition(definition))
-            elif cond_type == BqlConditionType.PATTERN_SANITIZER:
+            elif cond_type == BqlV1ConditionType.PATTERN_SANITIZER:
                 conf.setdefault(str(SemgrepAttribute.PATTERN_SANITIZERS), []).append(self._parse_definition(definition))
-            elif cond_type == BqlConditionType.PATTERN_PROPAGATOR:
+            elif cond_type == BqlV1ConditionType.PATTERN_PROPAGATOR:
                 conf.setdefault(str(SemgrepAttribute.PATTERN_PROPAGATORS), []).append(self._parse_definition(definition))
             else:
                 raise AttributeError(f'BQL policy taint mode definition contains an unexpected condition type: {cond_type}')

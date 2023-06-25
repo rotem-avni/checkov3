@@ -1,5 +1,6 @@
 from checkov.sast.checks_infra.check_parser.parser_v01 import SastCheckParserV01
 
+parser = SastCheckParserV01()
 
 def test_metadata_parsing():
     raw_check = {
@@ -19,7 +20,6 @@ def test_metadata_parsing():
             {'cond_type': 'pattern', 'operator': 'equals', 'value': 'set_port($ARG)'}
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1',
@@ -43,7 +43,6 @@ def test_multiline_pattern_parsing():
             {'cond_type': 'pattern', 'operator': 'equals', 'value': 'def $FUNC(...):\n  ...\n'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1',
@@ -65,7 +64,6 @@ def test_pattern_not_parsing():
             {'cond_type': 'pattern', 'operator': 'not_equals', 'value': 'set_port($ARG)'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1',
@@ -92,7 +90,6 @@ def test_pattern_either_parsing():
             }
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1',
@@ -122,7 +119,6 @@ def test_explicit_patterns_parsing():
             }
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
@@ -143,7 +139,6 @@ def test_implicit_patterns_parsing():
             {'cond_type': 'pattern', 'operator': 'equals', 'value': 'set_port_2($ARG)'}
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
@@ -164,7 +159,6 @@ def test_pattern_regex_parsing():
             {'cond_type': 'pattern', 'operator': 'regex_match', 'value': '^.*(RSA)/.*'}
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
@@ -185,7 +179,6 @@ def test_pattern_not_regex_parsing():
             {'cond_type': 'pattern', 'operator': 'not_regex_match', 'value': '^.*(RSA)/.*'}
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
@@ -206,7 +199,6 @@ def test_pattern_inside_parsing():
             {'cond_type': 'filter', 'attribute': 'pattern', 'operator': 'within', 'value': 'def $FUNC(...):\n  ...\n'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
@@ -227,7 +219,7 @@ def test_pattern_not_inside_parsing():
             {'cond_type': 'filter', 'attribute': 'pattern', 'operator': 'not_within', 'value': 'def $FUNC(...):\n  ...\n'},
         ]
     }
-    parser = SastCheckParserV01()
+
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
@@ -248,9 +240,7 @@ def test_metavariable_pattern_parsing():
             {'cond_type': 'variable', 'variable': '$KEY', 'operator': 'pattern_match', 'value': '...'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
             'name': 'check name'},
@@ -274,9 +264,7 @@ def test_metavariable_regex_parsing():
             {'cond_type': 'variable', 'variable': '$KEY', 'operator': 'regex_match', 'value': '^.*(RSA)/.*'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
             'name': 'check name'},
@@ -300,9 +288,7 @@ def test_metavariable_less_than_comparison_parsing():
             {'cond_type': 'variable', 'variable': '$KEY', 'operator': 'less_than', 'value': '1024'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
             'name': 'check name'},
@@ -326,9 +312,7 @@ def test_metavariable_greater_than_comparison_parsing():
             {'cond_type': 'variable', 'variable': '$KEY', 'operator': 'greater_than', 'value': '1024'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
             'name': 'check name'},
@@ -352,9 +336,7 @@ def test_basic_taint_mode_parsing():
             {'cond_type': 'pattern_sink', 'operator': 'equals', 'value': 'html_output(...)'},
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'mode': 'taint', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'],
         'metadata': {'name': 'check name'},
@@ -373,9 +355,7 @@ def test_taint_mode_sanitizer_parsing():
             {'cond_type': 'pattern_sanitizer', 'operator': 'equals', 'value': 'sanitize(...)'}
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'mode': 'taint', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'],
         'metadata': {'name': 'check name'},
@@ -400,9 +380,7 @@ def test_complex_taint_mode_parsing():
             {'cond_type': 'pattern_sanitizer', 'operator': 'equals', 'value': 'sanitize(...)'}
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'mode': 'taint', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'],
         'metadata': {'name': 'check name'},
@@ -435,9 +413,7 @@ def test_complex_policy_parsing():
             ]}
         ]
     }
-    parser = SastCheckParserV01()
     parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-    print (parsed_check)
     assert parsed_check == {
         'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
             'name': 'check name'},
