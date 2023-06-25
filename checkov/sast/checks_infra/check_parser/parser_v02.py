@@ -24,16 +24,16 @@ class SastCheckParserV02(BaseSastCheckParser):
                 for and_cond in v:
                     conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_definition(and_cond))
 
+            elif k == BqlV2ConditionType.PATTERNS:
+                conf[str(BqlV2ConditionType.PATTERNS)].extend(self._parse_definition(v)['patterns'])
+
             elif k == BqlV2ConditionType.CONDITIONS:
                 for condition in v:
-                    if condition.get(str(BqlV2ConditionType.METAVARIABLE)):
+                    if str(BqlV2ConditionType.METAVARIABLE) in condition:
                         conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_metavariable_condition(condition))
                     else:
                         for ck, cv in condition.items():
                             conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_single_condition(ck, cv))
-
-            elif k == BqlV2ConditionType.PATTERNS:
-                conf[str(BqlV2ConditionType.PATTERNS)].extend(self._parse_definition(v)['patterns'])
 
             else:
                 conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_single_condition(k, v))
