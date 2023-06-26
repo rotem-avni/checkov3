@@ -140,7 +140,7 @@ class Registry(BaseCheckRegistry):
 
 
 def get_check_version(raw_check: Dict[str, Dict[str, Any]]) -> str:
-    version = raw_check.get('metadata', {}).get('version')
+    version = str(raw_check.get('metadata', {}).get('version', 0))
     if not version:
         raise AttributeError('BQL policy is missing the version field')
     bql_version = get_bql_version_from_string(version)
