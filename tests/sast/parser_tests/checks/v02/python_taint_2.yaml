@@ -14,8 +14,8 @@ definition:
     - pattern: $VAR
       conditions:
         - within: |
-            @javax.ws.rs.Path("...")
-            $TYPE $FUNC(..., $VAR, ...) {
-              ...
+            @javax.ws.rs.Path("<ANY>")
+            $TYPE $FUNC(<ANY>, $VAR, <ANY>) {
+              <ANY>
             }
-  sink: return ...;
+  sink: return <ANY>;

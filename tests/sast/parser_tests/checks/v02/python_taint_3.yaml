@@ -14,12 +14,12 @@ definition:
     - pattern: $VAR
       conditions:
         - within: |
-            @javax.ws.rs.Path("...")
-            $TYPE $FUNC(..., $VAR, ...) {
-              ...
+            @javax.ws.rs.Path("<ANY>")
+            $TYPE $FUNC(<ANY>, $VAR, <ANY>) {
+              <ANY>
             }
   sanitizers:
-    - pattern: org.apache.commons.text.StringEscapeUtils.unescapeJava(...);
+    - pattern: org.apache.commons.text.StringEscapeUtils.unescapeJava(<ANY>);
     - pattern: $STR
       conditions:
         - within: |
@@ -30,5 +30,5 @@ definition:
         - metavariable: $REPLACE_CHAR
           regex: (*CRLF)
   propagators:
-    - pattern: $SET.add(...)
-  sink: return ...;
+    - pattern: $SET.add(<ANY>)
+  sink: return <ANY>;

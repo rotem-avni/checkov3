@@ -10,5 +10,5 @@ scope:
   languages:
     - python
 definition:
-  source: get_user_input(...)
-  sink: html_output(...)
+  source: get_user_input(<ANY>)
+  sink: html_output(<ANY>)

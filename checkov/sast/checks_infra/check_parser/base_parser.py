@@ -21,7 +21,7 @@ class BaseSastCheckParser(ABC):
             else:
                 semgrep_rule.update(self._parse_definition(check_definition))
         except Exception as e:
-            logging.error(f'the policy in file {check_file} is misconfigured so it could not be parsed properly.\n{e}')
+            logging.error(f'the policy in file {check_file} is could not be parsed properly.\n{e}')
 
         return semgrep_rule
 
