@@ -11,23 +11,29 @@ class SastCheckParserV02(BaseSastCheckParser):
         if not isinstance(definition, dict):
             raise TypeError(f'bad definition type, got {type(definition)} instead of dict')
 
-        conf: Dict[str, Any] = {str(BqlV2ConditionType.PATTERNS): []}
+        conf: Dict[str, Any] = {}
+        single_conditions = []
 
         for k, v in definition.items():
             if k == BqlV2ConditionType.OR:
-                ors = []
-                for or_cond in v:
-                    ors.append(self._parse_definition(or_cond))
-                conf[str(BqlV2ConditionType.PATTERNS)].append({SemgrepAttribute.PATTERN_EITHER.value: ors})
+                conf.setdefault(str(SemgrepAttribute.PATTERN_EITHER), [])
+                for condition in v:
+                    conf[str(SemgrepAttribute.PATTERN_EITHER)].append(self._parse_definition(condition))
 
             elif k == BqlV2ConditionType.AND:
-                for and_cond in v:
-                    conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_definition(and_cond))
+                conf.setdefault(str(SemgrepAttribute.PATTERNS), [])
+                for condition in v:
+                    conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_definition(condition))
 
             elif k == BqlV2ConditionType.PATTERNS:
-                conf[str(BqlV2ConditionType.PATTERNS)].extend(self._parse_definition(v)['patterns'])
+                if isinstance(v, dict):
+                    conf.update(self._parse_definition(v))
+                else:
+                    conf.setdefault(str(SemgrepAttribute.PATTERNS), [])
+                    conf[str(BqlV2ConditionType.PATTERNS)].extend(self._parse_definition(v))
 
             elif k == BqlV2ConditionType.CONDITIONS:
+                conf.setdefault(str(SemgrepAttribute.PATTERNS), [])
                 for condition in v:
                     if str(BqlV2ConditionType.METAVARIABLE) in condition:
                         conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_metavariable_condition(condition))
@@ -36,8 +42,14 @@ class SastCheckParserV02(BaseSastCheckParser):
                             conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_single_condition(ck, cv))
 
             else:
-                conf[str(BqlV2ConditionType.PATTERNS)].append(self._parse_single_condition(k, v))
+                single_conditions.append(self._parse_single_condition(k, v))
 
+        if single_conditions:
+            if len(single_conditions) == 1 and str(SemgrepAttribute.PATTERNS) not in conf:
+                conf.update(single_conditions[0])
+            else:
+                conf.setdefault(str(SemgrepAttribute.PATTERNS), [])
+                conf[str(BqlV2ConditionType.PATTERNS)].extend(single_conditions)
 
         return conf
 

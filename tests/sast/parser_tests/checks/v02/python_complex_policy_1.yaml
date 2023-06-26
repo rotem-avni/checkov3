@@ -27,8 +27,8 @@ definition:
           - pattern: |
               $VAR = ssl
               <ANY>
-              $VAR.check_hostname = False
+              $VAR.check_hostname1 = False
           - pattern: |
               $VAR = ssl
               <ANY>
-              $VAR.check_hostname = False
+              $VAR.check_hostname2 = False

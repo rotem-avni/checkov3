@@ -22,9 +22,7 @@ def test_metadata_parsing():
                 'cwe': 'CWE-289: Authentication Bypass by Alternate Name',
                 'owasp': 'OWASP 1: some owasp'
             },
-            'patterns': [
-                {'pattern': 'set_port($ARG)'}
-            ]
+            'pattern': 'set_port($ARG)'
         }
 
 
@@ -42,7 +40,7 @@ def test_multiline_pattern_parsing():
                 'cwe': 'CWE-289: Authentication Bypass by Alternate Name',
                 'owasp': 'OWASP 1: some owasp'
             },
-            'patterns': [{'pattern': 'def $FUNC(...):\n  ...\n  return'}]
+            'pattern': 'def $FUNC(...):\n  ...\n  return'
         }
 
 
@@ -61,8 +59,8 @@ def test_pattern_not_parsing():
                 'owasp': 'OWASP 1: some owasp'
             },
             'patterns': [
-                {'pattern': 'db_query($ARG)'},
-                {'pattern-not': 'db_query(call())'}
+                {'pattern-not': 'db_query(call())'},
+                {'pattern': 'db_query($ARG)'}
             ]
 
         }
@@ -80,9 +78,9 @@ def test_pattern_either_1_parsing():
             'metadata': {
                 'name': 'check name'
             },
-            'patterns': [{'pattern-either': [
-                        {'patterns': [{'pattern': 'set_port_1($ARG)'}]},
-                        {'patterns': [{'pattern': 'set_port_2($ARG)'}]}]}]
+            'pattern-either': [
+                {'pattern': 'set_port_1($ARG)'},
+                {'pattern': 'set_port_2($ARG)'}]
         }
 
 def test_pattern_either_2_parsing():
@@ -97,9 +95,9 @@ def test_pattern_either_2_parsing():
             'metadata': {
                 'name': 'check name'
             },
-            'patterns': [{'pattern-either': [
-                        {'patterns': [{'pattern': 'set_port_1($ARG)'}]},
-                        {'patterns': [{'pattern': 'set_port_2($ARG)'}]}]}]
+            'pattern-either': [
+                {'pattern': 'set_port_1($ARG)'},
+                {'pattern': 'set_port_2($ARG)'}]
         }
 
 
@@ -111,8 +109,8 @@ def test_explicit_patterns_parsing():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
                 'name': 'check name'},
             'patterns': [
-                {'patterns': [{'pattern': 'set_port_1($ARG)'}]},
-                {'patterns': [{'pattern-regex': 'ABC'}]}]
+                {'pattern': 'set_port_1($ARG)'},
+                {'pattern-regex': 'ABC'}]
         }
 
 
@@ -124,8 +122,8 @@ def test_pattern_not_regex_parsing():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
                 'name': 'check name'},
             'patterns': [
-                {'pattern': 'set_port($ARG)'},
                 {'pattern-not-regex': '^.*(RSA)/.*'},
+                {'pattern': 'set_port($ARG)'}
             ]
         }
 
@@ -138,8 +136,8 @@ def test_pattern_inside_parsing():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
                 'name': 'check name'},
             'patterns': [
-                {'pattern': 'set_port(1)'},
-                {'pattern-inside': 'danger(set_port(1))'}]
+                {'pattern-inside': 'danger(set_port(1))'},
+                {'pattern': 'set_port(1)'}]
         }
 
 
@@ -151,8 +149,8 @@ def test_pattern_not_inside_parsing():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
                 'name': 'check name'},
             'patterns': [
-                {'pattern': 'set_port(1)'},
-                {'pattern-not-inside': 'danger(set_port(1))'}]
+                {'pattern-not-inside': 'danger(set_port(1))'},
+                {'pattern': 'set_port(1)'}]
         }
 
 
@@ -164,11 +162,12 @@ def test_metavariable_pattern_parsing():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
                 'name': 'check name'},
             'patterns': [
-                {'pattern': 'os.system($ARG)'},
                 {'metavariable-pattern': {
                     'metavariable': '$ARG',
                     'pattern': 'os.getcwd()'
-                    }}]
+                    }},
+                {'pattern': 'os.system($ARG)'}
+            ]
         }
 
 
@@ -180,12 +179,12 @@ def test_metavariable_regex_parsing():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
                 'name': 'check name'},
             'patterns': [
-                {'pattern': 'hello($ARG)'},
                 {'metavariable-regex': {
                     'metavariable': '$ARG',
                     'regex': '(os.exec|subprocess.run)'
                     }
-                }
+                },
+                {'pattern': 'hello($ARG)'}
             ]
         }
 
@@ -198,12 +197,12 @@ def test_metavariable_less_than_comparison_parsing():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'severity': 'INFO', 'languages': ['python'], 'metadata': {
                 'name': 'check name'},
             'patterns': [
-                {'pattern': 'equal($ARG)'},
                 {'metavariable-comparison': {
                     'metavariable': '$ARG',
                     'comparison': '$ARG < 20 && ARG >=5'
                     }
                 },
+                {'pattern': 'equal($ARG)'}
             ]
         }
 
@@ -240,8 +239,8 @@ def test_taint_mode_parsing_2():
             'metadata': {'name': 'check name'},
             'pattern-sources': [
                 {'patterns': [
-                    {'pattern': '$VAR'},
-                    {'pattern-inside': '@javax.ws.rs.Path("...")\n$TYPE $FUNC(..., $VAR, ...) {\n  ...\n}\n'}
+                    {'pattern-inside': '@javax.ws.rs.Path("...")\n$TYPE $FUNC(..., $VAR, ...) {\n  ...\n}\n'},
+                    {'pattern': '$VAR'}
                 ]
                  }
             ],
@@ -256,38 +255,32 @@ def test_taint_mode_parsing_3():
             'id': 'CKV_SAST_1', 'message': 'some guidelines', 'languages': ['python'], 'severity': 'INFO',
             'metadata': {'name': 'check name'}, 'mode': 'taint',
             'pattern-sources': [{'patterns': [
-                {'pattern': '$VAR'},
-                {'pattern-inside': '@javax.ws.rs.Path("...")\n$TYPE $FUNC(..., $VAR, ...) {\n  ...\n}\n'}]}],
+                {'pattern-inside': '@javax.ws.rs.Path("...")\n$TYPE $FUNC(..., $VAR, ...) {\n  ...\n}\n'},
+                {'pattern': '$VAR'}]}],
             'pattern-sinks': [{'pattern': 'return ...;'}],
             'pattern-sanitizers': [
-                {'patterns': [{'pattern': 'org.apache.commons.text.StringEscapeUtils.unescapeJava(...);'}]},
+                {'pattern': 'org.apache.commons.text.StringEscapeUtils.unescapeJava(...);'},
                 {'patterns': [
-                    {'pattern': '$STR'},
                     {'pattern-inside': '$STR.replaceAll("$REPLACE_CHAR", "$REPLACER");\n...\n'},
                     {'metavariable-regex': {'metavariable': '$REPLACER', 'regex': '.*^(CRLF).*'}},
-                    {'metavariable-regex': {'metavariable': '$REPLACE_CHAR', 'regex': '(*CRLF)'}}]}],
-            'pattern-propagators': [{'patterns': [{'pattern': '$SET.add(...)'}]}]}
+                    {'metavariable-regex': {'metavariable': '$REPLACE_CHAR', 'regex': '(*CRLF)'}},
+                    {'pattern': '$STR'}]}],
+            'pattern-propagators': [{'pattern': '$SET.add(...)'}]}
 
 
 def test_complex_policy_parsing_1():
     with open(os.path.join(policy_dir, 'python_complex_policy_1.yaml'), "r") as f:
         raw_check = yaml.safe_load(f)
         parsed_check = parser.parse_raw_check_to_semgrep(raw_check)
-        assert parsed_check == {'id': 'CKV_SAST_1', 'message': 'some guidelines', 'languages': ['python'],
-                                'severity': 'INFO', 'metadata': {'name': 'check name'},
-                                'patterns': [
-                                    {'pattern-either': [
-                                        {'patterns': [
-                                            {'pattern': '$VAR = ssl'},
-                                            {'pattern-not-inside': '$VAR = ssl\n...\n$VAR.check_hostname = True\n'}]},
-                                        {'patterns': [
-                                            {'pattern': '$VAR = ssl'},
-                                            {'pattern-not-inside': '$VAR = ssl\n...\n$VAR.check_hostname = True\n'}]},
-                                        {'patterns': [{'pattern-either': [
-                                            {'patterns': [
-                                                {'pattern': '$VAR = ssl\n...\n$VAR.check_hostname = False\n'}]},
-                                            {'patterns': [{'pattern': '$VAR = ssl\n...\n$VAR.check_hostname = False'}]}
-                                        ]}]}]}]}
+        assert parsed_check == {
+            'id': 'CKV_SAST_1', 'message': 'some guidelines', 'languages': ['python'], 'severity': 'INFO',
+            'metadata': {'name': 'check name'}, 'pattern-either': [
+                {'patterns': [{'pattern-not-inside': '$VAR = ssl\n...\n$VAR.check_hostname = True\n'},
+                              {'pattern': '$VAR = ssl'}]},
+                {'patterns': [{'pattern-not-inside': '$VAR = ssl\n...\n$VAR.check_hostname = True\n'},
+                              {'pattern': '$VAR = ssl'}]},
+                {'pattern-either': [{'pattern': '$VAR = ssl\n...\n$VAR.check_hostname1 = False\n'},
+                                    {'pattern': '$VAR = ssl\n...\n$VAR.check_hostname2 = False'}]}]}
 
 def test_manually_bql_to_semgrep_parsing():
     """
