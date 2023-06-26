@@ -93,7 +93,7 @@ class SastCheckParserV01(BaseSastCheckParser):
         return {semgrep_attr: definition_value}
 
     def _parse_taint_cond_type(self, operator: str, definition_value: str | Dict[str, Any]) -> Dict[str, Any]:
-        if isinstance(definition_value, dict) and (definition_value.get(BqlV1ConditionType.AND) or definition_value.get(BqlConditionType.OR)):
+        if isinstance(definition_value, dict) and (definition_value.get(BqlV1ConditionType.AND) or definition_value.get(BqlV1ConditionType.OR)):
             return self._parse_definition(definition_value)
         else:
             if not isinstance(definition_value, str):

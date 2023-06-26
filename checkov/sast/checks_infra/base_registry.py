@@ -139,7 +139,7 @@ class Registry(BaseCheckRegistry):
             logging.error(f'Tried to delete the semgrep temporary rules file but no such file was found.\n{e}')
 
 
-def get_check_version(raw_check: Dict[str, Dict[str, Any]]) -> BqlVersion:
+def get_check_version(raw_check: Dict[str, Dict[str, Any]]) -> str:
     version = raw_check.get('metadata', {}).get('version')
     if not version:
         raise AttributeError('BQL policy is missing the version field')

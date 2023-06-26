@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Dict, Any
+from typing import Dict, Any, List
 
 from checkov.sast.consts import SemgrepAttribute, BqlV2ConditionType, BQLV2_KEY_TO_SEMGREP_ATTR, \
     BQLV2_METAVAR_KEY_TO_SEMGREP_ATTR
@@ -8,7 +8,7 @@ from checkov.sast.checks_infra.check_parser.base_parser import BaseSastCheckPars
 
 
 class SastCheckParserV02(BaseSastCheckParser):
-    def _parse_definition(self, definition: Dict[str, Any], conf: Dict[str, Any] | None = None) -> Dict[str, Any]:
+    def _parse_definition(self, definition: Dict[str, Any]) -> Dict[str, Any]:
         if not isinstance(definition, dict):
             raise TypeError(f'bad definition type, got {type(definition)} instead of dict')
 
@@ -55,7 +55,7 @@ class SastCheckParserV02(BaseSastCheckParser):
         return conf
 
     def _parse_single_condition(self, key: str, value: str) -> Dict[str, str]:
-        attribute = str(BQLV2_KEY_TO_SEMGREP_ATTR.get(key, ''))
+        attribute = BQLV2_KEY_TO_SEMGREP_ATTR.get(key, '')
         if not attribute:
             raise AttributeError(f'unsupported definition field: {key}')
 
@@ -72,7 +72,7 @@ class SastCheckParserV02(BaseSastCheckParser):
 
         return {attribute: metavar_conf}
 
-    def _parse_taint_field(self, key, value):
+    def _parse_taint_field(self, key: str, value: List[str | Dict[str, Any]] | str) -> List[Dict[str, Any]]:
         parsed_list = []
         if isinstance(value, list):
             for item in value:
