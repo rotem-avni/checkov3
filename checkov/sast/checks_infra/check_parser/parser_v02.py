@@ -2,7 +2,8 @@ from __future__ import annotations
 
 from typing import Dict, Any
 
-from checkov.sast.consts import SemgrepAttribute, BqlV2ConditionType
+from checkov.sast.consts import SemgrepAttribute, BqlV2ConditionType, BQLV2_KEY_TO_SEMGREP_ATTR, \
+    BQLV2_METAVAR_KEY_TO_SEMGREP_ATTR
 from checkov.sast.checks_infra.check_parser.base_parser import BaseSastCheckParser
 
 
@@ -54,43 +55,22 @@ class SastCheckParserV02(BaseSastCheckParser):
         return conf
 
     def _parse_single_condition(self, key: str, value: str) -> Dict[str, str]:
-        attribute = ''
-        if key in [
-            BqlV2ConditionType.PATTERN,
-            BqlV2ConditionType.SOURCE,
-            BqlV2ConditionType.SINK,
-            BqlV2ConditionType.SANITIZER,
-            BqlV2ConditionType.PROPAGATOR
-        ]:
-            attribute = str(SemgrepAttribute.PATTERN)
-        elif key == BqlV2ConditionType.REGEX:
-            attribute = str(SemgrepAttribute.PATTERN_REGEX)
-        elif key == BqlV2ConditionType.NOT_PATTERN:
-            attribute = str(SemgrepAttribute.PATTERN_NOT)
-        elif key == BqlV2ConditionType.NOT_REGEX:
-            attribute = str(SemgrepAttribute.PATTERN_NOT_REGEX)
-        elif key == BqlV2ConditionType.WITHIN:
-            attribute = str(SemgrepAttribute.PATTERN_INSIDE)
-        elif key == BqlV2ConditionType.NOT_WITHIN:
-            attribute = str(SemgrepAttribute.PATTERN_NOT_INSIDE)
-        else:
+        attribute = str(BQLV2_KEY_TO_SEMGREP_ATTR.get(key, ''))
+        if not attribute:
             raise AttributeError(f'unsupported definition field: {key}')
 
         return {attribute: value.replace('<ANY>', '...')}
 
     def _parse_metavariable_condition(self, cond: Dict[str, str]) -> Dict[str, Any]:
         metavar_conf = {}
-        cond_type = ''
+        attribute = ''
         for k, v in cond.items():
             metavar_conf[k] = v
-            if k in [BqlV2ConditionType.PATTERN, BqlV2ConditionType.PATTERNS]:
-                cond_type = str(SemgrepAttribute.METAVARIABLE_PATTERN)
-            elif k == BqlV2ConditionType.REGEX:
-                cond_type = str(SemgrepAttribute.METAVARIABLE_REGEX)
-            elif k == BqlV2ConditionType.COMPARISON:
-                cond_type = str(SemgrepAttribute.METAVARIABLE_COMPARISON)
+            attribute = BQLV2_METAVAR_KEY_TO_SEMGREP_ATTR.get(k, '')
+        if not attribute:
+            raise AttributeError(f'unsupported metavariable condition: {cond}')
 
-        return {cond_type: metavar_conf}
+        return {attribute: metavar_conf}
 
     def _parse_taint_field(self, key, value):
         parsed_list = []

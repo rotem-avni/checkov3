@@ -114,6 +114,26 @@ class BqlV2ConditionType(str, Enum):
     COMPARISON = 'comparison'
 
 
+BQLV2_KEY_TO_SEMGREP_ATTR = {
+    BqlV2ConditionType.PATTERN: SemgrepAttribute.PATTERN,
+    BqlV2ConditionType.SOURCE: SemgrepAttribute.PATTERN,
+    BqlV2ConditionType.SINK: SemgrepAttribute.PATTERN,
+    BqlV2ConditionType.SANITIZER: SemgrepAttribute.PATTERN,
+    BqlV2ConditionType.PROPAGATOR: SemgrepAttribute.PATTERN,
+    BqlV2ConditionType.REGEX: SemgrepAttribute.PATTERN_REGEX,
+    BqlV2ConditionType.NOT_PATTERN: SemgrepAttribute.PATTERN_NOT,
+    BqlV2ConditionType.NOT_REGEX: SemgrepAttribute.PATTERN_NOT_REGEX,
+    BqlV2ConditionType.WITHIN: SemgrepAttribute.PATTERN_INSIDE,
+    BqlV2ConditionType.NOT_WITHIN: SemgrepAttribute.PATTERN_NOT_INSIDE,
+}
+
+BQLV2_METAVAR_KEY_TO_SEMGREP_ATTR = {
+    BqlV2ConditionType.PATTERN: SemgrepAttribute.METAVARIABLE_PATTERN,
+    BqlV2ConditionType.PATTERNS: SemgrepAttribute.METAVARIABLE_PATTERN,
+    BqlV2ConditionType.REGEX: SemgrepAttribute.METAVARIABLE_REGEX,
+    BqlV2ConditionType.COMPARISON: SemgrepAttribute.METAVARIABLE_COMPARISON
+}
+
 PATTERN_OPERATOR_TO_SEMGREP_ATTR = {
     Operators.EQUALS: SemgrepAttribute.PATTERN.value,
     Operators.NOT_EQUALS: SemgrepAttribute.PATTERN_NOT.value,
