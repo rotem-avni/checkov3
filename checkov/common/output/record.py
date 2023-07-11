@@ -125,9 +125,9 @@ class Record:
         for line_num, line in code_block:
             spaces = " " * (last_line_number_len - len(str(line_num)))
             if line.lstrip().startswith("#"):
-                code_output.append(f"\t\t{color_codes[0]}{line_num}{spaces} | {line}\n")
+                code_output.append(f"\t\t{color_codes[0]}{line_num}{spaces} | {line}")
             else:
-                code_output.append(f"\t\t{color_codes[0]}{line_num}{spaces} | {color_codes[1]}{line}\n")
+                code_output.append(f"\t\t{color_codes[0]}{line_num}{spaces} | {color_codes[1]}{line}")
         return "".join(code_output)
 
     @staticmethod
