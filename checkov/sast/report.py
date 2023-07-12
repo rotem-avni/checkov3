@@ -5,7 +5,7 @@ from checkov.common.output.report import Report
 
 class SastReport(Report):
 
-    def __init__(self, check_type: str, metadata: Dict[str, Union[str, int]], engine_name: str):
+    def __init__(self, check_type: str, metadata: Dict[str, str], engine_name: str):
         super().__init__(check_type)
         self.metadata = metadata
         self.engine_name = engine_name

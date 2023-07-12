@@ -48,8 +48,8 @@ class Match(BaseModel):
 class RuleMatch(BaseModel):
     check_id: str  # noqa: CCE003
     check_name: str  # noqa: CCE003
-    check_cwe: Union[List[str], str, None]  # noqa: CCE003
-    check_owasp: Union[List[str], str, None]  # noqa: CCE003
+    check_cwe: Optional[Union[List[str], str]]  # noqa: CCE003
+    check_owasp: Optional[Union[List[str], str]]  # noqa: CCE003
     severity: str  # noqa: CCE003
     matches: List[Match]  # noqa: CCE003
 
@@ -62,7 +62,7 @@ class PrismaReport(BaseModel):
 
 
 def create_empty_report(languages: List[SastLanguages]) -> PrismaReport:
-    matches = {}
+    matches: Dict[SastLanguages, Dict[str, RuleMatch]] = {}
     for lang in languages:
         matches[lang] = {}
 
