@@ -79,7 +79,9 @@ class SemgrepEngine(SastEngine):
         for matches in semgrep_output.matches.values():
             for rule_match in matches:
                 match_lang = FILE_EXT_TO_SAST_LANG.get(rule_match.path.suffix.lstrip('.'), '')
-                if not match_lang or not isinstance(match_lang, SastLanguages):  # 2nd condition for typing
+                if not match_lang:
+                    continue
+                if not isinstance(match_lang, SastLanguages):  # 2nd condition for typing
                     raise TypeError(f'file type {rule_match.path.suffix} is not supported by sast framework')
                 semgrep_results_by_language.setdefault(match_lang.value, []).append(rule_match)
 
