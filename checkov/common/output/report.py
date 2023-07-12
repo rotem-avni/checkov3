@@ -302,7 +302,7 @@ class Report:
 
         else:
             if self.check_type.lower().startswith("sast"):
-                output_data += colored(f"SAST engine: {summary.get('engine_name', '').title()}, "
+                output_data += colored(f"SAST engine: {str(summary.get('engine_name', '')).title()}, "
                                        f"Source code files scanned: {summary.get('source_files_count', '?')}, "
                                        f"Policies found: {summary.get('policy_count', '?')}\n\n", "cyan")
             if not is_quiet:
