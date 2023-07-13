@@ -284,7 +284,7 @@ class Report:
                 summary["parsing_errors"],
             )
         else:
-            if self.check_type == CheckType.SCA_PACKAGE or self.check_type.lower().startswith("sast"):
+            if self.check_type == CheckType.SCA_PACKAGE or self.check_type.lower().startswith(CheckType.SAST):
                 message = f"\nFailed checks: {summary['failed']}, Skipped checks: {summary['skipped']}\n\n"
             else:
                 message = f"\nPassed checks: {summary['passed']}, Failed checks: {summary['failed']}, Skipped checks: {summary['skipped']}\n\n"
@@ -302,7 +302,7 @@ class Report:
                 output_data += create_3d_policy_cli_output(self.failed_checks, self.skipped_checks)  # type:ignore[arg-type]
 
         else:
-            if self.check_type.lower().startswith("sast"):
+            if self.check_type.lower().startswith(CheckType.SAST):
                 output_data += colored(f"SAST engine: {str(summary.get(ENGINE_NAME, '')).title()}, "
                                        f"Source code files scanned: {summary.get(SOURCE_FILES_COUNT, -1)}, "
                                        f"Policies found: {summary.get(POLICY_COUNT, -1)}\n\n", "cyan")
