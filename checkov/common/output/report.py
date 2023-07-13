@@ -305,7 +305,7 @@ class Report:
                 output_data += colored(f"SAST engine: {str(summary.get('engine_name', '')).title()}, "
                                        f"Source code files scanned: {summary.get('source_files_count', '?')}, "
                                        f"Policies found: {summary.get('policy_count', '?')}\n\n", "cyan")
-                policies_errors = summary.get('policies_errors', [])
+                policies_errors: List[str] = summary.get('policies_errors', [])
                 if policies_errors:
                     err_str = ""
                     for e in policies_errors:
