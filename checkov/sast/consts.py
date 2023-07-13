@@ -197,3 +197,6 @@ CHECKOV_SEVERITY_TO_SEMGREP_SEVERITY = {
     'MEDIUM': RuleSeverity.WARNING.value,
     'LOW': RuleSeverity.INFO.value,
 }
+
+POLICIES_ERRORS = 'policies_errors'
+POLICIES_ERRORS_COUNT = 'policies_errors_count'

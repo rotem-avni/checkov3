@@ -22,6 +22,7 @@ from checkov.common.output.record import Record, SCA_PACKAGE_SCAN_CHECK_NAME
 from checkov.common.util.consts import PARSE_ERROR_FAIL_FLAG, CHECKOV_RUN_SCA_PACKAGE_SCAN_V2
 from checkov.common.util.json_utils import CustomJSONEncoder
 from checkov.runner_filter import RunnerFilter
+from checkov.sast.consts import POLICIES_ERRORS, POLICIES_ERRORS_COUNT
 
 from checkov.sca_package_2.output import create_cli_output as create_sca_package_cli_output_v2
 
@@ -305,12 +306,9 @@ class Report:
                 output_data += colored(f"SAST engine: {str(summary.get('engine_name', '')).title()}, "
                                        f"Source code files scanned: {summary.get('source_files_count', '?')}, "
                                        f"Policies found: {summary.get('policy_count', '?')}\n\n", "cyan")
-                policies_errors: List[str] = summary.get('policies_errors', [])
+                policies_errors: str = summary.get(POLICIES_ERRORS)
                 if policies_errors:
-                    err_str = ""
-                    for e in policies_errors:
-                        err_str += f"\t- {e}\n"
-                    output_data += colored(f"Policy parsing failures ({len(policies_errors)}):\n{err_str}\n\n", "red")
+                    output_data += colored(f"Policy parsing failures ({summary.get(POLICIES_ERRORS_COUNT)}):\n{policies_errors}\n\n", "red")
             if not is_quiet:
                 for record in self.passed_checks:
                     output_data += record.to_string(compact=is_compact, use_bc_ids=use_bc_ids)
