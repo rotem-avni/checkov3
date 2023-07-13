@@ -200,3 +200,6 @@ CHECKOV_SEVERITY_TO_SEMGREP_SEVERITY = {
 
 POLICIES_ERRORS = 'policies_errors'
 POLICIES_ERRORS_COUNT = 'policies_errors_count'
+ENGINE_NAME = "engine_name"
+SOURCE_FILES_COUNT = "source_files_count"
+POLICY_COUNT = "policy_count"
