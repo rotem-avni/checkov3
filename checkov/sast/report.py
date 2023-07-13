@@ -25,11 +25,11 @@ class SastReport(Report):
         base_summary[POLICIES_ERRORS] = err_str
         base_summary[POLICIES_ERRORS_COUNT] = policies_errors_count
         source_files_count = self.metadata.get(SOURCE_FILES_COUNT)
-        if isinstance(source_files_count, int):
-            base_summary[SOURCE_FILES_COUNT] = source_files_count
+        if isinstance(source_files_count, int) or isinstance(source_files_count, str):
+            base_summary[SOURCE_FILES_COUNT] = str(source_files_count)
 
         policy_count = self.metadata.get(POLICY_COUNT)
-        if isinstance(policy_count, int):
+        if isinstance(policy_count, int) or isinstance(policy_count, str):
             base_summary[POLICY_COUNT] = policy_count
 
         return base_summary
