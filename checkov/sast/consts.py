@@ -24,7 +24,7 @@ class SastEngines(str, Enum):
         return self.value
 
     SEMGREP = 'semgrep'
-    PRISMA = 'prisma'
+    PRISMA = 'prisma cloud'
 
 
 class SemgrepAttribute(str, Enum):

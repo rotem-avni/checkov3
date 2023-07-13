@@ -283,7 +283,7 @@ class Report:
                 summary["parsing_errors"],
             )
         else:
-            if self.check_type == CheckType.SCA_PACKAGE:
+            if self.check_type == CheckType.SCA_PACKAGE or self.check_type.lower().startswith("sast"):
                 message = f"\nFailed checks: {summary['failed']}, Skipped checks: {summary['skipped']}\n\n"
             else:
                 message = f"\nPassed checks: {summary['passed']}, Failed checks: {summary['failed']}, Skipped checks: {summary['skipped']}\n\n"
@@ -305,6 +305,12 @@ class Report:
                 output_data += colored(f"SAST engine: {str(summary.get('engine_name', '')).title()}, "
                                        f"Source code files scanned: {summary.get('source_files_count', '?')}, "
                                        f"Policies found: {summary.get('policy_count', '?')}\n\n", "cyan")
+                policies_errors = summary.get('policies_errors', [])
+                if policies_errors:
+                    err_str = ""
+                    for e in policies_errors:
+                        err_str += f"\t- {e}\n"
+                    output_data += colored(f"Policy parsing failures ({len(policies_errors)}):\n{err_str}\n\n", "red")
             if not is_quiet:
                 for record in self.passed_checks:
                     output_data += record.to_string(compact=is_compact, use_bc_ids=use_bc_ids)
