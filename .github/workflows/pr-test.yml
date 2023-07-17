@@ -153,8 +153,7 @@ jobs:
         env:
           LOG_LEVEL: INFO
           BC_KEY: ${{ secrets.BC_API_KEY }}
-        run: |
-          bash -c './sast_integration_tests/prepare_data.sh
+        run: bash -c './sast_integration_tests/prepare_data.sh'
       - name: Run integration tests
         env:
           LOG_LEVEL: INFO
