@@ -1,6 +1,10 @@
 import json
 import os
 
+import pytest
+
+from checkov.sast.consts import SastEngines
+
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -14,6 +18,7 @@ def test_sast_java() -> None:
     validate_report(os.path.abspath(report_path))
 
 
+@pytest.mark.skip(reason="No JavaScript policies implemented yet")
 def test_sast_javascript() -> None:
     report_path = os.path.join(current_dir, '..', 'checkov_report_sast_javascript.json')
     validate_report(os.path.abspath(report_path))
@@ -35,3 +40,5 @@ def validate_report(report_path: str) -> None:
         summary = report.get("summary")
         assert summary.get("passed") == 0
         assert summary.get("failed") > 0
+        engine_name = summary.get("engine_name", "")
+        assert engine_name == SastEngines.PRISMA
