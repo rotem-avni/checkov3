@@ -8,7 +8,7 @@
 # You can also set those vars in the set_env_vars() function, and uncomment the call to it.
 
 # The working dir should be the checkov project dir.
-# For example: on /Users/ajbara/dev2/checkov dir run BC_API_URL=https://ws342vj2ze.execute-api.us-west-2.amazonaws.com/v1 BC_KEY=e74ebcef-e4fc-4b35-b7f9-1f5bd5c336a6 LOG_LEVEL=Info /Users/ajbara/dev2/checkov/sast_integration_tests/run_integration_tests.sh
+# For example: on /Users/ajbara/dev2/checkov dir run BC_API_URL=https://ws342vj2ze.execute-api.us-west-2.amazonaws.com/v1 BC_KEY=xyz LOG_LEVEL=Info /Users/ajbara/dev2/checkov/sast_integration_tests/run_integration_tests.sh
 
 set_env_vars() {
   export SAST_ARTIFACT_PATH=""

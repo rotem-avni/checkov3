@@ -117,7 +117,7 @@ jobs:
         run: |
           pipenv run pytest integration_tests -k 'not api_key'
 
-  integration-tests-api-key:
+  sast-integration-tests:
     strategy:
       fail-fast: true
       matrix:
