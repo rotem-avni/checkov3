@@ -12,15 +12,15 @@
 
 set_env_vars() {
   export SAST_ARTIFACT_PATH=""
-  export BC_KEY=""
+  export BC_KEY_KEY=""
   export LOG_LEVEL=DEBUG
   export BC_API_URL="https://www.bridgecrew.cloud"
 }
 
 prepare_data () {
-  python checkov/main.py -s --framework sast_python -d repositories/flask --bc-api-key $BC_KEY -o json > checkov_report_sast_python.json
-  python checkov/main.py -s --framework sast_java -d repositories/jenkins --bc-api-key $BC_KEY -o json > checkov_report_sast_java.json
-  python checkov/main.py -s --framework sast_javascript -d repositories/axios --bc-api-key $BC_KEY -o json > checkov_report_sast_javascript.json
+  python checkov/main.py -s --framework sast_python -d repositories/flask -o json > checkov_report_sast_python.json
+  python checkov/main.py -s --framework sast_java -d repositories/jenkins -o json > checkov_report_sast_java.json
+  python checkov/main.py -s --framework sast_javascript -d repositories/axios -o json > checkov_report_sast_javascript.json
 
 }
 
@@ -46,8 +46,8 @@ delete_reports () {
 
 #set_env_vars
 
-echo $BC_KEY
-if [[ -z "$BC_KEY" ]]; then
+echo $BC_API_KEY
+if [[ -z "BC_API_KEY" ]]; then
    echo "BC_API_KEY is missing."
    exit 1
 fi
