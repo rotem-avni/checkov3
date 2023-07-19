@@ -121,7 +121,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        python: [ "3.7", "3.8" ]
+        python: [ "3.8" ]
         os: [ ubuntu-latest, macos-latest]
     runs-on: ${{ matrix.os }}
     steps:
@@ -152,12 +152,12 @@ jobs:
       - name: Create checkov reports
         env:
           LOG_LEVEL: INFO
-          BC_KEY: ${{ secrets.BC_API_KEY }}
+          BC_API_KEY: ${{ secrets.BC_API_KEY }}
         run: bash -c './sast_integration_tests/prepare_data.sh'
       - name: Run integration tests
         env:
           LOG_LEVEL: INFO
-          BC_KEY: ${{ secrets.BC_API_KEY }}
+          BC_API_KEY: ${{ secrets.BC_API_KEY }}
         run: |
           pipenv run pytest sast_integration_tests
 
