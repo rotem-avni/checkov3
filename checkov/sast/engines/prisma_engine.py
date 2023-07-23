@@ -77,7 +77,7 @@ class PrismaEngine(SastEngine):
                         current_version = match.groups()[0]
 
         if os.getenv("SAST_ARTIFACT_PATH"):
-            logging.debug(f'using local artifact in path {os.getenv("SAST_ARTIFACT_PATH")}')
+            logging.info(f'using local artifact in path {os.getenv("SAST_ARTIFACT_PATH")}')
             return True
         status: bool = self.download_sast_artifacts(current_version)
 
@@ -126,15 +126,20 @@ class PrismaEngine(SastEngine):
 
     def get_sast_artifact(self) -> Optional[Path]:
         env_variable_path = os.getenv("SAST_ARTIFACT_PATH")
+        logging.info(f"get_sast_artifact: env_variable_path={env_variable_path}")
         if env_variable_path and os.path.isfile(env_variable_path):
-            return Path(env_variable_path)
+            path = Path(env_variable_path)
+            logging.info(f"get_sast_artifact: returning path {path}")
+            return path
 
         files = [(self.prisma_sast_dir_path / f) for f in os.listdir(self.prisma_sast_dir_path) if
                  (self.prisma_sast_dir_path / f).is_file() and "library" in f]
 
         if len(files) == 0:
+            logging.info(f"get_sast_artifact: got 0 files")
             return None
 
+        logging.info(f"get_sast_artifact: returning file {files[0]}")
         return files[0]
 
     def run_go_library(self, languages: Set[SastLanguages],
