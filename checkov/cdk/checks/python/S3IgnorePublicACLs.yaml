@@ -1,0 +1,38 @@
+metadata:
+  id: CKV3_SAST_AWS_55
+  version: 0.2
+  approach: define failing
+  name: Ensure S3 bucket has ignore public ACLs enabled
+  guidelines: |
+    The IgnorePublicAcls setting causes S3 to ignore all public ACLs on a bucket and any objects that it contains. 
+    Enabling this setting does not affect the persistence of any existing ACLs and does not prevent new public ACLs 
+    from being set. This setting will block public access granted by ACLs while still allowing PUT Object calls 
+    that include a public ACL.
+  category: General
+scope:
+  languages:
+    - python
+  framework:
+    - aws-cdk
+definition:
+  or:
+    - pattern: $ARG = $S3.Bucket(<ANY>)
+      conditions:
+        - not_pattern: |
+            $ARG = $S3.Bucket(<ANY>,
+                        block_public_access=$S3.BlockPublicAccess(
+                          ignore_public_acls=True
+                        ),<ANY>)
+        - within: |
+            from aws_cdk import aws_s3 as $S3
+            <ANY>
+    - pattern: $ARG = aws_s3.Bucket(<ANY>)
+      conditions:
+        - not_pattern: |
+            $ARG = aws_s3.Bucket(<ANY>,
+                            block_public_access=aws_s3.BlockPublicAccess(
+                              ignore_public_acls=True
+                            ),<ANY>)
+        - within: |
+            from aws_cdk import aws_s3
+            <ANY>
