@@ -6,8 +6,6 @@ metadata:
 scope:
   languages:
     - python
-  framework:
-    - aws-cdk
 definition:
   or:
     - pattern: $ARG = $S3.Bucket(<ANY>)
