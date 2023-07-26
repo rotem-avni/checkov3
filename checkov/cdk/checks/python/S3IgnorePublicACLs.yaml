@@ -1,5 +1,6 @@
 metadata:
   version: 0.2
+  approach: define failing
   id: CKV_AWS_55
   name: Ensure S3 bucket has ignore public ACLs enabled
   category: GENERAL_SECURITY
