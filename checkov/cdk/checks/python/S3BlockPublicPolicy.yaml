@@ -8,6 +8,11 @@ scope:
   languages:
     - python
 definition:
-  not_pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
-                  block_public_access=aws_cdk.aws_s3.BlockPublicAccess(block_public_policy=True),
-                  <ANY>)
+  pattern: aws_cdk.aws_s3.Bucket(<ANY>)
+  conditions:
+    - not_pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
+                      block_public_access=aws_cdk.aws_s3.BlockPublicAccess(block_public_policy=True),
+                      <ANY>)
+    - not_pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
+                      block_public_access=s4.BlockPublicAccess.BLOCK_ALL,
+                      <ANY>)
