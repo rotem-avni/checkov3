@@ -23,3 +23,7 @@ def test_CKV_AWS_145_S3BucketKMSEncryption():
 
 def test_CKV2_AWS_6_S3BucketPublicAccessBlock():
     run(check_name="S3BucketPublicAccessBlock")
+
+
+def test_CKV_AWS_20_S3PublicACLRead():
+    run(check_name="S3PublicACLRead")
