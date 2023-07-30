@@ -9,10 +9,10 @@ scope:
     - python
 definition:
   - or:
-    - pattern: "aws_cdk.aws_s3.Bucket(...)"
+    - pattern: "aws_cdk.aws_s3.Bucket(<ANY>)"
       conditions:
-        - not_pattern: "aws_cdk.aws_s3.Bucket(..., encryption=aws_cdk.aws_s3.BucketEncryption.$ANY_VAR, ...)"
-    - pattern: "aws_cdk.aws_s3.Bucket(..., encryption=aws_cdk.aws_s3.BucketEncryption.$ENCRYPTION, ...)"
+        - not_pattern: "aws_cdk.aws_s3.Bucket(<ANY>, encryption=aws_cdk.aws_s3.BucketEncryption.$ANY_VAR, <ANY>)"
+    - pattern: "aws_cdk.aws_s3.Bucket(<ANY>, encryption=aws_cdk.aws_s3.BucketEncryption.$ENCRYPTION, <ANY>)"
       conditions:
         - metavariable: $ENCRYPTION
           regex: ^(S3_MANAGED|UNENCRYPTED)$

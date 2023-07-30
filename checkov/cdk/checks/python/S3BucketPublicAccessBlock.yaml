@@ -8,6 +8,6 @@ scope:
   languages:
     - python
 definition:
-  pattern: "aws_cdk.aws_s3.Bucket(...)"
+  pattern: "aws_cdk.aws_s3.Bucket(<ANY>)"
   conditions:
-    not_pattern: "aws_cdk.aws_s3.Bucket(..., block_public_access=$ANY_VAR, ...)"
+    not_pattern: "aws_cdk.aws_s3.Bucket(<ANY>, block_public_access=$ANY_VAR, <ANY>)"
