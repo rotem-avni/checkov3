@@ -1,16 +1,13 @@
 metadata:
-  version: 0.1
+  version: 0.2
   id: CKV2_AWS_6
   name: Ensure that S3 bucket has a Public Access block
   category: NETWORKING
+  approach: define failing
 scope:
   languages:
     - python
 definition:
-  - and:
-      - cond_type: pattern
-        operator: equals
-        value: "aws_cdk.aws_s3.Bucket(...)"
-      - cond_type: pattern
-        operator: not_equals
-        value: "aws_cdk.aws_s3.Bucket(..., block_public_access=$ANY_VAR, ...)"
+  pattern: "aws_cdk.aws_s3.Bucket(...)"
+  conditions:
+    not_pattern: "aws_cdk.aws_s3.Bucket(..., block_public_access=$ANY_VAR, ...)"
