@@ -27,3 +27,7 @@ def test_CKV2_AWS_6_S3BucketPublicAccessBlock():
 
 def test_CKV2_AWS_55_S3BucketIgnorePublicACLs():
     run(check_name="S3BucketIgnorePublicACLs")
+
+
+def test_CKV_AWS_54_S3BlockPublicPolicy():
+    run(check_name="S3BlockPublicPolicy")
