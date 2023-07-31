@@ -31,3 +31,8 @@ def test_CKV2_AWS_55_S3BucketIgnorePublicACLs():
 
 def test_CKV_AWS_54_S3BlockPublicPolicy():
     run(check_name="S3BlockPublicPolicy")
+
+
+def test_CKV_AWS_26_SNSTopicEncryption():
+    run(check_name="SNSTopicEncryption")
+
