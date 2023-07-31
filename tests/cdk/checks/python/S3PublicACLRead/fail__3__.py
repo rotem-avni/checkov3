@@ -21,7 +21,7 @@ class MyS3Stack(Stack):
                             )
         
         bucket3 = s3.Bucket(self, "MyPublicReadBucket3",
-                            bucket_name="my-public-read-bucket3",  # replace with your desired bucket name
+                            bucket_name="my-public-read-bucket3",
                             public_read_access=True
                             )
 

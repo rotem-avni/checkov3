@@ -11,7 +11,12 @@ class MyS3Stack(Stack):
         super().__init__(scope, id, **kwargs)
 
         bucket = s3.Bucket(self, "MyPublicReadBucket",
-                            bucket_name="my-public-read-bucket"  # replace with your desired bucket name
+                            bucket_name="my-public-read-bucket"
+                            )
+        
+        bucket2 = s3.Bucket(self, "MyPublicReadBucket2",
+                            bucket_name="my-public-read-bucket2",
+                            access_control=s3.BucketAccessControl.PRIVATE
                             )
 
 app = App()

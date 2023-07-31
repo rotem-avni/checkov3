@@ -19,6 +19,15 @@ class MyStac2(Stack):
             )
         )
 
+        # pass
+        bucket2 = s4.Bucket(self, "MyS3Bucket2",
+            bucket_name='my-s3-bucket2',
+            public_read_access=False,
+            block_public_access=s4.BlockPublicAccess(
+                ignore_public_acls=True
+            )
+        )
+
 app = App()
 MyStack(app, "my-stack-name")
 
