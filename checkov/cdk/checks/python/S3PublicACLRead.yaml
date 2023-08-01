@@ -9,12 +9,15 @@ scope:
     - python
 definition:
   or:
-  - pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
-                access_control=s3.BucketAccessControl.PUBLIC_READ,
-                <ANY>)
-  - pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
-                access_control=s3.BucketAccessControl.PUBLIC_READ_WRITE,
-                <ANY>)
-  - pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
-                public_read_access=True,
-                <ANY>)
+    - pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
+                    access_control=$ARG,
+                    <ANY>)
+      conditions:
+        or:
+          - metavariable: $ARG
+            pattern: aws_cdk.aws_s3.BucketAccessControl.PUBLIC_READ
+          - metavariable: $ARG
+            pattern: aws_cdk.aws_s3.BucketAccessControl.PUBLIC_READ_WRITE
+    -  pattern: aws_cdk.aws_s3.Bucket(<ANY>, 
+                    public_read_access=True,
+                    <ANY>)

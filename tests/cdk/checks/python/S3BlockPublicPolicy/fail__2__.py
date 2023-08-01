@@ -14,6 +14,9 @@ class MyS3Stack(Stack):
             block_public_access=s4.BlockPublicAccess(block_public_policy=False)
         )
 
+        bucket2 = s4.Bucket(self, "MyBlockedBucket2"
+        )
+
 app = App()
 MyS3Stack(app, "MyS3Stack")
 app.synth()

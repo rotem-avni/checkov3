@@ -8,4 +8,7 @@ scope:
   languages:
     - python
 definition:
-  pattern: aws_cdk.aws_s3.Bucket(<ANY>, block_public_access=aws_cdk.aws_s3.BlockPublicAccess(ignore_public_acls=False),<ANY>)
+  pattern: aws_cdk.aws_s3.Bucket(<ANY>, block_public_access=$ARG,<ANY>)
+  conditions:
+    - metavariable: $ARG
+      pattern: aws_cdk.aws_s3.BlockPublicAccess(ignore_public_acls=False)
