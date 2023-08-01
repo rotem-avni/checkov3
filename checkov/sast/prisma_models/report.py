@@ -5,8 +5,8 @@ from checkov.sast.consts import SastLanguages
 
 
 class Profiler(BaseModel):
-    duration: str   # noqa: CCE003
-    memory: int     # noqa: CCE003
+    duration: str  # noqa: CCE003
+    memory: int  # noqa: CCE003
 
 
 class Point(BaseModel):
@@ -36,7 +36,7 @@ class MatchMetavariable(BaseModel):
 
 
 class DataFlow(BaseModel):
-    data_flow: List[Flow] # noqa: CCE003
+    data_flow: List[Flow]  # noqa: CCE003
 
 
 class MatchMetadata(BaseModel):
