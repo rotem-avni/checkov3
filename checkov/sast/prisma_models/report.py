@@ -36,7 +36,7 @@ class MatchMetavariable(BaseModel):
 
 
 class DataFlow(BaseModel):
-    data_flow: List[Flow]
+    data_flow: List[Flow] # noqa: CCE003
 
 
 class MatchMetadata(BaseModel):

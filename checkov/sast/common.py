@@ -15,7 +15,7 @@ def get_data_flow_code_block(data_flow: List[Flow], split_code_block: List[str])
         code_block.append((-1, PLACEHOLDER_LINE))
         code_block.append((data_flow[-1].end.row, split_code_block[-1]))
     elif len(split_code_block) != 1:
-        logging.warning(f"got illegal code block for taint mode: split_code_block")
+        logging.warning(f"got illegal code block for taint mode: {split_code_block}")
     return cut_code_block_ident(code_block)
 
 
