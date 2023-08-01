@@ -5,15 +5,8 @@ import logging
 from typing import List, Tuple
 
 from checkov.common.output.record import PLACEHOLDER_LINE
-from checkov.sast.prisma_models.report import MatchLocation, Flow
+from checkov.sast.prisma_models.report import Flow
 
-
-# def get_code_block(location: MatchLocation, is_taint: bool = False) -> List[Tuple[int, str]]:
-#     if is_taint:
-#         code_block = [(index, line) for index, line in enumerate(location., start=start)]
-#     else:
-#         split_code_block = [line + '\n' for line in location.code_block.split('\n')]
-#         return get_code_block_from_start(split_code_block, location.start.row)
 
 def get_data_flow_code_block(data_flow: List[Flow], split_code_block: List[str]) -> List[Tuple[int, str]]:
     code_block: List[Tuple[int, str]] = [(data_flow[0].start.row, split_code_block[0])]
