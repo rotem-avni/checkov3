@@ -7,6 +7,7 @@ metadata:
 scope:
   languages:
     - python
+#TODO: move to metavariable when nested metavariables is an option
 definition:
   - or:
     - pattern: "aws_cdk.aws_s3.Bucket(<ANY>)"
