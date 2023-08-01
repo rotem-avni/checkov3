@@ -55,7 +55,7 @@ class PrismaEngine(SastEngine):
         prisma_result = self.run_go_library(languages,
                                             source_codes=targets,
                                             policies=registry.checks_dirs_path,
-                                            checks=registry.runner_filter.checks)
+                                            checks=registry.runner_filter.checks if registry.runner_filter else [])
 
         return prisma_result
 
