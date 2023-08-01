@@ -35,9 +35,14 @@ class MatchMetavariable(BaseModel):
     code_block: Optional[str]  # noqa: CCE003
 
 
+class DataFlow(BaseModel):
+    data_flow: List[Flow]
+
+
 class MatchMetadata(BaseModel):
     metavariables: Dict[str, MatchMetavariable]  # noqa: CCE003
     variables: Dict[str, Any]  # noqa: CCE003
+    taint_mode: Optional[DataFlow]  # noqa: CCE003
 
 
 class Match(BaseModel):

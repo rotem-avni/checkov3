@@ -1,10 +1,32 @@
 from __future__ import annotations
 
+import logging
 # temporary code common to semgrep and go runner
 from typing import List, Tuple
 
+from checkov.common.output.record import PLACEHOLDER_LINE
+from checkov.sast.prisma_models.report import MatchLocation, Flow
 
-def get_code_block(lines: List[str], start: int) -> List[Tuple[int, str]]:
+
+# def get_code_block(location: MatchLocation, is_taint: bool = False) -> List[Tuple[int, str]]:
+#     if is_taint:
+#         code_block = [(index, line) for index, line in enumerate(location., start=start)]
+#     else:
+#         split_code_block = [line + '\n' for line in location.code_block.split('\n')]
+#         return get_code_block_from_start(split_code_block, location.start.row)
+
+def get_data_flow_code_block(data_flow: List[Flow], split_code_block: List[str]) -> List[Tuple[int, str]]:
+    code_block: List[Tuple[int, str]] = [(data_flow[0].start.row, split_code_block[0])]
+
+    if len(split_code_block) == 3:
+        code_block.append((-1, PLACEHOLDER_LINE))
+        code_block.append((data_flow[-1].end.row, split_code_block[-1]))
+    elif len(split_code_block) != 1:
+        logging.warning(f"got illegal code block for taint mode: split_code_block")
+    return cut_code_block_ident(code_block)
+
+
+def get_code_block_from_start(lines: List[str], start: int) -> List[Tuple[int, str]]:
     code_block = [(index, line) for index, line in enumerate(lines, start=start)]
     return cut_code_block_ident(code_block)
 
