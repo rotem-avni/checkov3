@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import logging
 # temporary code common to semgrep and go runner
 from typing import List, Tuple
 
@@ -12,7 +11,7 @@ def get_data_flow_code_block(data_flow: List[Flow]) -> List[Tuple[int, str]]:
     code_block: List[Tuple[int, str]] = []
 
     prev_end = -1
-    for i, flow in enumerate(data_flow):
+    for flow in data_flow:
         if prev_end >= 0 and abs(prev_end - flow.start.row) > 1:
             code_block.append((-1, PLACEHOLDER_LINE))
         code_block.append((flow.start.row, flow.code_block + "\n"))
