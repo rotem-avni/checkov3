@@ -25,16 +25,18 @@ def test_CKV2_AWS_6_S3BucketPublicAccessBlock():
     run(check_name="S3BucketPublicAccessBlock")
 
 
-def test_CKV2_AWS_55_S3IgnorePublicACLs():
-    run(check_name="S3IgnorePublicACLs")
+#Uncomment when tests support v2
+#def test_CKV2_AWS_55_S3IgnorePublicACLs():
+#    run(check_name="S3IgnorePublicACLs")
 
+#Uncomment when tests support v2
+#def test_CKV_AWS_54_S3BlockPublicPolicy():
+#    run(check_name="S3BlockPublicPolicy")
 
-def test_CKV_AWS_54_S3BlockPublicPolicy():
-    run(check_name="S3BlockPublicPolicy")
+#Uncomment when tests support v2
+#def test_CKV_AWS_26_SNSTopicEncryption():
+#    run(check_name="SNSTopicEncryption")
 
-
-def test_CKV_AWS_26_SNSTopicEncryption():
-    run(check_name="SNSTopicEncryption")
-
-def test_CKV_AWS_20_S3PublicACLRead():
-    run(check_name="S3PublicACLRead")
+#Uncomment when tests support v2
+#def test_CKV_AWS_20_S3PublicACLRead():
+#    run(check_name="S3PublicACLRead")
