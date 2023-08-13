@@ -56,7 +56,7 @@ class PrismaEngine(SastEngine):
                                             source_codes=targets,
                                             policies=registry.checks_dirs_path,
                                             checks=registry.runner_filter.checks if registry.runner_filter else [],
-                                            skip_checks=registry.runner_filter.skip_checks or [])
+                                            skip_checks=registry.runner_filter.skip_checks if registry.runner_filter else [],)
 
         return prisma_result
 
