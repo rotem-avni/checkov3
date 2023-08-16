@@ -194,12 +194,12 @@ def get_checks(frameworks: Optional[List[str]] = None, use_bc_ids: bool = False,
                 printable_checks_list.append((check_id, check_type, "secrets", check_type, "secrets", check_link))
 
     if any(x in framework_list for x in ("all", "sast", *set((f"sast_{lang.value}" for lang in SastLanguages.set())))):
-        langs = [lang for lang in SastLanguages.set() if f"sast_{lang.value}" in framework_list]
+        langs = {lang for lang in SastLanguages.set() if f"sast_{lang.value}" in framework_list}
         if not langs:
             langs = SastLanguages.set()
         sast_policies: SastPolicies = PrismaEngine().get_policies(languages=langs)
 
-        for lang, policies_list in sast_policies:
+        for _, policies_list in sast_policies:
             for policy in policies_list:
                 policy_metadata = policy.Metadata
                 if not policy_metadata:

@@ -7,7 +7,7 @@ import platform
 import re
 import stat
 from pathlib import Path
-from typing import Optional, List, Set, Dict, Any
+from typing import Optional, List, Set, Union
 
 from cachetools import cached, TTLCache
 from pydantic import ValidationError
@@ -153,7 +153,7 @@ class PrismaEngine(SastEngine):
                        checks: List[str],
                        skip_checks: List[str],
                        skip_path: List[str],
-                       list_policies: bool) -> List[Report] | SastPolicies:
+                       list_policies: bool) -> Union[List[Report], SastPolicies]:
 
         validate_params(languages, source_codes, policies, list_policies)
 
@@ -198,7 +198,7 @@ class PrismaEngine(SastEngine):
         if list_policies:
             try:
                 return SastPolicies(**d)
-            except ValidationError as e:
+            except ValidationError:
                 return {}
 
         try:
@@ -246,7 +246,7 @@ class PrismaEngine(SastEngine):
 
         return reports
 
-    def get_policies(self, languages: Set[SastLanguages]):
+    def get_policies(self, languages: Set[SastLanguages]) -> SastPolicies:
         if not bc_integration.bc_api_key:
             logging.info("The --bc-api-key flag needs to be set to run Sast prisma scanning")
             return []
