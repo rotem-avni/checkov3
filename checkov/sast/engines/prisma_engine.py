@@ -153,7 +153,7 @@ class PrismaEngine(SastEngine):
                        checks: List[str],
                        skip_checks: List[str],
                        skip_path: List[str],
-                       list_policies: bool) -> Union[List[Report], SastPolicies]:
+                       list_policies: bool = False) -> Union[List[Report], SastPolicies]:
 
         validate_params(languages, source_codes, policies, list_policies)
 
