@@ -1,10 +1,7 @@
-from typing import Set, List
+from typing import Set, List, TYPE_CHECKING
 from typing_extensions import TypedDict
 from checkov.sast.consts import SastLanguages
-import sys
-if sys.version_info >= (3, 8):
-    from typing import NotRequired
-else:
+if TYPE_CHECKING:
     from typing_extensions import NotRequired
 
 
