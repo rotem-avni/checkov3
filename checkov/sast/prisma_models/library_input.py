@@ -1,8 +1,10 @@
-from typing import Set, List, TYPE_CHECKING
-from typing_extensions import TypedDict
+from typing import Set, List
 from checkov.sast.consts import SastLanguages
-if TYPE_CHECKING:
-    from typing_extensions import NotRequired
+import sys
+if sys.version_info < (3, 11):
+    from typing_extensions import TypedDict, NotRequired
+else:
+    from typing import TypedDict, NotRequired
 
 
 class LibraryInput(TypedDict):
