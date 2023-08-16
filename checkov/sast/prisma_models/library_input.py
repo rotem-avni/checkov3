@@ -1,4 +1,4 @@
-from typing import Set, List
+from typing import Set, List, NotRequired
 from typing_extensions import TypedDict
 from checkov.sast.consts import SastLanguages
 
@@ -10,3 +10,4 @@ class LibraryInput(TypedDict):
     checks: List[str]
     skip_checks: List[str]
     skip_path: List[str]
+    list_policies: NotRequired[bool]
