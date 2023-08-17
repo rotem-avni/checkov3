@@ -206,7 +206,7 @@ def get_checks(frameworks: Optional[List[str]] = None, use_bc_ids: bool = False,
                     continue
 
                 printable_checks_list.append(
-                    (policy_metadata.ID, "code block", "sast", policy_metadata.Name, policy.Language.value.capitalize(), "")
+                    (policy_metadata.ID, "code block", "sast", policy_metadata.Name, policy.Language.value.capitalize(), "Available in the platform")
                 )
     return sorted(printable_checks_list, key=get_compare_key)  # type:ignore[arg-type]
 
