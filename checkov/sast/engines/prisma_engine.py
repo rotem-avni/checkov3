@@ -46,8 +46,10 @@ class PrismaEngine(SastEngine):
             logging.info("The --bc-api-key flag needs to be set to run Sast prisma scanning")
             return []
 
+        logging.info("[SAST] Triggered get_reports")
         self.setup_sast_artifact()
         prisma_lib_path = self.get_sast_artifact()
+        logging.info(f"[SAST] prisma_lib_path =  {prisma_lib_path}")
         if not prisma_lib_path:
             return []
 
@@ -66,6 +68,7 @@ class PrismaEngine(SastEngine):
         return prisma_result
 
     def setup_sast_artifact(self) -> bool:
+        logging.info("[SAST] setup sast artifact")
         current_version = ""
         if not self.prisma_sast_dir_path.exists():
             try:
@@ -75,6 +78,7 @@ class PrismaEngine(SastEngine):
         else:
             is_file_exists = [f for f in os.listdir(self.prisma_sast_dir_path) if
                               (self.prisma_sast_dir_path / f).is_file() and "library" in f]
+            logging.info(f"[SAST] is_file_exists? {is_file_exists}")
             if len(is_file_exists) > 0:
                 latest_file = os.path.join(self.prisma_sast_dir_path, is_file_exists[0])
                 creation_time = os.path.getmtime(latest_file)
@@ -86,7 +90,8 @@ class PrismaEngine(SastEngine):
                         current_version = match.groups()[0]
 
         if os.getenv("SAST_ARTIFACT_PATH"):
-            logging.debug(f'using local artifact in path {os.getenv("SAST_ARTIFACT_PATH")}')
+            logging.info(f'using local artifact in path {os.getenv("SAST_ARTIFACT_PATH")}')
+            logging.info(f"[SAST] checking if file - ? {os.path.isfile(os.getenv('SAST_ARTIFACT_PATH'))}")
             return True
         status: bool = self.download_sast_artifacts(current_version)
 
@@ -182,8 +187,9 @@ class PrismaEngine(SastEngine):
         analyze_code.restype = ctypes.c_void_p
 
         # send the document as a byte array of json format
+        logging.info(f"[SAST] calling analyze_code")
         analyze_code_output = analyze_code(json.dumps(document).encode('utf-8'))
-
+        logging.info(f"[SAST] analyze_code_output = {analyze_code_output}")
         # we dereference the pointer to a byte array
         analyze_code_bytes = ctypes.string_at(analyze_code_output)
 
@@ -193,6 +199,7 @@ class PrismaEngine(SastEngine):
         try:
             result = PrismaReport(**d)
         except ValidationError as e:
+            logging.info(f"[SAST] got validation error: {e}")
             result = create_empty_report(list(languages))
             result.errors = {REPORT_PARSING_ERRORS: [str(err) for err in e.errors()]}
         return self.create_report(result)
