@@ -110,6 +110,8 @@ class PrismaEngine(SastEngine):
                                        headers=headers,
                                        should_call_raise_for_status=True)
 
+            logging.info(f"[SAST] response = {response}")
+
             if response.status_code == 304:
                 return True
 
@@ -142,7 +144,9 @@ class PrismaEngine(SastEngine):
         env_variable_path = os.getenv("SAST_ARTIFACT_PATH")
         logging.info(f"[SAST] env_variable_path = {env_variable_path}")
         if env_variable_path and os.path.isfile(env_variable_path):
-            return Path(env_variable_path)
+            cli_file_name_path = Path(env_variable_path)
+            cli_file_name_path.chmod(cli_file_name_path.stat().st_mode | stat.S_IEXEC | stat.S_IREAD)
+            return cli_file_name_path
 
         files = [(self.prisma_sast_dir_path / f) for f in os.listdir(self.prisma_sast_dir_path) if
                  (self.prisma_sast_dir_path / f).is_file() and "library" in f]
