@@ -67,7 +67,7 @@ def print_checks(frameworks: Optional[List[str]] = None, use_bc_ids: bool = Fals
                                        include_all_checkov_policies=include_all_checkov_policies,
                                        filtered_policy_ids=filtered_policy_ids or [])
     print(
-        tabulate(printable_checks_list, headers=["Id", "Type", "Entity", "Policy", "IaC", "Resource Link"], tablefmt="github",
+        tabulate(printable_checks_list, headers=["Id", "Type", "Entity", "Policy", "Technology", "Resource Link"], tablefmt="github",
                  showindex=True))
     print("\n\n---\n\n")
 
@@ -206,7 +206,7 @@ def get_checks(frameworks: Optional[List[str]] = None, use_bc_ids: bool = False,
                     continue
 
                 printable_checks_list.append(
-                    (policy_metadata.ID, "Code Block", "code block", policy_metadata.Name, "SAST", "")
+                    (policy_metadata.ID, "code block", "sast", policy_metadata.Name, policy.Language.value.capitalize(), "")
                 )
     return sorted(printable_checks_list, key=get_compare_key)  # type:ignore[arg-type]
 
