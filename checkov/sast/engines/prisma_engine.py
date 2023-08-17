@@ -145,7 +145,7 @@ class PrismaEngine(SastEngine):
         logging.info(f"[SAST] env_variable_path = {env_variable_path}")
         if env_variable_path and os.path.isfile(env_variable_path):
             cli_file_name_path = Path(env_variable_path)
-            cli_file_name_path.chmod(cli_file_name_path.stat().st_mode | stat.S_IEXEC | stat.S_IREAD)
+            # cli_file_name_path.chmod(cli_file_name_path.stat().st_mode | stat.S_IEXEC | stat.S_IREAD)
             return cli_file_name_path
 
         files = [(self.prisma_sast_dir_path / f) for f in os.listdir(self.prisma_sast_dir_path) if
