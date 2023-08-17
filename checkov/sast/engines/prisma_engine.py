@@ -7,7 +7,7 @@ import platform
 import re
 import stat
 from pathlib import Path
-from typing import Optional, List, Set, Union
+from typing import Optional, List, Set, Union, Dict, Any
 
 from cachetools import cached, TTLCache
 from pydantic import ValidationError
@@ -180,6 +180,9 @@ class PrismaEngine(SastEngine):
             }
         }
 
+        if list_policies:
+            return self.run_go_library_list_policies(document)
+
         library = ctypes.cdll.LoadLibrary(self.lib_path)
         analyze_code = library.analyzeCode
         analyze_code.restype = ctypes.c_void_p
@@ -194,19 +197,34 @@ class PrismaEngine(SastEngine):
         analyze_code_string = analyze_code_bytes.decode('utf-8')
         d = json.loads(analyze_code_string)
 
-        # in case checkov is executed w/ --list option, returning all sast policies
-        if list_policies:
-            try:
-                return SastPolicies(**d)
-            except ValidationError:
-                return {}
-
         try:
             result = PrismaReport(**d)
         except ValidationError as e:
             result = create_empty_report(list(languages))
             result.errors = {REPORT_PARSING_ERRORS: [str(err) for err in e.errors()]}
         return self.create_report(result)
+
+    def run_go_library_list_policies(self, document: Dict[str, Any]) -> SastPolicies:
+        library = ctypes.cdll.LoadLibrary(self.lib_path)
+        list_policies = library.listPolicies
+        list_policies.restype = ctypes.c_void_p
+
+        # send the document as a byte array of json format
+        list_policies_output = list_policies(json.dumps(document).encode('utf-8'))
+
+        # we dereference the pointer to a byte array
+        list_policies_bytes = ctypes.string_at(list_policies_output)
+
+        # convert our byte array to a string
+        list_policies_string = list_policies_bytes.decode('utf-8')
+        d = json.loads(list_policies_string)
+
+        try:
+            return SastPolicies(**d)
+        except ValidationError:
+            if d.get('errors'):
+                logging.error(d.get('errors'))
+            return {}
 
     def create_report(self, prisma_report: PrismaReport) -> List[Report]:
         logging.debug("Printing Prisma-SAST profiling data")
