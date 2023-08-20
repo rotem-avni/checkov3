@@ -205,19 +205,23 @@ class PrismaEngine(SastEngine):
         return self.create_report(result)
 
     def run_go_library_list_policies(self, document: Dict[str, Any]) -> SastPolicies:
-        library = ctypes.cdll.LoadLibrary(self.lib_path)
-        list_policies = library.listPolicies
-        list_policies.restype = ctypes.c_void_p
+        try:
+            library = ctypes.cdll.LoadLibrary(self.lib_path)
+            list_policies = library.listPolicies
+            list_policies.restype = ctypes.c_void_p
 
-        # send the document as a byte array of json format
-        list_policies_output = list_policies(json.dumps(document).encode('utf-8'))
+            # send the document as a byte array of json format
+            list_policies_output = list_policies(json.dumps(document).encode('utf-8'))
 
-        # we dereference the pointer to a byte array
-        list_policies_bytes = ctypes.string_at(list_policies_output)
+            # we dereference the pointer to a byte array
+            list_policies_bytes = ctypes.string_at(list_policies_output)
 
-        # convert our byte array to a string
-        list_policies_string = list_policies_bytes.decode('utf-8')
-        d = json.loads(list_policies_string)
+            # convert our byte array to a string
+            list_policies_string = list_policies_bytes.decode('utf-8')
+            d = json.loads(list_policies_string)
+        except Exception as e:
+            logging.error(e)
+            return {}
 
         try:
             return SastPolicies(**d)
