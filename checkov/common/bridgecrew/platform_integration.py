@@ -459,7 +459,7 @@ class BcPlatformIntegration:
         if sast_imports_report:
             persist_sast_imports_results(sast_imports_report, self.s3_client, self.bucket, self.repo_path)
 
-    def get_sast_import_report(self, scan_reports: List[SastReport]):
+    def get_sast_import_report(self, scan_reports: List[SastReport]) -> Dict[str, Any]:
         sast_imports_report = {}
         for report in scan_reports:
             sast_imports_report[report.language] = {}
