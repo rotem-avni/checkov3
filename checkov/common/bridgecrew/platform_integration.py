@@ -30,7 +30,7 @@ from urllib3.exceptions import HTTPError, MaxRetryError
 from checkov.common.bridgecrew.run_metadata.registry import registry
 from checkov.common.bridgecrew.platform_errors import BridgecrewAuthError
 from checkov.common.bridgecrew.platform_key import read_key, persist_key, bridgecrew_file
-from checkov.common.bridgecrew.wrapper import reduce_scan_reports, persist_checks_results, \
+from checkov.common.bridgecrew.wrapper import reduce_scan_reports, persist_checks_results, persist_sast_imports_results, \
     enrich_and_persist_checks_metadata, checkov_results_prefix, persist_run_metadata, _put_json_object, \
     persist_logs_stream, persist_graphs
 from checkov.common.models.consts import SUPPORTED_FILE_EXTENSIONS, SUPPORTED_FILES, SCANNABLE_PACKAGE_FILES
@@ -46,6 +46,7 @@ from checkov.common.util.http_utils import normalize_prisma_url, get_auth_header
 from checkov.common.util.type_forcers import convert_prisma_policy_filter_to_dict, convert_str_to_bool
 from checkov.secrets.coordinator import EnrichedSecret
 from checkov.version import version as checkov_version
+from checkov.sast.report import SastReport
 
 if TYPE_CHECKING:
     import argparse
@@ -451,8 +452,22 @@ class BcPlatformIntegration:
         reduced_scan_reports = reduce_scan_reports(self.scan_reports)
         checks_metadata_paths = enrich_and_persist_checks_metadata(self.scan_reports, self.s3_client, self.bucket,
                                                                    self.repo_path)
+        sast_report = [scan_report for scan_report in scan_reports if type(scan_report) == SastReport]
+        sast_imports_report = self.get_sast_import_report(sast_report)
         dpath.merge(reduced_scan_reports, checks_metadata_paths)
         persist_checks_results(reduced_scan_reports, self.s3_client, self.bucket, self.repo_path)
+        if sast_imports_report:
+            persist_sast_imports_results(sast_imports_report, self.s3_client, self.bucket, self.repo_path)
+
+    def get_sast_import_report(self, scan_reports: List[SastReport]):
+        sast_imports_report = {}
+        for report in scan_reports:
+            sast_imports_report[report.language] = {}
+        for report in scan_reports:
+            for data in report.sast_imports.values():
+                sast_imports_report[report.language] = data
+        return {"imports": sast_imports_report}
+
 
     def persist_image_scan_results(self, report: dict[str, Any] | None, file_path: str, image_name: str, branch: str) -> None:
         if not self.s3_client:

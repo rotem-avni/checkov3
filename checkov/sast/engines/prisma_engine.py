@@ -60,7 +60,8 @@ class PrismaEngine(SastEngine):
             'policies': registry.checks_dirs_path,
             'checks': registry.runner_filter.checks if registry.runner_filter else [],
             'skip_checks': registry.runner_filter.skip_checks if registry.runner_filter else [],
-            'skip_path': registry.runner_filter.excluded_paths if registry.runner_filter else []
+            'skip_path': registry.runner_filter.excluded_paths if registry.runner_filter else [],
+            'report_imports': registry.runner_filter.report_sast_imports
         }
         prisma_result = self.run_go_library(**library_input)
 
@@ -153,7 +154,8 @@ class PrismaEngine(SastEngine):
                        checks: List[str],
                        skip_checks: List[str],
                        skip_path: List[str],
-                       list_policies: bool = False) -> Union[List[Report], SastPolicies]:
+                       list_policies: bool = False,
+                       report_imports: bool = True) -> Union[List[Report], SastPolicies]:
 
         validate_params(languages, source_codes, policies, list_policies)
 
@@ -170,7 +172,8 @@ class PrismaEngine(SastEngine):
                 "checks": checks,
                 "skip_checks": skip_checks,
                 "skip_path": skip_path,
-                "list_policies": list_policies
+                "list_policies": list_policies,
+                "report_imports": report_imports
             },
             "auth": {
                 "api_key": bc_integration.get_auth_token(),
@@ -235,7 +238,7 @@ class PrismaEngine(SastEngine):
         logging.debug(prisma_report.profiler)
         reports: List[Report] = []
         for lang, checks in prisma_report.rule_match.items():
-            report = SastReport(f'{self.check_type.upper()} - {lang.value.title()}', prisma_report.run_metadata, SastEngines.PRISMA)
+            report = SastReport(f'{self.check_type.upper()} - {lang.value.title()}', prisma_report.run_metadata, SastEngines.PRISMA, lang)
             for check_id, match_rule in checks.items():
                 check_name = match_rule.check_name
                 check_cwe = match_rule.check_cwe
@@ -266,6 +269,15 @@ class PrismaEngine(SastEngine):
                 report.add_parsing_errors(report_parsing_errors)
             reports.append(report)
 
+        for lang in prisma_report.imports:
+            for report in reports:
+                if report.language == lang:
+                    report.sast_imports = prisma_report.imports[lang]
+                    break
+            else:
+                report = SastReport(f'{self.check_type.upper()} - {lang.title()}', prisma_report.run_metadata, SastEngines.PRISMA, lang)
+                report.sast_imports = prisma_report.imports[lang]
+                reports.append(report)
         return reports
 
     def get_policies(self, languages: Set[SastLanguages]) -> SastPolicies:
