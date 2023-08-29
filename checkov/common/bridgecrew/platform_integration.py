@@ -468,7 +468,6 @@ class BcPlatformIntegration:
                 sast_imports_report[report.language] = data
         return {"imports": sast_imports_report}
 
-
     def persist_image_scan_results(self, report: dict[str, Any] | None, file_path: str, image_name: str, branch: str) -> None:
         if not self.s3_client:
             logging.error("S3 upload was not correctly initialized")

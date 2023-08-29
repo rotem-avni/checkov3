@@ -116,6 +116,7 @@ def persist_sast_imports_results(sast_imports_data: dict[str, any], s3_client: S
     _put_json_object(s3_client, sast_imports_data, bucket, data_object_path)
     return data_object_path
 
+
 def persist_run_metadata(
         run_metadata: dict[str, str | list[str]], s3_client: S3Client, bucket: str, full_repo_object_key: str, use_checkov_results: bool = True
 ) -> None:
