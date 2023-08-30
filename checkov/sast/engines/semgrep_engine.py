@@ -75,7 +75,7 @@ class SemgrepEngine(SastEngine):
         output_handler = OutputHandler(output_settings)
 
         semgrep_output = self.get_semgrep_output(targets=targets, config=config, output_handler=output_handler)
-        semgrep_results_by_language: Dict[str, List[RuleMatch]] = {}
+        semgrep_results_by_language: Dict[SastLanguages, List[RuleMatch]] = {}
         for matches in semgrep_output.matches.values():
             for rule_match in matches:
                 match_lang = FILE_EXT_TO_SAST_LANG.get(rule_match.path.suffix.lstrip('.'), '')
