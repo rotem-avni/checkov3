@@ -275,7 +275,7 @@ class PrismaEngine(SastEngine):
                     report.sast_imports = prisma_report.imports[lang]
                     break
             else:
-                report = SastReport(f'{self.check_type.upper()} - {lang.title()}', prisma_report.run_metadata, SastEngines.PRISMA, lang)
+                report = SastReport(f'{self.check_type.upper()} - {lang.value.title()}', prisma_report.run_metadata, SastEngines.PRISMA, lang)
                 report.sast_imports = prisma_report.imports[lang]
                 reports.append(report)
         return reports
