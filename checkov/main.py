@@ -12,7 +12,7 @@ import sys
 import platform
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Any, Dict, List
 
 import argcomplete
 import configargparse
@@ -64,6 +64,7 @@ from checkov.json_doc.runner import Runner as json_runner
 from checkov.kubernetes.runner import Runner as k8_runner
 from checkov.kustomize.runner import Runner as kustomize_runner
 from checkov.runner_filter import RunnerFilter
+from checkov.sast.report import SastData, SastReport
 from checkov.sca_image.runner import Runner as sca_image_runner
 from checkov.sca_package.runner import Runner as sca_package_runner
 from checkov.sca_package_2.runner import Runner as sca_package_runner_2
@@ -135,6 +136,7 @@ class Checkov:
         self.run_metadata: dict[str, str | list[str]] = {}
         self.graphs: dict[str, DiGraph | Graph] = {}
         self.url: str | None = None
+        self.sast_data: SastData = SastData()
 
         self.parse_config(argv=argv)
 
@@ -494,6 +496,7 @@ class Checkov:
                             included_paths=included_paths,
                             git_configuration_folders=git_configuration_folders,
                         )
+                        self.save_sast_assets_data(self.scan_reports)
 
                     if self.config.create_baseline:
                         overall_baseline = Baseline()
@@ -605,6 +608,7 @@ class Checkov:
                         excluded_paths=runner_filter.excluded_paths,
                         git_configuration_folders=git_configuration_folders,
                     )
+                    self.save_sast_assets_data(self.scan_reports)
 
                 should_run_contributor_metrics = bc_integration.bc_api_key and self.config.repo_id and self.config.prisma_api_url
                 logger.debug(f"Should run contributor metrics report: {should_run_contributor_metrics}")
@@ -677,6 +681,11 @@ class Checkov:
         if bc_integration.enable_persist_graphs:
             bc_integration.persist_graphs(self.graphs, absolute_root_folder=absolute_root_folder)
         self.url = self.commit_repository()
+
+    def save_sast_assets_data(self, scan_reports):
+        sast_report = [scan_report for scan_report in scan_reports if type(scan_report) == SastReport]
+        sast_imports_report = self.sast_data.get_sast_import_report(sast_report)
+        self.sast_data.set_imports_data(sast_imports_report)
 
     def print_results(
             self,

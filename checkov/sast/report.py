@@ -34,3 +34,22 @@ class SastReport(Report):
             base_summary[POLICY_COUNT] = policy_count
 
         return base_summary
+
+
+class SastData:
+    def __init__(self) -> None:
+        self.imports_data = None
+
+    def set_imports_data(self, imports_data):
+        self.imports_data = imports_data
+
+    @staticmethod
+    def get_sast_import_report(scan_reports: List[SastReport]) -> Dict[str, Any]:
+        sast_imports_report = {}
+        for report in scan_reports:
+            sast_imports_report[report.language] = {}
+        for report in scan_reports:
+            for data in report.sast_imports.values():
+                for file_name, all_data in data.items():
+                    sast_imports_report[report.language][file_name] = {'all': all_data['All']}
+        return {"imports": sast_imports_report}

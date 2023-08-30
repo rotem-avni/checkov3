@@ -452,21 +452,8 @@ class BcPlatformIntegration:
         reduced_scan_reports = reduce_scan_reports(self.scan_reports)
         checks_metadata_paths = enrich_and_persist_checks_metadata(self.scan_reports, self.s3_client, self.bucket,
                                                                    self.repo_path)
-        sast_report = [scan_report for scan_report in scan_reports if type(scan_report) == SastReport]
-        sast_imports_report = self.get_sast_import_report(sast_report)
         dpath.merge(reduced_scan_reports, checks_metadata_paths)
         persist_checks_results(reduced_scan_reports, self.s3_client, self.bucket, self.repo_path)
-        if sast_imports_report:
-            persist_sast_imports_results(sast_imports_report, self.s3_client, self.bucket, self.repo_path)
-
-    def get_sast_import_report(self, scan_reports: List[SastReport]) -> Dict[str, Any]:
-        sast_imports_report = {}
-        for report in scan_reports:
-            sast_imports_report[report.language] = {}
-        for report in scan_reports:
-            for data in report.sast_imports.values():
-                sast_imports_report[report.language] = data
-        return {"imports": sast_imports_report}
 
     def persist_image_scan_results(self, report: dict[str, Any] | None, file_path: str, image_name: str, branch: str) -> None:
         if not self.s3_client:
