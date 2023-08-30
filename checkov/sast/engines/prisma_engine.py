@@ -61,7 +61,7 @@ class PrismaEngine(SastEngine):
             'checks': registry.runner_filter.checks if registry.runner_filter else [],
             'skip_checks': registry.runner_filter.skip_checks if registry.runner_filter else [],
             'skip_path': registry.runner_filter.excluded_paths if registry.runner_filter else [],
-            'report_imports': registry.runner_filter.report_sast_imports
+            'report_imports': registry.runner_filter.report_sast_imports if registry.runner_filter else False
         }
         prisma_result = self.run_go_library(**library_input)
 
@@ -233,12 +233,12 @@ class PrismaEngine(SastEngine):
                 logging.error(d.get('errors'))
             return {}
 
-    def create_report(self, prisma_report: PrismaReport) -> List[Report]:
+    def create_report(self, prisma_report: PrismaReport) -> List[SastRecord]:
         logging.debug("Printing Prisma-SAST profiling data")
         logging.debug(prisma_report.profiler)
-        reports: List[Report] = []
+        reports: List[SastRecord] = []
         for lang, checks in prisma_report.rule_match.items():
-            report = SastReport(f'{self.check_type.upper()} - {lang.value.title()}', prisma_report.run_metadata, SastEngines.PRISMA, lang.value)
+            report = SastReport(f'{self.check_type.upper()} - {lang.value.title()}', prisma_report.run_metadata, SastEngines.PRISMA, lang)
             for check_id, match_rule in checks.items():
                 check_name = match_rule.check_name
                 check_cwe = match_rule.check_cwe
@@ -299,7 +299,8 @@ class PrismaEngine(SastEngine):
             'policies': [],
             'checks': [],
             'skip_checks': [],
-            'skip_path': []
+            'skip_path': [],
+            'report_imports': False
         }
         prisma_result = self.run_go_library(**library_input)
 

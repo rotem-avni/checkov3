@@ -136,7 +136,7 @@ class SemgrepEngine(SastEngine):
                                        output_extra, shown_severities, target_manager_lockfile_scan_info)
         return semgrep_output
 
-    def create_report(self, check_type: str, lang: str, semgrep_matches: List[RuleMatch]) -> Report:
+    def create_report(self, check_type: str, lang: SastLanguages, semgrep_matches: List[RuleMatch]) -> Report:
         report = SastReport(f'{check_type}_{lang}', {}, SastEngines.SEMGREP, lang)
         for match in semgrep_matches:
             check_id = match.rule_id.split('.')[-1]
