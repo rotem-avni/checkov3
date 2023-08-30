@@ -38,14 +38,14 @@ class SastReport(Report):
 
 class SastData:
     def __init__(self) -> None:
-        self.imports_data = None
+        self.imports_data: Optional[Dict[str, Any]] = None
 
-    def set_imports_data(self, imports_data):
+    def set_imports_data(self, imports_data: Dict[str, Any]) -> None:
         self.imports_data = imports_data
 
     @staticmethod
     def get_sast_import_report(scan_reports: List[SastReport]) -> Dict[str, Any]:
-        sast_imports_report = {}
+        sast_imports_report: Dict[str, Any] = {}
         for report in scan_reports:
             sast_imports_report[report.language] = {}
         for report in scan_reports:

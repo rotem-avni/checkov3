@@ -56,7 +56,7 @@ class RunnerFilter(object):
             enable_git_history_secret_scan: bool = False,
             git_history_timeout: str = '12h',
             git_history_last_commit_scanned: Optional[str] = None,  # currently not exposed by a CLI flag
-            report_sast_imports: Optional[bool] = True
+            report_sast_imports: bool = True
     ) -> None:
 
         checks = convert_csv_string_arg_to_list(checks)
