@@ -107,16 +107,6 @@ def persist_checks_results(
     return checks_results_paths
 
 
-def persist_sast_imports_results(sast_imports_data: dict[str, any], s3_client: S3Client, bucket: str, full_repo_object_key: str) -> str:
-    """
-    Save sast imports reports into bridgecrew's platform
-    :return: path
-    """
-    data_object_path = f'sast/{full_repo_object_key}/assets_report.json'
-    _put_json_object(s3_client, sast_imports_data, bucket, data_object_path)
-    return data_object_path
-
-
 def persist_run_metadata(
         run_metadata: dict[str, str | list[str]], s3_client: S3Client, bucket: str, full_repo_object_key: str, use_checkov_results: bool = True
 ) -> None:
