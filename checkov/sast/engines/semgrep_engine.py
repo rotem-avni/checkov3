@@ -137,7 +137,7 @@ class SemgrepEngine(SastEngine):
         return semgrep_output
 
     def create_report(self, check_type: str, lang: SastLanguages, semgrep_matches: List[RuleMatch]) -> Report:
-        report = SastReport(f'{check_type}_{lang}', {}, SastEngines.SEMGREP, lang)
+        report = SastReport(f'{check_type}_{lang.value}', {}, SastEngines.SEMGREP, lang)
         for match in semgrep_matches:
             check_id = match.rule_id.split('.')[-1]
             check_id = check_id.rsplit("_", maxsplit=1)[0]  # remove the added language suffix, ex. CKV_AWS_21_python
