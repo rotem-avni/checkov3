@@ -12,7 +12,7 @@ import sys
 import platform
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List
+from typing import TYPE_CHECKING, List
 
 import argcomplete
 import configargparse
@@ -682,7 +682,7 @@ class Checkov:
             bc_integration.persist_graphs(self.graphs, absolute_root_folder=absolute_root_folder)
         self.url = self.commit_repository()
 
-    def save_sast_assets_data(self, scan_reports):
+    def save_sast_assets_data(self, scan_reports: List[Report]) -> None:
         sast_report = [scan_report for scan_report in scan_reports if type(scan_report) == SastReport]
         sast_imports_report = self.sast_data.get_sast_import_report(sast_report)
         self.sast_data.set_imports_data(sast_imports_report)
