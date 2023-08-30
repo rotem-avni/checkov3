@@ -106,6 +106,12 @@ def persist_checks_results(
         _put_json_object(s3_client, reduced_report, bucket, check_result_object_path)
     return checks_results_paths
 
+def persist_assets_results(
+        check_type, assets_report, s3_client: S3Client, bucket: str,
+        full_repo_object_key: str) -> str:
+    check_result_object_path = f'{full_repo_object_key}/{checkov_results_prefix}/{check_type}/assets.json'
+    _put_json_object(s3_client, assets_report, bucket, check_result_object_path)
+    return check_result_object_path
 
 def persist_run_metadata(
         run_metadata: dict[str, str | list[str]], s3_client: S3Client, bucket: str, full_repo_object_key: str, use_checkov_results: bool = True

@@ -489,6 +489,7 @@ class Checkov:
                         included_paths = [self.config.external_modules_download_path]
                         for r in runner_registry.runners:
                             included_paths.extend(r.included_paths())
+                        self.save_sast_assets_data(self.scan_reports)
                         self.upload_results(
                             root_folder=root_folder,
                             absolute_root_folder=absolute_root_folder,
@@ -496,7 +497,7 @@ class Checkov:
                             included_paths=included_paths,
                             git_configuration_folders=git_configuration_folders,
                         )
-                        self.save_sast_assets_data(self.scan_reports)
+                        
 
                     if self.config.create_baseline:
                         overall_baseline = Baseline()
@@ -601,6 +602,7 @@ class Checkov:
                     root_folder = os.path.split(os.path.commonprefix(files))[0]
                     absolute_root_folder = os.path.abspath(root_folder)
 
+                    self.save_sast_assets_data(self.scan_reports)
                     self.upload_results(
                         root_folder=root_folder,
                         absolute_root_folder=absolute_root_folder,
@@ -608,7 +610,7 @@ class Checkov:
                         excluded_paths=runner_filter.excluded_paths,
                         git_configuration_folders=git_configuration_folders,
                     )
-                    self.save_sast_assets_data(self.scan_reports)
+                    
 
                 should_run_contributor_metrics = bc_integration.bc_api_key and self.config.repo_id and self.config.prisma_api_url
                 logger.debug(f"Should run contributor metrics report: {should_run_contributor_metrics}")
@@ -677,6 +679,7 @@ class Checkov:
         if git_configuration_folders:
             bc_integration.persist_git_configuration(os.getcwd(), git_configuration_folders)
         bc_integration.persist_scan_results(self.scan_reports)
+        bc_integration.persist_assets_scan_results(self.sast_data.imports_data)
         bc_integration.persist_run_metadata(self.run_metadata)
         if bc_integration.enable_persist_graphs:
             bc_integration.persist_graphs(self.graphs, absolute_root_folder=absolute_root_folder)
