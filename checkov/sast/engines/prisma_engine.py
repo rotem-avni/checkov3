@@ -233,7 +233,7 @@ class PrismaEngine(SastEngine):
                 logging.error(d.get('errors'))
             return {}
 
-    def create_report(self, prisma_report: PrismaReport) -> List[SastRecord]:
+    def create_report(self, prisma_report: PrismaReport) -> List[SastReport]:
         logging.debug("Printing Prisma-SAST profiling data")
         logging.debug(prisma_report.profiler)
         reports: List[SastReport] = []

@@ -83,15 +83,15 @@ class SemgrepEngine(SastEngine):
                     continue
                 if not isinstance(match_lang, SastLanguages):  # 2nd condition for typing
                     raise TypeError(f'file type {rule_match.path.suffix} is not supported by sast framework')
-                semgrep_results_by_language.setdefault(match_lang.value, []).append(rule_match)
+                semgrep_results_by_language.setdefault(match_lang, []).append(rule_match)
 
         # add empty reports for checked languages without findings
         for target in targets:
             suffix = target.rsplit(".", maxsplit=1)
             if len(suffix) == 2:
                 match_lang_extra = FILE_EXT_TO_SAST_LANG.get(suffix[1])
-                if match_lang_extra and match_lang_extra.value not in semgrep_results_by_language:
-                    semgrep_results_by_language[match_lang_extra.value] = []
+                if match_lang_extra and match_lang_extra not in semgrep_results_by_language:
+                    semgrep_results_by_language[match_lang_extra] = []
 
         registry.delete_temp_rules_file()
 
