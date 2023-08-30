@@ -497,7 +497,6 @@ class Checkov:
                             included_paths=included_paths,
                             git_configuration_folders=git_configuration_folders,
                         )
-                        
 
                     if self.config.create_baseline:
                         overall_baseline = Baseline()
@@ -610,7 +609,6 @@ class Checkov:
                         excluded_paths=runner_filter.excluded_paths,
                         git_configuration_folders=git_configuration_folders,
                     )
-                    
 
                 should_run_contributor_metrics = bc_integration.bc_api_key and self.config.repo_id and self.config.prisma_api_url
                 logger.debug(f"Should run contributor metrics report: {should_run_contributor_metrics}")

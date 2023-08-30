@@ -454,7 +454,7 @@ class BcPlatformIntegration:
         dpath.merge(reduced_scan_reports, checks_metadata_paths)
         persist_checks_results(reduced_scan_reports, self.s3_client, self.bucket, self.repo_path)
 
-    def persist_assets_scan_results(self, assets_report) -> None:
+    def persist_assets_scan_results(self, assets_report: Dict[str, Any]) -> None:
         if not assets_report:
             return
         for lang, assets in assets_report['imports'].items():
