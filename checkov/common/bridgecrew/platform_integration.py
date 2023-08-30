@@ -13,7 +13,7 @@ from json import JSONDecodeError
 from os import path
 from pathlib import Path
 from time import sleep
-from typing import List, Dict, TYPE_CHECKING, Any, cast
+from typing import List, Dict, TYPE_CHECKING, Any, Optional, cast
 
 import boto3
 import dpath
@@ -454,7 +454,7 @@ class BcPlatformIntegration:
         dpath.merge(reduced_scan_reports, checks_metadata_paths)
         persist_checks_results(reduced_scan_reports, self.s3_client, self.bucket, self.repo_path)
 
-    def persist_assets_scan_results(self, assets_report: Dict[str, Any]) -> None:
+    def persist_assets_scan_results(self, assets_report: Optional[Dict[str, Any]]) -> None:
         if not assets_report:
             return
         for lang, assets in assets_report['imports'].items():
