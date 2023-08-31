@@ -201,11 +201,16 @@ class PrismaEngine(SastEngine):
         d = json.loads(analyze_code_string)
 
         try:
-            result = PrismaReport(**d)
+            result = self.create_prisma_report(d)
         except ValidationError as e:
             result = create_empty_report(list(languages))
             result.errors = {REPORT_PARSING_ERRORS: [str(err) for err in e.errors()]}
         return self.create_report(result)
+
+    def create_prisma_report(self, data: Dict[str, Any]) -> PrismaReport:
+        if not data.get("imports"):
+            data["imports"] = {}
+        return PrismaReport(**data)
 
     def run_go_library_list_policies(self, document: Dict[str, Any]) -> SastPolicies:
         try:
