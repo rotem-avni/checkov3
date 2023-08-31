@@ -302,7 +302,7 @@ class Checkov:
                 resource_attr_to_omit=self.config.mask,
                 enable_git_history_secret_scan=self.config.scan_secrets_history,
                 git_history_timeout=self.config.secrets_history_timeout,
-                report_sast_imports=bool(convert_str_to_bool(os.getenv('ENABLE_UPLOAD_SAST_IMPORTS', False)))
+                report_sast_imports=bool(convert_str_to_bool(os.getenv('CKV_ENABLE_UPLOAD_SAST_IMPORTS', False)))
             )
 
             source_env_val = os.getenv('BC_SOURCE', 'cli')
@@ -685,7 +685,7 @@ class Checkov:
         self.url = self.commit_repository()
 
     def save_sast_assets_data(self, scan_reports: List[Report]) -> None:
-        if not bool(convert_str_to_bool(os.getenv('ENABLE_UPLOAD_SAST_IMPORTS', False))):
+        if not bool(convert_str_to_bool(os.getenv('CKV_ENABLE_UPLOAD_SAST_IMPORTS', False))):
             return
         sast_report = [scan_report for scan_report in scan_reports if type(scan_report) == SastReport]
         sast_imports_report = self.sast_data.get_sast_import_report(sast_report)
