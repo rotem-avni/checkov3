@@ -303,7 +303,6 @@ class PrismaEngine(SastEngine):
             'report_imports': False
         }
         prisma_result = self.run_go_library(**library_input)
-
         return prisma_result
 
 
