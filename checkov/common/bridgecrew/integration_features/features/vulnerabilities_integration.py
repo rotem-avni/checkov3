@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
-from typing import TYPE_CHECKING, Optional, List, Dict, Any
+from typing import TYPE_CHECKING, Optional, List, Dict, Any, Tuple
 
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.integration_features.base_integration_feature import BaseIntegrationFeature
@@ -114,7 +114,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     convert SAST report structure to a sturcture grouped by package_name, for better performance in the enrich step
     '''
 
-    def create_file_by_package_map(self, filtered_entries: Dict[str, List[Any]]) -> Dict[str, List[str]]:
+    def create_file_by_package_map(self, filtered_entries: List[Tuple[Any, Any]]) -> Dict[str, List[str]]:
         sast_files_by_packages_map: Dict[str, List[str]] = defaultdict()
         for code_file_path, sast_data in filtered_entries:
             for package_name in sast_data['all']:
