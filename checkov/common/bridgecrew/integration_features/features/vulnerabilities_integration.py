@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
-from typing import TYPE_CHECKING, Optional, List, DefaultDict, Dict
+from typing import TYPE_CHECKING, Optional, List, DefaultDict, Dict, Any
 
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.integration_features.base_integration_feature import BaseIntegrationFeature
@@ -114,7 +114,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     convert SAST report structure to a sturcture grouped by package_name, for better performance in the enrich step
     '''
 
-    def create_file_by_package_map(self, filtered_entries) -> Dict[str, List[str]]:
+    def create_file_by_package_map(self, filtered_entries: Dict[str, List[Any]]) -> Dict[str, List[str]]:
         sast_files_by_packages_map: Dict[str, List[str]] = defaultdict()
         for code_file_path, sast_data in filtered_entries:
             for package_name in sast_data['all']:
@@ -174,7 +174,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     '''
 
     def normalize_package_name(self, package_name: str) -> str:
-        normalize_package = package_name.replace('-', '').replace('_', '')
+        normalize_package: str = package_name.replace('-', '').replace('_', '')
 
         if './' in package_name:
             last_index = package_name.rfind('/')
