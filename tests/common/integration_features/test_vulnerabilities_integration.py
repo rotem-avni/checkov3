@@ -150,7 +150,7 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         original = '../asdas/asdasd/asdasd/asd.txt'
         expected = f"{NORMALIZE_PREFIX}asd.txt"
         result = vul_integration.normalize_package_name(original)
-        self.assertTrue(result == expected)
+        self.assertTrue(result, expected)
 
     def test_normalized_package_name_case_without_relative(self):
         instance = BcPlatformIntegration()
@@ -158,7 +158,7 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         original = 'asdas/asdasd/asdasd/asd.txt'
         expected = f"{NORMALIZE_PREFIX}asdas/asdasd/asdasd/asd.txt"
         result = vul_integration.normalize_package_name(original)
-        self.assertTrue(result == expected)
+        self.assertTrue(result, expected)
 
     def test_normalized_package_name_case_dot_in_name(self):
         instance = BcPlatformIntegration()
@@ -166,7 +166,7 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         original = 'asd.txt'
         expected = f"{NORMALIZE_PREFIX}asd.txt"
         result = vul_integration.normalize_package_name(original)
-        self.assertTrue(result == expected)
+        self.assertTrue(result, expected)
 
     def test_normalized_package_name_case_relative_package(self):
         instance = BcPlatformIntegration()
@@ -174,7 +174,7 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         original = '../asdas/asdasd/asdasd/asd.txt'
         expected = f"{NORMALIZE_PREFIX}asd.txt"
         result = vul_integration.normalize_package_name(original)
-        self.assertTrue(result == expected)
+        self.assertTrue(result, expected)
 
     def test_normalized_package_name_case_with_underscore(self):
         instance = BcPlatformIntegration()
@@ -182,7 +182,7 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         original = 'asd2_asd'
         expected = f"{NORMALIZE_PREFIX}asd2asd"
         result = vul_integration.normalize_package_name(original)
-        self.assertTrue(result == expected)
+        self.assertTrue(result, expected)
 
     def test_normalized_package_name_case_with_minus(self):
         instance = BcPlatformIntegration()
@@ -190,7 +190,7 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         original = 'asd2-asd'
         expected = f"{NORMALIZE_PREFIX}asd2asd"
         result = vul_integration.normalize_package_name(original)
-        self.assertTrue(result == expected)
+        self.assertTrue(result, expected)
 
     def test_normalized_package_name_case_simple(self):
         instance = BcPlatformIntegration()
@@ -198,7 +198,7 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         original = 'asd'
         expected = f"{NORMALIZE_PREFIX}asd"
         result = vul_integration.normalize_package_name(original)
-        self.assertTrue(result == expected)
+        self.assertTrue(result, expected)
 
 
 if __name__ == '__main__':

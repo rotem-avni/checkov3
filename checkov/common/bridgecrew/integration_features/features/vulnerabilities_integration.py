@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
-from typing import TYPE_CHECKING, Optional, List, DefaultDict
+from typing import TYPE_CHECKING, Optional, List, DefaultDict, Dict
 
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.integration_features.base_integration_feature import BaseIntegrationFeature
@@ -97,9 +97,9 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     Each SCA report check has file_path, we want to getter same file_path so we won't have to calculate SAST language more then once
     '''
 
-    def group_cves_checks_by_files(self, cves_checks: List[Record]):
+    def group_cves_checks_by_files(self, cves_checks: List[Record]) -> Dict[str, List[Record]]:
         # Create a dictionary to store the grouped records
-        grouped_records = {}
+        grouped_records: Dict[str, List[Record]] = defaultdict()
 
         # Group the records by the 'file_path' key
         for record in cves_checks:
@@ -114,8 +114,8 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     convert SAST report structure to a sturcture grouped by package_name, for better performance in the enrich step
     '''
 
-    def create_file_by_package_map(self, filtered_entries) -> DefaultDict:
-        sast_files_by_packages_map = defaultdict()
+    def create_file_by_package_map(self, filtered_entries) -> Dict[str, List[str]]:
+        sast_files_by_packages_map: Dict[str, List[str]] = defaultdict()
         for code_file_path, sast_data in filtered_entries:
             for package_name in sast_data['all']:
                 clean_package_name = package_name.strip("'")
@@ -136,7 +136,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     enrich each CVE with the risk factor of IsUsed - which means there is a file the use the package of that CVE
     '''
 
-    def enrich_cves_with_sast_data(self, current_cves: List[Record], sast_files_by_packages_map: DefaultDict):
+    def enrich_cves_with_sast_data(self, current_cves: List[Record], sast_files_by_packages_map: Dict[str, List[str]]):
         for cve_check in current_cves:
             if cve_check.vulnerability_details:
                 package_name = cve_check.vulnerability_details.get('package_name', '')
