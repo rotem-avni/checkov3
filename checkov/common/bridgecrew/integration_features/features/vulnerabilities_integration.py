@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from collections import defaultdict
-from typing import TYPE_CHECKING, Optional, List, DefaultDict, Dict, Any
+from typing import TYPE_CHECKING, Optional, List, Dict, Any
 
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.integration_features.base_integration_feature import BaseIntegrationFeature
@@ -169,7 +169,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
         return sca_package_to_sast_lang_map.get(sca_package, None)
 
     '''
-    normalizze the package name because there can be different between the package name as it present in the SCA file and 
+    normalizze the package name because there can be different between the package name as it present in the SCA file and
     in the way it used in the code, so we are removing special chars for better comperation
     '''
 
