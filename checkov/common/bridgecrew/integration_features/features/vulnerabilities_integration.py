@@ -136,7 +136,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     enrich each CVE with the risk factor of IsUsed - which means there is a file the use the package of that CVE
     '''
 
-    def enrich_cves_with_sast_data(self, current_cves: List[Record], sast_files_by_packages_map: Dict[str, List[str]]):
+    def enrich_cves_with_sast_data(self, current_cves: List[Record], sast_files_by_packages_map: Dict[str, List[str]]) -> None:
         for cve_check in current_cves:
             if cve_check.vulnerability_details:
                 package_name = cve_check.vulnerability_details.get('package_name', '')
