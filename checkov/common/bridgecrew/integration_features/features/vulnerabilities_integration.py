@@ -105,7 +105,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
         for record in cves_checks:
             file_path = record.file_path
             if file_path not in grouped_records:
-                grouped_records[file_path] = []
+                grouped_records[file_path] = list()
             grouped_records[file_path].append(record)
 
         return grouped_records
@@ -115,7 +115,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
     '''
 
     def create_file_by_package_map(self, filtered_entries: List[Tuple[Any, Any]]) -> Dict[str, List[str]]:
-        sast_files_by_packages_map: Dict[str, List[str]] = defaultdict()
+        sast_files_by_packages_map: Dict[str, List[str]] = defaultdict(list)
         for code_file_path, sast_data in filtered_entries:
             for package_name in sast_data['all']:
                 clean_package_name = package_name.strip("'")
@@ -123,9 +123,9 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
                 normalize_package_name = self.normalize_package_name(clean_package_name)
 
                 if clean_package_name not in sast_files_by_packages_map:
-                    sast_files_by_packages_map[clean_package_name] = []
+                    sast_files_by_packages_map[clean_package_name] = list()
                 if normalize_package_name not in sast_files_by_packages_map:
-                    sast_files_by_packages_map[normalize_package_name] = []
+                    sast_files_by_packages_map[normalize_package_name] = list()
 
                 sast_files_by_packages_map[clean_package_name].append(code_file_path)
                 sast_files_by_packages_map[normalize_package_name].append(code_file_path)
@@ -169,7 +169,7 @@ class VulnerabilitiesIntegration(BaseIntegrationFeature):
         return sca_package_to_sast_lang_map.get(sca_package, None)
 
     '''
-    normalizze the package name because there can be different between the package name as it present in the SCA file and
+    normalize the package name because there can be different between the package name as it present in the SCA file and
     in the way it used in the code, so we are removing special chars for better comperation
     '''
 
