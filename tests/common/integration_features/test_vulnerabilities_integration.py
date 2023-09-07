@@ -1,5 +1,6 @@
 import os
 import unittest
+from unittest.mock import patch
 
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.bridgecrew.integration_features.features.vulnerabilities_integration import \
@@ -13,9 +14,8 @@ from checkov.sast.report import SastReport
 
 class TestVulnerabilitiesIntegration(unittest.TestCase):
 
+    @patch.dict('os.environ', {'CKV_ENABLE_UPLOAD_SAST_IMPORTS':'True', 'CKV_ENABLE_SCA_INTEGRATE_SAST': 'True'})
     def test_full_enrich_cves(self):
-        os.environ['CKV_ENABLE_UPLOAD_SAST_IMPORTS'] = 'True'
-        os.environ['CKV_ENABLE_SCA_INTEGRATE_SAST'] = 'True'
         instance = BcPlatformIntegration()
 
         vul_integration = VulnerabilitiesIntegration(instance)
@@ -64,13 +64,8 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
         self.assertTrue(cve2.vulnerability_details.get('risk_factors', {})['IsUsed'])
         self.assertFalse(cve3.vulnerability_details.get('risk_factors', {})['IsUsed'])
 
-        # clean
-        os.environ['CKV_ENABLE_UPLOAD_SAST_IMPORTS'] = ''
-        os.environ['CKV_ENABLE_SCA_INTEGRATE_SAST'] = ''
-
+    @patch.dict('os.environ', {'CKV_ENABLE_UPLOAD_SAST_IMPORTS':'True', 'CKV_ENABLE_SCA_INTEGRATE_SAST': 'True'})
     def test_unsupported_sast_lang(self):
-        os.environ['CKV_ENABLE_UPLOAD_SAST_IMPORTS'] = 'True'
-        os.environ['CKV_ENABLE_SCA_INTEGRATE_SAST'] = 'True'
         instance = BcPlatformIntegration()
 
         vul_integration = VulnerabilitiesIntegration(instance)
@@ -100,9 +95,6 @@ class TestVulnerabilitiesIntegration(unittest.TestCase):
 
         self.assertFalse(cve1.vulnerability_details.get('risk_factors', {})['IsUsed'])
 
-        # clean
-        os.environ['CKV_ENABLE_UPLOAD_SAST_IMPORTS'] = ''
-        os.environ['CKV_ENABLE_SCA_INTEGRATE_SAST'] = ''
 
     def test_compare_paths_same_level(self):
         instance = BcPlatformIntegration()
