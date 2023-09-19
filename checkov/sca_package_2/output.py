@@ -145,17 +145,19 @@ def create_cli_output(fixable: bool = True, *cve_records: list[Record]) -> str:
                             parsed_version = packaging_version.parse(root_package_fix_version.strip())
                             fix_versions_lists.append([parsed_version])
 
-                    root_package_lines = validate_lines(record.vulnerability_details.get("root_package_file_line_range"))
+                    root_package_lines = validate_lines(
+                        record.vulnerability_details.get("root_package_file_line_range"))
                     if lines or root_package_lines:
                         lines_details_found_cves = True
 
-                    if record.vulnerability_details and record.vulnerability_details.get("riskFactors", {}).get("IsUsed"):
-                            cve_count.used += 1
+                    if record.vulnerability_details and record.vulnerability_details.get("riskFactors", {}).get(
+                            "IsUsed"):
+                        cve_count.used += 1
 
                     if record.vulnerability_details is not None:
                         reachability_risk_factors_tmp = {key: value for key, value in
-                                                     record.vulnerability_details.get("riskFactors", {}).items()
-                                                     if key in InterestingRiskFactors}
+                                                         record.vulnerability_details.get("riskFactors", {}).items()
+                                                         if key in InterestingRiskFactors}
                     else:
                         reachability_risk_factors_tmp = {}
 
@@ -334,9 +336,10 @@ def create_cve_summary_table_part(table_width: int, column_width: int, cve_count
 def create_fixable_cve_summary_table_part(
         table_width: int, column_count: int, cve_count: CveCount, vulnerable_packages: bool
 ) -> List[str]:
-
     fixable_table = PrettyTable(
-        header=False, min_table_width=table_width + column_count-4, max_table_width=table_width + column_count-4
+        header=False,
+        min_table_width=table_width + column_count - 4,
+        max_table_width=table_width + column_count - 4
     )
     fixable_table.set_style(SINGLE_BORDER)
     if cve_count.fixable:
@@ -377,7 +380,8 @@ def create_package_overview_table_part(
             package_table.header = False
             package_table.clear_rows()
 
-        details["cves"].sort(key=lambda x: ("" if x["root_package_name"] == x['package_name'] else x['package_name'], x['package_version']))
+        details["cves"].sort(key=lambda x: (
+            "" if x["root_package_name"] == x['package_name'] else x['package_name'], x['package_version']))
 
         last_package_alias = get_package_alias(details['cves'][-1]['package_name'],
                                                details['cves'][-1]['package_version'])
@@ -394,7 +398,8 @@ def create_package_overview_table_part(
             if cve_idx == 0:
                 cur_compliant_version = compliant_version + is_public_overview if compliant_version and compliant_version != UNFIXABLE_VERSION else compliant_version
                 if not is_root:  # no cves on root package
-                    package_name_col_val = get_package_name_with_lines(cve["root_package_name"], cve.get("root_package_lines"))
+                    package_name_col_val = get_package_name_with_lines(cve["root_package_name"],
+                                                                       cve.get("root_package_lines"))
                     package_table.add_row(
                         [
                             package_name_col_val,
