@@ -393,7 +393,8 @@ def create_package_overview_table_part(
             package_alias = get_package_alias(package_name, package_version)
             is_root = package_alias == root_package_alias
             is_public_overview = "(Public)" if cve['is_private_fix'] is False else ""
-            reachability = "Package Used" if "IsUsed" in cve.get("reachability_risk_factors", {}) else ""
+            reachability = "Package Used" if ("IsUsed" in cve.get("reachability_risk_factors", {}) and cve.get("reachability_risk_factors").get(
+                            "IsUsed")) else ""
             compliant_version_overview = ""
             if cve_idx == 0:
                 cur_compliant_version = compliant_version + is_public_overview if compliant_version and compliant_version != UNFIXABLE_VERSION else compliant_version
