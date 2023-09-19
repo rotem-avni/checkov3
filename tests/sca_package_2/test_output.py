@@ -419,9 +419,6 @@ def test_create_cli_cves_table():
     )
 
 
-
-
-
 def test_create_cli_license_violations_table_no_line_numbers():
 
     # when
