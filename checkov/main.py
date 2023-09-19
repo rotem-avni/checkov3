@@ -668,7 +668,6 @@ class Checkov:
             git_configuration_folders: list[str] | None = None,
     ) -> None:
         """Upload scan results and other relevant files"""
-
         bc_integration.persist_repository(
             root_dir=root_folder,
             files=files,
