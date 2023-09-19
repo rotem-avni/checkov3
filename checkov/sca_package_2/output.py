@@ -150,13 +150,13 @@ def create_cli_output(fixable: bool = True, *cve_records: list[Record]) -> str:
                     if lines or root_package_lines:
                         lines_details_found_cves = True
 
-                    if record.vulnerability_details and record.vulnerability_details.get("riskFactors", {}).get(
+                    if record.vulnerability_details and record.vulnerability_details.get("risk_factors", {}).get(
                             "IsUsed"):
                         cve_count.used += 1
 
                     if record.vulnerability_details is not None:
                         reachability_risk_factors_tmp = {key: value for key, value in
-                                                         record.vulnerability_details.get("riskFactors", {}).items()
+                                                         record.vulnerability_details.get("risk_factors", {}).items()
                                                          if key in InterestingRiskFactors}
                     else:
                         reachability_risk_factors_tmp = {}
