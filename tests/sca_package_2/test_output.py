@@ -15,7 +15,8 @@ from checkov.sca_package_2.output import (
 )
 from tests.sca_package_2.conftest import get_vulnerabilities_details_package_json, get_vulnerabilities_details, \
     get_vulnerabilities_details_no_deps, get_vulnerabilities_details_package_lock_json,\
-    create_cli_license_violations_table_wrapper, create_cli_output_wrapper
+    create_cli_license_violations_table_wrapper, create_cli_output_wrapper, \
+    get_vulnerabilities_details_is_used_packages, get_vulnerabilities_details_no_deps_is_used_packages
 
 
 def test_create_report_cve_record():
@@ -602,6 +603,45 @@ def test_create_cli_output_without_license_records():
     )
 
 
+def test_create_cli_output_without_license_records_is_used_packages():
+    # given
+    rootless_file_path = "requirements.txt"
+    file_abs_path = "/path/to/requirements.txt"
+    check_class = "checkov.sca_package_2.scanner.Scanner"
+    # when
+    cves_records = [
+        create_report_cve_record(
+            rootless_file_path=rootless_file_path,
+            file_abs_path=file_abs_path,
+            check_class=check_class,
+            vulnerability_details=details,
+            licenses='Unknown',
+            package={'package_registry': "https://registry.npmjs.org/", 'is_private_registry': False},
+            root_package={'name': "django", 'version': "1.2"},
+            used_private_registry=False
+        )
+        for details in get_vulnerabilities_details_is_used_packages()
+    ]
+    cli_output = create_cli_output(True, cves_records)
+    # then
+    assert cli_output == "".join(
+        [
+            "\t/requirements.txt - CVEs Summary:\n",
+            '\t┌──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┐\n',
+            '\t│ Total CVEs: 2        │ critical: 1          │ high: 0              │ medium: 1            │ low: 0               │ skipped: 0           │ Total Packages Used: │\n',
+            "\t│                      │                      │                      │                      │                      │                      │ 1                    │\n",
+            '\t├──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┤\n',
+            "\t│ To fix 2/2 CVEs, go to https://www.bridgecrew.cloud/                                                                                                           │\n",
+            '\t├──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┤\n',
+            "\t│ Package              │ CVE ID               │ Severity             │ Current version      │ Root fixed version   │ Compliant version    │ Reachability         │\n",
+            "\t├──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤\n",
+            '\t│ django               │ CVE-2019-19844       │ CRITICAL             │ 1.2                  │ 1.11.27              │ 1.11.27              │                      │\n',
+            '\t│                      │ CVE-2016-6186        │ MEDIUM               │                      │ 1.8.14               │                      │ Package Used         │\n',
+            "\t└──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘\n"
+        ]
+    )
+
+
 def test_create_cli_output_without_cve_records():
     # given
     rootless_file_path = "requirements.txt"
@@ -764,6 +804,49 @@ def test_create_cli_output_without_dependencies():
 
          ]
     )
+
+
+def test_create_cli_output_without_dependencies_is_used_packages():
+    # given
+    rootless_file_path = "package.json"
+    file_abs_path = "/path/to/package.json"
+    check_class = "checkov.sca_package_2.scanner.Scanner"
+    # when
+    cves_records = [
+        create_report_cve_record(
+            rootless_file_path=rootless_file_path,
+            file_abs_path=file_abs_path,
+            check_class=check_class,
+            vulnerability_details=details,
+            licenses='Unknown',
+            package={'package_registry': "https://registry.npmjs.org/", 'is_private_registry': False},
+            root_package={'name': details["packageName"], 'version': details["packageVersion"]},
+            used_private_registry=False
+        )
+        for details in get_vulnerabilities_details_no_deps_is_used_packages()
+    ]
+
+    cli_output = create_cli_output(True, cves_records)
+    # then
+
+    assert cli_output == "".join(
+        ["\t/package.json - CVEs Summary:\n",
+         '\t┌──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┐\n',
+         '\t│ Total CVEs: 3        │ critical: 0          │ high: 2              │ medium: 1            │ low: 0               │ skipped: 0           │ Total Packages Used: │\n',
+         "\t│                      │                      │                      │                      │                      │                      │ 2                    │\n",
+         '\t├──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┤\n',
+         '\t│ To fix 3/3 CVEs, go to https://www.bridgecrew.cloud/                                                                                                           │\n',
+         '\t├──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┤\n',
+         "\t│ Package              │ CVE ID               │ Severity             │ Current version      │ Root fixed version   │ Compliant version    │ Reachability         │\n",
+         '\t├──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┼──────────────────────┤\n',
+         '\t│ marked               │ CVE-2022-21681       │ HIGH                 │ 0.3.9                │ 4.0.10               │ 4.0.10               │ Package Used         │\n',
+         '\t│                      │ CVE-2022-21680       │ HIGH                 │                      │ 4.0.10               │                      │                      │\n',
+         '\t│                      │ PRISMA-2021-0013     │ MEDIUM               │                      │ 1.1.1                │                      │ Package Used         │\n',
+         '\t└──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┴──────────────────────┘\n'
+
+         ]
+    )
+
 
 def test_create_cli_table_for_package_with_diff_CVEs():
     # given

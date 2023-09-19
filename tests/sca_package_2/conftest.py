@@ -1510,6 +1510,50 @@ def get_vulnerabilities_details() -> List[Dict[str, Any]]:
     ]
 
 
+def get_vulnerabilities_details_is_used_packages() -> List[Dict[str, Any]]:
+    return [
+        {
+            "id": "CVE-2019-19844",
+            "status": "fixed in 3.0.1, 2.2.9, 1.11.27",
+            "cvss": 9.8,
+            "vector": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:H",
+            "description": "Django before 1.11.27, 2.x before 2.2.9, and 3.x before 3.0.1 allows account takeover. ...",
+            "severity": "critical",
+            "packageName": "django",
+            "packageVersion": "1.2",
+            "link": "https://nvd.nist.gov/vuln/detail/CVE-2019-19844",
+            "riskFactorsV2": {
+                "Attack complexity": "low",
+                "Attack vector": "network",
+            },
+            "impactedVersions": ["<1.11.27"],
+            "publishedDate": "2019-12-18T20:15:00+01:00",
+            "discoveredDate": "2019-12-18T19:15:00Z",
+            "fixDate": "2019-12-18T20:15:00+01:00",
+        },
+        {
+            "id": "CVE-2016-6186",
+            "status": "fixed in 1.9.8, 1.8.14",
+            "cvss": 6.1,
+            "vector": "CVSS:3.0/AV:N/AC:L/PR:N/UI:R/S:C/C:L/I:L/A:N",
+            "description": "Cross-site scripting (XSS) vulnerability in the dismissChangeRelatedObjectPopup function ...",
+            "severity": "medium",
+            "packageName": "django",
+            "packageVersion": "1.2",
+            "link": "https://nvd.nist.gov/vuln/detail/CVE-2016-6186",
+            "riskFactorsV2": {
+                "Attack complexity": "low",
+                "Attack vector": "network",
+                "IsUsed": "True",
+            },
+            "impactedVersions": ["<=1.8.13"],
+            "publishedDate": "2016-08-05T17:59:00+02:00",
+            "discoveredDate": "2016-08-05T15:59:00Z",
+            "fixDate": "2016-08-05T17:59:00+02:00",
+        },
+    ]
+
+
 def get_vulnerabilities_details_no_deps() -> List[Dict[str, Any]]:
     return [{'cveId': 'PRISMA-2021-0013', 'status': 'fixed in 1.1.1', 'severity': 'medium', 'packageName': 'marked',
              'packageVersion': '0.3.9', 'link': None, 'cvss': None, 'vector': None,
@@ -1520,6 +1564,24 @@ def get_vulnerabilities_details_no_deps() -> List[Dict[str, Any]]:
              'vector': 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H',
              'description': 'Marked is a markdown parser and compiler. Prior to version 4.0.10, the regular expression `inline.reflinkSearch` may cause catastrophic backtracking against some strings and lead to a denial of service (DoS). Anyone who runs untrusted markdown through a vulnerable version of marked and does not use a worker with a time limit may be affected. This issue is patched in version 4.0.10. As a workaround, avoid running untrusted markdown through marked or run marked on a worker thread and set a reasonable time limit to prevent draining resources.',
              'riskFactorsV2': {'Attack complexity': 'low', 'Attack vector': 'network'}, 'publishedDate': '2022-01-14T17:15:00Z'},
+            {'cveId': 'CVE-2022-21680', 'status': 'fixed in 4.0.10', 'severity': 'high', 'packageName': 'marked',
+             'packageVersion': '0.3.9', 'link': 'https://github.com/advisories/GHSA-rrrm-qjm4-v8hf', 'cvss': 7.5,
+             'vector': 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H',
+             'description': 'Marked is a markdown parser and compiler. Prior to version 4.0.10, the regular expression `block.def` may cause catastrophic backtracking against some strings and lead to a regular expression denial of service (ReDoS). Anyone who runs untrusted markdown through a vulnerable version of marked and does not use a worker with a time limit may be affected. This issue is patched in version 4.0.10. As a workaround, avoid running untrusted markdown through marked or run marked on a worker thread and set a reasonable time limit to prevent draining resources.',
+             'riskFactorsV2': {'Attack complexity': 'low', 'Attack vector': 'network'}, 'publishedDate': '2022-01-14T17:15:00Z'}
+            ]
+
+
+def get_vulnerabilities_details_no_deps_is_used_packages() -> List[Dict[str, Any]]:
+    return [{'cveId': 'PRISMA-2021-0013', 'status': 'fixed in 1.1.1', 'severity': 'medium', 'packageName': 'marked',
+             'packageVersion': '0.3.9', 'link': None, 'cvss': None, 'vector': None,
+             'description': 'marked package prior to 1.1.1 are vulnerable to  Regular Expression Denial of Service (ReDoS). The regex within src/rules.js file have multiple unused capture groups which could lead to a denial of service attack if user input is reachable.  Origin: https://github.com/markedjs/marked/commit/bd4f8c464befad2b304d51e33e89e567326e62e0',
+             'riskFactorsV2': {'Attack complexity': 'low', 'Attack vector': 'network', 'IsUsed': 'True'}, 'publishedDate': '2021-01-14T10:29:35Z'},
+            {'cveId': 'CVE-2022-21681', 'status': 'fixed in 4.0.10', 'severity': 'high', 'packageName': 'marked',
+             'packageVersion': '0.3.9', 'link': 'https://github.com/advisories/GHSA-5v2h-r2cx-5xgj', 'cvss': 7.5,
+             'vector': 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H',
+             'description': 'Marked is a markdown parser and compiler. Prior to version 4.0.10, the regular expression `inline.reflinkSearch` may cause catastrophic backtracking against some strings and lead to a denial of service (DoS). Anyone who runs untrusted markdown through a vulnerable version of marked and does not use a worker with a time limit may be affected. This issue is patched in version 4.0.10. As a workaround, avoid running untrusted markdown through marked or run marked on a worker thread and set a reasonable time limit to prevent draining resources.',
+             'riskFactorsV2': {'Attack complexity': 'low', 'Attack vector': 'network', 'IsUsed': 'True'}, 'publishedDate': '2022-01-14T17:15:00Z'},
             {'cveId': 'CVE-2022-21680', 'status': 'fixed in 4.0.10', 'severity': 'high', 'packageName': 'marked',
              'packageVersion': '0.3.9', 'link': 'https://github.com/advisories/GHSA-rrrm-qjm4-v8hf', 'cvss': 7.5,
              'vector': 'CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:N/A:H',
