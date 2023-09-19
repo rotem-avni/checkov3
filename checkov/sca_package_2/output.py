@@ -149,8 +149,15 @@ def create_cli_output(fixable: bool = True, *cve_records: list[Record]) -> str:
                     if lines or root_package_lines:
                         lines_details_found_cves = True
 
-                    if record.vulnerability_details.get("risk_factors", {}).get("IsUsed"):
-                        cve_count.used += 1
+                    if record.vulnerability_details and record.vulnerability_details.get("riskFactors", {}).get("IsUsed"):
+                            cve_count.used += 1
+
+                    if record.vulnerability_details is not None:
+                        reachability_risk_factors_tmp = {key: value for key, value in
+                                                     record.vulnerability_details.get("riskFactors", {}).items()
+                                                     if key in InterestingRiskFactors}
+                    else:
+                        reachability_risk_factors_tmp = {}
 
                     package_cves_details_map[root_package_alias].setdefault("cves", []).append(
                         {
@@ -166,9 +173,7 @@ def create_cli_output(fixable: bool = True, *cve_records: list[Record]) -> str:
                             "lines": lines,
                             "root_package_lines": root_package_lines,
                             "is_private_fix": record.vulnerability_details.get("is_private_fix"),
-                            "reachability_risk_factors": {key: value for key, value in
-                                                          record.vulnerability_details.get("risk_factors").items()
-                                                          if key in InterestingRiskFactors}
+                            "reachability_risk_factors": reachability_risk_factors_tmp
                         }
                     )
                 elif record.check_name == SCA_LICENSE_CHECK_NAME:
@@ -275,8 +280,8 @@ def create_cli_license_violations_table(file_path: str,
 
 def create_cli_cves_table(file_path: str, cve_count: CveCount, package_details_map: Dict[str, Dict[str, Any]],
                           lines_details_found: bool) -> str:
-    columns = 6
-    table_width = 136
+    columns = 7
+    table_width = 159
     column_width = int(table_width / columns)
 
     cve_table_lines = create_cve_summary_table_part(
@@ -331,7 +336,7 @@ def create_fixable_cve_summary_table_part(
 ) -> List[str]:
 
     fixable_table = PrettyTable(
-        header=False, min_table_width=table_width + column_count - 1, max_table_width=table_width + column_count - 1
+        header=False, min_table_width=table_width + column_count-4, max_table_width=table_width + column_count-4
     )
     fixable_table.set_style(SINGLE_BORDER)
     if cve_count.fixable:
