@@ -499,6 +499,7 @@ class Checkov:
                             git_configuration_folders=git_configuration_folders,
                         )
 
+
                     if self.config.create_baseline:
                         overall_baseline = Baseline()
                         for report in self.scan_reports:
