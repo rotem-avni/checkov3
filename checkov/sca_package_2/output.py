@@ -154,12 +154,11 @@ def create_cli_output(fixable: bool = True, *cve_records: list[Record]) -> str:
                             "IsUsed"):
                         cve_count.used += 1
 
+                    reachability_risk_factors_tmp = {}
                     if record.vulnerability_details is not None:
                         reachability_risk_factors_tmp = {key: value for key, value in
                                                          record.vulnerability_details.get("risk_factors", {}).items()
                                                          if key in REACHABILITY_RISK_FACTORS_KEYS}
-                    else:
-                        reachability_risk_factors_tmp = {}
 
                     package_cves_details_map[root_package_alias].setdefault("cves", []).append(
                         {
