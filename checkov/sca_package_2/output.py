@@ -17,7 +17,7 @@ from checkov.common.sca.commons import UNFIXABLE_VERSION, get_package_alias
 from checkov.common.typing import _LicenseStatusWithLines
 from checkov.common.output.common import compare_table_items_severity
 
-InterestingRiskFactors = ["IsUsed"]
+REACHABILITY_RISK_FACTORS_KEYS = ["IsUsed"]
 
 
 @dataclass
@@ -157,9 +157,7 @@ def create_cli_output(fixable: bool = True, *cve_records: list[Record]) -> str:
                     if record.vulnerability_details is not None:
                         reachability_risk_factors_tmp = {key: value for key, value in
                                                          record.vulnerability_details.get("risk_factors", {}).items()
-                                                         if key in InterestingRiskFactors}
-                    else:
-                        reachability_risk_factors_tmp = {}
+                                                         if key in REACHABILITY_RISK_FACTORS_KEYS}
 
                     package_cves_details_map[root_package_alias].setdefault("cves", []).append(
                         {
@@ -393,8 +391,7 @@ def create_package_overview_table_part(
             package_alias = get_package_alias(package_name, package_version)
             is_root = package_alias == root_package_alias
             is_public_overview = "(Public)" if cve['is_private_fix'] is False else ""
-            reachability = "Package Used" if ("IsUsed" in cve.get('reachability_risk_factors', {}) and
-                                              cve.get("reachability_risk_factors").get("IsUsed")) else ""
+            reachability = "Package Used" if cve.get('reachability_risk_factors', {}).get("IsUsed", False) else ""
             compliant_version_overview = ""
             if cve_idx == 0:
                 cur_compliant_version = compliant_version + is_public_overview if compliant_version and compliant_version != UNFIXABLE_VERSION else compliant_version
