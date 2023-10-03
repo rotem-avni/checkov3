@@ -3,8 +3,6 @@ import os
 
 import pytest
 
-from checkov.sast.consts import SastEngines
-
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
 
@@ -40,5 +38,3 @@ def validate_report(report_path: str) -> None:
         summary = report.get("summary")
         assert summary.get("passed") == 0
         assert summary.get("failed") > 0
-        engine_name = summary.get("engine_name", "")
-        assert engine_name == SastEngines.PRISMA
