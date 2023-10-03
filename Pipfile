@@ -3,9 +3,6 @@ name = "pypi"
 url = "https://pypi.org/simple"
 verify_ssl = true
 
-[scripts]
-checkov3 = "/Users/arielk/PycharmProjects/checkov3/bin/checkov"
-
 [dev-packages]
 #
 # REMINDER: Update "dev" deps on setup.py when changing
