@@ -7,6 +7,7 @@ for file in "../checkov/cdk/checks/python"/*; do
         basename=$(basename -- "$file")
         filename="${basename%.*}"
         # create a report for this check
+        echo "creating report for check: $filename"
         pipenv run checkov -s --framework sast_python -o json \
           -d "cdk_integration_tests/src/python/$filename" \
           --external-checks-dir "checkov/cdk/checks/python/$filename.yaml" > "checkov_sast_report_python_$filename.json"
