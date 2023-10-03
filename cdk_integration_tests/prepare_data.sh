@@ -13,3 +13,5 @@ for file in "checkov/cdk/checks/python"/*; do
           --external-checks-dir "checkov/cdk/checks/python/$filename.yaml" > "checkov_sast_report_python_$filename.json"
     fi
 done
+
+#todo: iterate over all the cdk typescript checks - when ts supported in sast
