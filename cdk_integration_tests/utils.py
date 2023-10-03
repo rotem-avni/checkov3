@@ -5,11 +5,9 @@ import pytest
 
 current_dir = os.path.dirname(os.path.realpath(__file__))
 
-
-def test_cdk_1() -> None:
-    report_path = os.path.join(current_dir, '..', 'checkov_sast_report_S3BucketEncryption.json')
+def run_check(lang: str, check_name: str) -> None:
+    report_path = os.path.join(current_dir, '..', f'checkov_sast_report_{lang}_{check_name}.json')
     validate_report(os.path.abspath(report_path))
-
 
 def validate_report(report_path: str) -> None:
     with open(report_path) as f:
