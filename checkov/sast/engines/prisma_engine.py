@@ -22,7 +22,7 @@ from checkov.common.typing import _CheckResult
 from checkov.common.util.http_utils import request_wrapper
 from checkov.sast.checks_infra.base_registry import Registry
 from checkov.sast.common import get_code_block_from_start, get_data_flow_code_block
-from checkov.sast.consts import SastLanguages, SastEngines
+from checkov.sast.consts import SastLanguages
 from checkov.sast.engines.base_engine import SastEngine
 from checkov.sast.prisma_models.library_input import LibraryInput
 from checkov.sast.prisma_models.policies_list import SastPolicies
@@ -243,7 +243,7 @@ class PrismaEngine(SastEngine):
         logging.debug(prisma_report.profiler)
         reports: List[SastReport] = []
         for lang, checks in prisma_report.rule_match.items():
-            report = SastReport(f'{self.check_type.lower()}_{lang.value}', prisma_report.run_metadata, SastEngines.PRISMA, lang)
+            report = SastReport(f'{self.check_type.lower()}_{lang.value}', prisma_report.run_metadata, lang)
             for check_id, match_rule in checks.items():
                 check_name = match_rule.check_name
                 check_cwe = match_rule.check_cwe
@@ -280,7 +280,7 @@ class PrismaEngine(SastEngine):
                     report.sast_imports = prisma_report.imports[lang]
                     break
             else:
-                report = SastReport(f'{self.check_type.lower()}_{lang.value}', prisma_report.run_metadata, SastEngines.PRISMA, lang)
+                report = SastReport(f'{self.check_type.lower()}_{lang.value}', prisma_report.run_metadata, lang)
                 report.sast_imports = prisma_report.imports[lang]
                 reports.append(report)
         return reports
