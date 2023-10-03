@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # iterate over all the cdk python checks
-for file in "../checkov/cdk/checks/python"/*; do
+for file in "checkov/cdk/checks/python"/*; do
   # Ensure it's a regular file (not a directory or symlink, etc.)
     if [ -f "$file" ]; then
         basename=$(basename -- "$file")
