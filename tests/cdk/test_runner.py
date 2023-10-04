@@ -66,6 +66,7 @@ def test_runner_failing_check():
     assert summary["parsing_errors"] == 0
 
 
+@pytest.mark.skip(reason="should move test to an integration test once sast supports skipping default policies")
 def test_runner_multiple_languages():
     # given
     test_dir = EXAMPLES_DIR

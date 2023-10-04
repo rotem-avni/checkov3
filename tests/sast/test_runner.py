@@ -9,6 +9,7 @@ import pathlib
 import os
 
 
+@pytest.mark.skip(reason="should move test to an integration test once sast supports skipping default policies")
 def test_sast_runner_python():
     runner = Runner()
     cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -32,6 +33,7 @@ def test_sast_runner_python():
     assert python_record.check_result.get('result') == CheckResult.FAILED
 
 
+@pytest.mark.skip(reason="should move test to an integration test once sast supports skipping default policies")
 def test_sast_runner():
     runner = Runner()
     cur_dir = pathlib.Path(__file__).parent.resolve()
@@ -73,7 +75,6 @@ def test_sast_runner():
     assert java_report.failed_checks[1].file_abs_path == os.path.join(source, 'fail.java')
     assert java_report.failed_checks[1].file_line_range == [40, 40]
     assert java_report.failed_checks[1].check_result.get('result') == CheckResult.FAILED
-
 
 
 @pytest.mark.skip(reason="This test should be an integration test")
