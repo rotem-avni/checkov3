@@ -12,8 +12,3 @@ class BaseCdkRegistry(Registry):
     def __init__(self, checks_dir: str) -> None:
         super().__init__(checks_dir=checks_dir)
         self.report_type = CheckType.CDK
-
-    def load_rules(
-        self, frameworks: Iterable[str], sast_languages: set[SastLanguages] | None
-    ) -> int:
-        return self._load_checks_from_dir(directory=self.checks_dir, sast_languages=SastLanguages.set())

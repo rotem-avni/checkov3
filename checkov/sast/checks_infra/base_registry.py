@@ -2,17 +2,12 @@ from __future__ import annotations
 
 import logging
 import os
-from pathlib import Path
 
-import yaml
-from typing import List, Any, Optional, Set, Dict, Iterable
+from typing import List, Any, Optional, Dict
 
 from checkov.common.bridgecrew.check_type import CheckType
-from checkov.sast.checks_infra.base_check import BaseSastCheck
 from checkov.common.checks.base_check_registry import BaseCheckRegistry
 from checkov.runner_filter import RunnerFilter
-from checkov.sast.consts import SastLanguages, BqlVersion, get_bql_version_from_string
-from checkov.common.checks_infra.registry import CHECKS_POSSIBLE_ENDING
 
 logger = logging.getLogger(__name__)
 
