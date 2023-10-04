@@ -86,8 +86,6 @@ def test_sast_prisma_runner(mocker):
     mocker.patch("checkov.sast.engines.prisma_engine.PrismaEngine.get_sast_artifact", return_value='')
 
     runner = Runner()
-    runner.registry.temp_semgrep_rules_path = os.path.join(pathlib.Path(__file__).parent.resolve(),
-                                                           'test_runner_temp_rules.yaml')
     cur_dir = pathlib.Path(__file__).parent.resolve()
     source = os.path.join(cur_dir / 'source_code' / 'external_check')
     external_dir_checks = os.path.join(cur_dir, 'external_checks')
