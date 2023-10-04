@@ -61,7 +61,8 @@ class PrismaEngine(SastEngine):
             'checks': registry.runner_filter.checks if registry.runner_filter else [],
             'skip_checks': registry.runner_filter.skip_checks if registry.runner_filter else [],
             'skip_path': registry.runner_filter.excluded_paths if registry.runner_filter else [],
-            'report_imports': registry.runner_filter.report_sast_imports if registry.runner_filter else False
+            'report_imports': registry.runner_filter.report_sast_imports if registry.runner_filter else False,
+            'remove_default_policies': registry.runner_filter.remove_default_sast_policies if registry.runner_filter else False,
         }
         prisma_result = self.run_go_library(**library_input)
 
@@ -155,7 +156,8 @@ class PrismaEngine(SastEngine):
                        skip_checks: List[str],
                        skip_path: List[str],
                        list_policies: bool = False,
-                       report_imports: bool = True) -> Union[List[Report], SastPolicies]:
+                       report_imports: bool = True,
+                       remove_default_policies: bool = False) -> Union[List[Report], SastPolicies]:
 
         validate_params(languages, source_codes, policies, list_policies)
 
@@ -173,7 +175,9 @@ class PrismaEngine(SastEngine):
                 "skip_checks": skip_checks,
                 "skip_path": skip_path,
                 "list_policies": list_policies,
-                "report_imports": report_imports
+                "report_imports": report_imports,
+                "remove_default_policies": remove_default_policies,
+
             },
             "auth": {
                 "api_key": bc_integration.get_auth_token(),

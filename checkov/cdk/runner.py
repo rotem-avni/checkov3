@@ -32,6 +32,7 @@ class CdkRunner(SastRunner):
         runner_filter: RunnerFilter | None = None,
         collect_skip_comments: bool = True,
     ) -> list[Report]:
+        runner_filter.remove_default_sast_policies = True
         reports = super().run(
             root_folder=root_folder,
             external_checks_dir=external_checks_dir,
