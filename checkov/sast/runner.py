@@ -26,6 +26,7 @@ class Runner(BaseRunner[None]):
     def __init__(self) -> None:
         super().__init__(file_extensions=["." + a for a in FILE_EXT_TO_SAST_LANG.keys()])
         self.registry = Registry(checks_dir=CHECKS_DIR)
+        self.engine = PrismaEngine()  # noqa: disallow-untyped-calls
 
     def should_scan_file(self, file: str) -> bool:
         for extensions in SUPPORT_FILE_EXT.values():
@@ -60,10 +61,9 @@ class Runner(BaseRunner[None]):
         if files:
             targets.extend([a if os.path.isabs(a) else os.path.abspath(a) for a in files])
 
-        engine = PrismaEngine()  # noqa: disallow-untyped-calls
         reports = []
         try:
-            reports = engine.get_reports(targets, self.registry, runner_filter.sast_languages)
+            reports = self.engine.get_reports(targets, self.registry, runner_filter.sast_languages)
         except BaseException as e:
             logger.error(f"got error when try to run prisma sast: {e}")
 
