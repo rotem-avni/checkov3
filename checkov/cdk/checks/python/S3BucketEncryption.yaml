@@ -9,7 +9,7 @@ scope:
 definition:
   patterns:
     or:
-      - pattern: aws_cdk.aws_s3.Bucket(...)
+      - pattern: aws_cdk.aws_s3.Bucket(<ANY>)
         conditions:
-          - not_pattern: aws_cdk.aws_s3.Bucket(..., encryption=aws_cdk.aws_s3.BucketEncryption.$ANY_VAR, ...)
-      - pattern: aws_cdk.aws_s3.Bucket(..., encryption=aws_cdk.aws_s3.BucketEncryption.UNENCRYPTED, ...)
+          - not_pattern: aws_cdk.aws_s3.Bucket(<ANY>, encryption=aws_cdk.aws_s3.BucketEncryption.$ANY_VAR, <ANY>)
+      - pattern: aws_cdk.aws_s3.Bucket(<ANY>, encryption=aws_cdk.aws_s3.BucketEncryption.UNENCRYPTED, <ANY>)
