@@ -390,6 +390,6 @@ class RunnerFilter(object):
                 return langs
             if not framework.startswith(CheckType.SAST):
                 continue
-            lang = '_'.join(framework.split('_')[1:])
+            lang = str('_'.join(framework.split('_')[1:]))
             langs.add(SastLanguages[lang.upper()])
         return langs
