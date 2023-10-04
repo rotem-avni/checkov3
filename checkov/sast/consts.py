@@ -1,8 +1,6 @@
 from enum import Enum
 from typing import List, Any, Set
 
-from checkov.common.graph.checks_infra.enums import Operators
-
 
 class SastLanguages(Enum):
     @classmethod

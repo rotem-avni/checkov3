@@ -1,5 +1,6 @@
 from cdk_integration_tests.utils import run_check
 
+
 def test_CKV_AWS_18_S3BucketLogging():
     run_check(lang='python', check_name="S3BucketLogging")
 
