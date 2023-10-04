@@ -10,7 +10,7 @@ for file in "checkov/cdk/checks/python"/*; do
         echo "creating report for check: $filename"
         pipenv run checkov -s --framework sast_python -o json \
           -d "cdk_integration_tests/src/python/$filename" \
-          --external-checks-dir "checkov/cdk/checks/python/$filename.yaml" > "checkov_sast_report_python_$filename.json"
+          --external-checks-dir "checkov/cdk/checks/python/$filename.yaml" > "checkov_report_cdk_python_$filename.json"
     fi
 done
 
