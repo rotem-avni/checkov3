@@ -382,6 +382,7 @@ class RunnerFilter(object):
         if 'all' in frameworks:
             for lang in SastLanguages:
                 langs.add(lang)
+            return langs
         for framework in frameworks:
             if framework == CheckType.SAST:
                 for sast_lang in SastLanguages:
