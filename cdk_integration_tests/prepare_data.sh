@@ -2,8 +2,8 @@
 
 # iterate over all the cdk python checks
 for file in "checkov/cdk/checks/python"/*; do
-  # Ensure it's a regular file (not a directory or symlink, etc.)
-    if [ -f "$file" ]; then
+  # Ensure it's a yaml file
+    if [[ -f "$file" && "$file" == *.yaml ]]; then
         basename=$(basename -- "$file")
         filename="${basename%.*}"
         # create a report for this check
