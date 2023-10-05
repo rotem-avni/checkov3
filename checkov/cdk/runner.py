@@ -30,7 +30,7 @@ class CdkRunner(SastRunner):
         root_folder: str | None = None,
         external_checks_dir: list[str] | None = None,
         files: list[str] | None = None,
-        runner_filter: RunnerFilter | None = None,
+        runner_filter: RunnerFilter | None = RunnerFilter(),
         collect_skip_comments: bool = True,
     ) -> list[Report]:
         runner_filter.remove_default_sast_policies = True
