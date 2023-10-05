@@ -17,10 +17,6 @@ logger = logging.getLogger(__name__)
 
 CHECKS_DIR_PATH = Path(__file__).parent / "checks"
 
-CDK_LANGUAGES = [
-    SastLanguages.PYTHON
-]
-
 
 class CdkRunner(SastRunner):
     check_type = CheckType.CDK  # noqa: CCE003  # a static attribute
@@ -38,8 +34,6 @@ class CdkRunner(SastRunner):
         collect_skip_comments: bool = True,
     ) -> list[Report]:
         runner_filter.remove_default_sast_policies = True
-        for lang in CDK_LANGUAGES:
-            runner_filter.sast_languages.add(lang)
         reports = super().run(
             root_folder=root_folder,
             external_checks_dir=external_checks_dir,
