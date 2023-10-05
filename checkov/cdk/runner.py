@@ -8,9 +8,7 @@ from checkov.cdk.checks_infra.base_registry import BaseCdkRegistry
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.output.report import Report
 from checkov.sast.runner import Runner as SastRunner
-
-if TYPE_CHECKING:
-    from checkov.runner_filter import RunnerFilter
+from checkov.runner_filter import RunnerFilter
 
 logger = logging.getLogger(__name__)
 
