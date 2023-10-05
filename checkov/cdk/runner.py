@@ -2,7 +2,6 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 from checkov.cdk.checks_infra.base_registry import BaseCdkRegistry
 from checkov.common.bridgecrew.check_type import CheckType
