@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING
 from checkov.cdk.checks_infra.base_registry import BaseCdkRegistry
 from checkov.common.bridgecrew.check_type import CheckType
 from checkov.common.output.report import Report
+from checkov.sast.consts import SastLanguages
 from checkov.sast.runner import Runner as SastRunner
 
 if TYPE_CHECKING:
@@ -15,6 +16,10 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 CHECKS_DIR_PATH = Path(__file__).parent / "checks"
+
+CDK_LANGUAGES = [
+    SastLanguages.PYTHON
+]
 
 
 class CdkRunner(SastRunner):
@@ -33,6 +38,8 @@ class CdkRunner(SastRunner):
         collect_skip_comments: bool = True,
     ) -> list[Report]:
         runner_filter.remove_default_sast_policies = True
+        for lang in CDK_LANGUAGES:
+            runner_filter.sast_languages.add(lang)
         reports = super().run(
             root_folder=root_folder,
             external_checks_dir=external_checks_dir,

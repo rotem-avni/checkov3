@@ -25,7 +25,7 @@ prepare_data () {
         filename="${basename%.*}"
         # create a report for this check
         echo "creating report for check: $filename"
-        python checkov/main.py -s --framework sast_python -o json \
+        python checkov/main.py -s --framework cdk -o json \
           -d "cdk_integration_tests/src/python/$filename" \
           --external-checks-dir "checkov/cdk/checks/python/$filename.yaml" > "checkov_report_cdk_python_$filename.json"
     fi

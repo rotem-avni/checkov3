@@ -24,5 +24,4 @@ def validate_report(report_path: str) -> None:
         assert len(failed_checks) > 0
         summary = report.get("summary")
         assert summary.get("passed") == 0
-        # TODO: validate the exact number of failures per check, when disabling the default checks in sast is supported
         assert summary.get("failed") > 0
