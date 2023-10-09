@@ -22,6 +22,7 @@ def test_sast_javascript() -> None:
     validate_report(os.path.abspath(report_path))
 
 
+
 def validate_report(report_path: str) -> None:
     with open(report_path) as f:
         data = f.read()
