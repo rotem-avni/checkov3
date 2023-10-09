@@ -72,3 +72,4 @@ def create_empty_report(languages: List[SastLanguages]) -> PrismaReport:
     for lang in languages:
         matches[lang] = {}
     return PrismaReport(rule_match=matches, errors={}, profiler={}, run_metadata={}, imports={})
+
