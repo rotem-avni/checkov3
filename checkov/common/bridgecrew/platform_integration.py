@@ -489,6 +489,16 @@ class BcPlatformIntegration:
         dpath.merge(reduced_scan_reports, checks_metadata_paths)
         persist_checks_results(reduced_scan_reports, self.s3_client, self.bucket, self.repo_path)
 
+    async def persist_reachability_alias_mapping(self, alias_mapping: Dict[str, Any]) -> None:
+        if not self.use_s3_integration or not self.s3_client:
+            return
+        if not self.bucket or not self.repo_path:
+            logging.error(f"Something went wrong: bucket {self.bucket}, repo path {self.repo_path}")
+            return
+
+        s3_path = f'{self.repo_path}/alias_mapping.json'
+        _put_json_object(self.s3_client, alias_mapping, self.bucket, s3_path)
+
     def persist_assets_scan_results(self, assets_report: Optional[Dict[str, Any]]) -> None:
         if not assets_report:
             return
