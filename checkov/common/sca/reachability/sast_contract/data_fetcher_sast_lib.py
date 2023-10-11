@@ -13,18 +13,18 @@ class SastReachabilityDataFetcher:
     def __init__(self) -> None:
         self.alias_mapping_creator = AliasMappingCreator()
         self.reachability_run_config_raw: Union[Dict[str, Any], None] = None
-        self.reachability_run_config = Union[ReachabilityRunConfig, None] = None
+        self.reachability_run_config: Union[ReachabilityRunConfig, None] = None
 
     def fetch(self, repository_name: str, repository_root_dir: str) -> Union[ReachabilityData, None]:
-        self.reachability_run_config = bc_integration.get_reachability_run_config()
+        self.reachability_run_config_raw = bc_integration.get_reachability_run_config()
 
-        if not self.reachability_run_config:
+        if not self.reachability_run_config_raw:
             logging.error('reachability_run_config is null, unable to proceed', exc_info=True)
             return None
 
         try:
             self.reachability_run_config = ReachabilityRunConfig(
-                packageNamesForMapping=self.reachability_run_config.get('packageNamesForMapping', []))
+                packageNamesForMapping=self.reachability_run_config_raw.get('packageNamesForMapping', []))
         except ValidationError:
             logging.error('Unable to serialize reachability run_config', exc_info=True)
             return None
