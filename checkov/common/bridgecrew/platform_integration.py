@@ -913,7 +913,7 @@ class BcPlatformIntegration:
             logging.debug(f"Got checkov mappings and guidelines from {platform_type} platform")
         except Exception:
             logging.warning(f"Failed to get the checkov mappings and guidelines from {self.guidelines_api_url}. Skips using BC_* IDs will not work.",
-                exc_info=True)
+                            exc_info=True)
 
     def onboarding(self) -> None:
         if not self.bc_api_key:
@@ -936,9 +936,9 @@ class BcPlatformIntegration:
                                                                                                                                                                                                                      "\n"
                                                                                                                                                                                                                      "\n" + "and much more...",
                 'yellow') +
-              colored("\n\nIt's easy and only takes 2 minutes. We can do it right now!\n\n"
-                      "To Level-up, press 'y'... \n",
-                      'cyan') + Style.RESET_ALL)
+                colored("\n\nIt's easy and only takes 2 minutes. We can do it right now!\n\n"
+                        "To Level-up, press 'y'... \n",
+                        'cyan') + Style.RESET_ALL)
             reply = self._input_levelup_results()
             if reply[:1] == 'y':
                 print(Style.BRIGHT + colored("\nOk, let’s get you started on creating your free account! \n"

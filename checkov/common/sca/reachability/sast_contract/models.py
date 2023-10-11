@@ -4,8 +4,8 @@ from pydantic import BaseModel
 
 
 class ReachabilityData(BaseModel):
-    aliasMapping: Dict[str, Any]
+    aliasMapping: Dict[str, Any]  # noqa: CCE003
 
 
 class ReachabilityRunConfig(BaseModel):
-    packageNamesForMapping: Set[str]
+    packageNamesForMapping: Set[str]  # noqa: CCE003

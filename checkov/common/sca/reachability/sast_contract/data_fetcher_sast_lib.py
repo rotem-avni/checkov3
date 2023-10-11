@@ -10,9 +10,9 @@ from .models import ReachabilityRunConfig, ReachabilityData
 
 
 class SastReachabilityDataFetcher:
-    def __init__(self, alias_mapping_creator: AliasMappingCreator = AliasMappingCreator()) -> None:
-        self.alias_mapping_creator = alias_mapping_creator
-        self.reachability_run_config = None
+    def __init__(self) -> None:
+        self.alias_mapping_creator = AliasMappingCreator()
+        self.reachability_run_config: Dict[str, Any] | None = None
 
     def fetch(self, repository_name: str, repository_root_dir: str) -> Union[ReachabilityData, None]:
         self.reachability_run_config = bc_integration.get_reachability_run_config()
