@@ -46,5 +46,5 @@ class SastReachabilityDataFetcher:
             relevant_packages=relevant_packages
         )
         res: Dict[str, Any] = self.alias_mapping_creator.get_alias_mapping()
-        asyncio.create_task(bc_integration.persist_reachability_alias_mapping(res))
+        asyncio.run(bc_integration.persist_reachability_alias_mapping(res))
         return res
