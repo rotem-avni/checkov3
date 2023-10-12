@@ -1,9 +1,7 @@
 import asyncio
 import logging
 from typing import Set, Dict, Any, Union
-
 from pydantic import ValidationError
-
 from checkov.common.bridgecrew.platform_integration import bc_integration
 from checkov.common.sca.reachability.package_alias_mapping.alias_mapping_creator import AliasMappingCreator
 from .models import ReachabilityRunConfig, ReachabilityData
