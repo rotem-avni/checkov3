@@ -380,9 +380,7 @@ class RunnerFilter(object):
         if not frameworks:
             return langs
         if 'all' in frameworks:
-            for sast_lang in SastLanguages:
-                langs.add(sast_lang)
-            return langs
+            return SastLanguages.set()
         for framework in frameworks:
             if framework == CheckType.SAST:
                 for sast_lang in SastLanguages:
