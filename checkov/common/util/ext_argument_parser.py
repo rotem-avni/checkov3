@@ -358,22 +358,6 @@ class ExtArgumentParser(configargparse.ArgumentParser):
                  "above under --check) still applies here. Requires a BC or PC platform API key.",
         )
         self.add(
-            "--no-guide",
-            action="store_true",
-            default=False,
-            help="Deprecated - use --skip-download",
-        )
-        self.add(
-            "--skip-suppressions",
-            help="Deprecated - use --skip-download",
-            action="store_true",
-        )
-        self.add(
-            "--skip-policy-download",
-            help="Deprecated - use --skip-download",
-            action="store_true",
-        )
-        self.add(
             "--skip-fixes",
             help="Do not download fixed resource templates from Bridgecrew. Only has effect when using the API key.",
             action="store_true",
