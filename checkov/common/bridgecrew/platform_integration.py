@@ -106,7 +106,7 @@ class BcPlatformIntegration:
         self.support_repo_path: str | None = None
         self.repo_id: str | None = None
         self.repo_branch: str | None = None
-        self.skip_fixes = False
+        self.skip_fixes = False  # even though we removed the CLI flag, this gets set so we know whether this is a fix run (IDE) or not (normal CLI)
         self.skip_download = False
         self.source_id: str | None = None
         self.bc_source: SourceType | None = None
