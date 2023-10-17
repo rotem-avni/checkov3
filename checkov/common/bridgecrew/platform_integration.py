@@ -273,6 +273,7 @@ class BcPlatformIntegration:
         repo_id: str,
         skip_download: bool = False,
         source: SourceType | None = None,
+        skip_fixes: bool = False,
         source_version: str | None = None,
         repo_branch: str | None = None,
         prisma_api_url: str | None = None,
@@ -286,6 +287,7 @@ class BcPlatformIntegration:
         """
         self.repo_id = repo_id
         self.repo_branch = repo_branch
+        self.skip_fixes = skip_fixes
         self.skip_download = skip_download
         self.bc_source = source
         self.bc_source_version = source_version
