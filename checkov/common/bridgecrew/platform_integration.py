@@ -271,7 +271,6 @@ class BcPlatformIntegration:
     def setup_bridgecrew_credentials(
         self,
         repo_id: str,
-        skip_fixes: bool = False,
         skip_download: bool = False,
         source: SourceType | None = None,
         source_version: str | None = None,
@@ -281,14 +280,12 @@ class BcPlatformIntegration:
         """
         Setup credentials against Bridgecrew's platform.
         :param repo_id: Identity string of the scanned repository, of the form <repo_owner>/<repo_name>
-        :param skip_fixes: whether to skip querying fixes from Bridgecrew
         :param skip_download: whether to skip downloading data (guidelines, custom policies, etc) from the platform
         :param source:
         :param prisma_api_url: optional URL for the Prisma Cloud platform, requires a Prisma Cloud Access Key as bc_api_key
         """
         self.repo_id = repo_id
         self.repo_branch = repo_branch
-        self.skip_fixes = skip_fixes
         self.skip_download = skip_download
         self.bc_source = source
         self.bc_source_version = source_version
