@@ -353,7 +353,7 @@ class Checkov:
                 try:
                     bc_integration.bc_api_key = self.config.bc_api_key
                     bc_integration.setup_bridgecrew_credentials(repo_id=self.config.repo_id,
-                                                                skip_fixes=self.config.skip_fixes,
+                                                                skip_fixes=False,  # will be set to True if this run is not eligible for fixes
                                                                 skip_download=self.config.skip_download,
                                                                 source=source,
                                                                 source_version=source_version,
