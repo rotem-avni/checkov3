@@ -8,18 +8,7 @@ scope:
   languages:
     - python
 definition:
-  patterns:
-    or:
-      - patterns:
-          and:
-          - pattern: aws_cdk.aws_s3.Bucket(<ANY>,block_public_access=$ARG,<ANY>)
-            conditions:
-              - metavariable: $ARG
-                not_pattern: aws_cdk.aws_s3.BlockPublicAccess(block_public_policy=True)
-          - pattern: aws_cdk.aws_s3.Bucket(<ANY>,block_public_access=$ARG,<ANY>)
-            conditions:
-              - metavariable: $ARG
-                not_pattern: aws_cdk.aws_s3.BlockPublicAccess.BLOCK_ALL
-      - pattern: aws_cdk.aws_s3.Bucket(<ANY>)
-        conditions:
-          - not_pattern: aws_cdk.aws_s3.Bucket(<ANY>,block_public_access=$ARG,<ANY>)
+  pattern: aws_cdk.aws_s3.Bucket(<ANY>)
+  conditions:
+    - not_pattern: aws_cdk.aws_s3.Bucket(<ANY>, block_public_access=aws_cdk.aws_s3.BlockPublicAccess.BLOCK_ALL, <ANY>)
+    - not_pattern: aws_cdk.aws_s3.Bucket(<ANY>, block_public_access=aws_cdk.aws_s3.BlockPublicAccess(block_public_policy=True), <ANY>)
