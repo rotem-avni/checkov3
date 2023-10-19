@@ -18,6 +18,7 @@ from checkov.common.bridgecrew.platform_key import bridgecrew_dir
 from checkov.common.bridgecrew.severities import get_severity
 from checkov.common.models.enums import CheckResult
 from checkov.common.output.report import Report
+from checkov.common.sca.reachability.sast_contract.data_fetcher_sast_lib import SastReachabilityDataFetcher
 from checkov.common.typing import _CheckResult
 from checkov.common.util.http_utils import request_wrapper
 from checkov.sast.checks_infra.base_registry import Registry
@@ -170,7 +171,7 @@ class PrismaEngine(SastEngine):
 
         reachability_data = None
         if report_reachability:
-            reachability_data = get_reachability_data()
+            reachability_data = get_reachability_data(source_codes[0])
 
         document = {
             "scan_code_params": {
@@ -362,5 +363,10 @@ def get_machine() -> str:
 
     return ''
 
-def get_reachability_data():
-    return None
+def get_reachability_data(repo_path):
+    fetcher = SastReachabilityDataFetcher()
+    reachability_data = fetcher.fetch(repository_name=repo_path, repository_root_dir=repo_path)
+    #TODO
+    alias_data = {}
+    data = {"reachability_data": {"package_alias": alias_data}}
+    return data
