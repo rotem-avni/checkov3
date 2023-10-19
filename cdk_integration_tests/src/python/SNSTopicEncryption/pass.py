@@ -18,6 +18,7 @@ class MyStack(Stack):
                           topic_name="my-topic",
                           master_key=key)
 
+
 app = App()
 MyStack(app, "MyStack")
 app.synth()
