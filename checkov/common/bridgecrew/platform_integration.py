@@ -34,7 +34,7 @@ from checkov.common.bridgecrew.platform_key import read_key, persist_key, bridge
 from checkov.common.bridgecrew.run_metadata.registry import registry
 from checkov.common.bridgecrew.wrapper import persist_assets_results, reduce_scan_reports, persist_checks_results, \
     enrich_and_persist_checks_metadata, checkov_results_prefix, persist_run_metadata, _put_json_object, \
-    persist_logs_stream, persist_graphs
+    persist_logs_stream, persist_graphs, persist_reachability_results
 from checkov.common.models.consts import SUPPORTED_FILE_EXTENSIONS, SUPPORTED_FILES, SCANNABLE_PACKAGE_FILES
 from checkov.common.runners.base_runner import filter_ignored_paths
 from checkov.common.typing import _CicdDetails, LibraryGraph
@@ -505,6 +505,12 @@ class BcPlatformIntegration:
         for lang, assets in assets_report['imports'].items():
             new_report = {'imports': {lang.value: assets}}
             persist_assets_results(f'sast_{lang.value}', new_report, self.s3_client, self.bucket, self.repo_path)
+
+    def persist_reachability_scan_results(self, reachability_report: Optional[Dict[str, Any]]) -> None:
+        if not reachability_report:
+            return
+        for lang, report in reachability_report.items():
+            persist_reachability_results(f'sast_{lang.value}', report, self.s3_client, self.bucket, self.repo_path)
 
     def persist_image_scan_results(self, report: dict[str, Any] | None, file_path: str, image_name: str, branch: str) -> None:
         if not self.s3_client:
