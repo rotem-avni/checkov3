@@ -370,5 +370,5 @@ def get_reachability_data(repo_path):
     reachability_data = fetcher.fetch(repository_name=repo_path, repository_root_dir=repo_path)
     #TODO
     alias_data = {}
-    data = {"reachability_data": {"package_alias": alias_data}}
+    data = {"javascript": {"package_alias": alias_data}}
     return data
