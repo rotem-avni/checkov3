@@ -103,7 +103,7 @@ def test_console_output_in_tty(mocker: MockerFixture, sca_package_2_report):
             '\x1b[0m\x1b[36m\n',
             'Failed checks: 7, Skipped checks: 3\n',
             '\n',
-            '\t/requirements.txt - CVEs Summary:\n',
+            '\x1b[0m\t/requirements.txt - CVEs Summary:\n',
             '\t┌──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┬──────────────────────┐\n',
             '\t│ Total CVEs: 6        │ critical: 1          │ high: 2              │ medium: 1            │ low: 0               │ skipped: 2           │ Total Packages Used: │\n',
             '\t│                      │                      │                      │                      │                      │                      │ 0                    │\n',
