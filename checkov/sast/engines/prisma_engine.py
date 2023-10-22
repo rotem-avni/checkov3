@@ -171,7 +171,9 @@ class PrismaEngine(SastEngine):
 
         reachability_data = None
         if report_reachability:
-            reachability_data = get_reachability_data(source_codes[0])
+            #TODO - merge all data/ create per src
+            for source_code in source_codes:
+                reachability_data = get_reachability_data(source_code)
 
         document = {
             "scan_code_params": {
