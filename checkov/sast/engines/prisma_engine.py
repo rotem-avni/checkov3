@@ -171,7 +171,7 @@ class PrismaEngine(SastEngine):
 
         reachability_data = None
         if report_reachability:
-            #TODO - merge all data/ create per src
+            #TODO - run sast-core per src
             for source_code in source_codes:
                 reachability_data = get_reachability_data(source_code)
 
