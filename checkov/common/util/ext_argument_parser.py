@@ -211,18 +211,20 @@ class ExtArgumentParser(configargparse.ArgumentParser):
         )
         self.add(
             "--framework",
-            help="Filter scan to run only on specific infrastructure code frameworks",
-            choices=checkov_runners + sast_types + ["all"],
+            help="Filter scan to run only on specific infrastructure code frameworks. Enter as a comma-separated list or "
+                 "repeat the flag multiple times. For example, --framework terraform,sca_package or --framework terraform "
+                 f"--framework sca_package. Possible values: {', '.join(['all'] + checkov_runners)}",
             default=["all"],
             env_var="CKV_FRAMEWORK",
-            nargs="+",
+            action='append'
         )
         self.add(
             "--skip-framework",
-            help="Filter scan to skip specific infrastructure as code frameworks."
+            help="Filter scan to skip specific infrastructure as code frameworks. "
                  "This will be included automatically for some frameworks if system dependencies "
-                 "are missing. Add multiple frameworks using spaces. For example, "
-                 "--skip-framework terraform sca_package.",
+                 "are missing. Enter as a comma-separated list or repeat the flag multiple times. For example, "
+                 "--skip-framework terraform,sca_package or --skip-framework terraform --skip-framework sca_package."
+                 f"Possible values: {', '.join(checkov_runners)}",
             choices=checkov_runners,
             default=None,
             nargs="+",

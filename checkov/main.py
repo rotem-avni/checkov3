@@ -175,6 +175,8 @@ class Checkov:
 
         self.config = self.parser.parse_args(argv)
         self.normalize_config()
+        logging.error('Exiting')
+        sys.exit(0)
 
     def normalize_config(self) -> None:
         if self.config.no_guide:
