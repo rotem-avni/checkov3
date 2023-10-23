@@ -223,7 +223,7 @@ class ExtArgumentParser(configargparse.ArgumentParser):
         )
         self.add(
             "--framework",
-            help="Filter scan to run only on specific infrastructure code frameworks. Defaults to all frameworks. If you "
+            help="Filter scan to run only on specific infrastructure as code frameworks. Defaults to all frameworks. If you "
                  "explicitly include 'all' as a value, then all other values are ignored. Enter as a "
                  "comma-separated list or repeat the flag multiple times. For example, --framework terraform,sca_package "
                  f"or --framework terraform --framework sca_package. Possible values: {', '.join(['all'] + checkov_runners)}",
