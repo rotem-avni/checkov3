@@ -65,7 +65,7 @@ class Function(BaseModel):
     line_number: int  # noqa: CCE003
     code_block: str  # noqa: CCE003
 
-    def to_dict(self):
+    def to_dict(self) -> Dict[str, Any]:
         return self.__dict__
 
 
@@ -95,11 +95,11 @@ def create_empty_report(languages: List[SastLanguages]) -> PrismaReport:
     matches: Dict[SastLanguages, Dict[str, RuleMatch]] = {}
     for lang in languages:
         matches[lang] = {}
-    return PrismaReport(rule_match=matches, errors={}, profiler={}, run_metadata={}, imports={})
+    return PrismaReport(rule_match=matches, errors={}, profiler={}, run_metadata={}, imports={}, reachability_report={})
 
 
 def serialize_reachability_report(report: Dict[str, Repositories]) -> Dict[str, Any]:
-    result = {}
+    result: Dict[str, Any] = {}
     for repo_path, files in report.items():
         result[repo_path] = {"files": {}}
         for file_name, packages in files.files.items():

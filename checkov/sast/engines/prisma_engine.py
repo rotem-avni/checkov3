@@ -307,7 +307,7 @@ class PrismaEngine(SastEngine):
                     break
             else:
                 report = SastReport(f'{self.check_type.lower()}_{lang.value}', prisma_report.run_metadata, lang)
-                report.sast_Reachability = prisma_report.reachability_report[lang]
+                report.sast_reachability = prisma_report.reachability_report[lang]
                 reports.append(report)
         return reports
 
@@ -365,10 +365,12 @@ def get_machine() -> str:
     return ''
 
 
-def get_reachability_data(repo_path):
+def get_reachability_data(repo_path) -> Dict[str, Any]:
     fetcher = SastReachabilityDataFetcher()
     reachability_data = fetcher.fetch(repository_name=repo_path, repository_root_dir=repo_path)
-    data = {}
+    data: Dict[str, Any] = {}
+    if not reachability_data:
+        return data
     langs = reachability_data.aliasMapping.get("languages")
     if not langs:
         return {}
