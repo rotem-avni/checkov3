@@ -24,7 +24,7 @@ def flatten_csv(list_to_flatten: List[List[str]]) -> List[str]:
     """
     if not list_to_flatten:
         return []
-    return list(set([s for sublist in list_to_flatten for val in sublist for s in val.split(',')]))
+    return list({s for sublist in list_to_flatten for val in sublist for s in val.split(',')})
 
 
 class ExtArgumentParser(configargparse.ArgumentParser):
