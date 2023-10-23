@@ -12,7 +12,7 @@ import signal
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, List
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, List, cast
 
 import argcomplete
 import configargparse
@@ -53,7 +53,7 @@ from checkov.common.util import prompt
 from checkov.common.util.banner import banner as checkov_banner, tool as checkov_tool
 from checkov.common.util.config_utils import get_default_config_paths
 from checkov.common.util.consts import CHECKOV_RUN_SCA_PACKAGE_SCAN_V2
-from checkov.common.util.ext_argument_parser import ExtArgumentParser
+from checkov.common.util.ext_argument_parser import ExtArgumentParser, flatten_csv
 from checkov.common.util.runner_dependency_handler import RunnerDependencyHandler
 from checkov.common.util.type_forcers import convert_str_to_bool
 from checkov.contributor_metrics import report_contributor_metrics
@@ -175,14 +175,8 @@ class Checkov:
 
         self.config = self.parser.parse_args(argv)
         self.normalize_config()
-        logging.error('Exiting')
-        sys.exit(0)
 
     def normalize_config(self) -> None:
-
-        logging.error('Config:')
-        logging.error(self.config)
-
         if self.config.no_guide:
             logger.warning(
                 '--no-guide is deprecated and will be removed in a future release. Use --skip-download instead'
@@ -212,12 +206,56 @@ class Checkov:
                 '--policy-metadata-filter flag was used without a Prisma Cloud API key. Policy filtering will be skipped.'
             )
 
+        self.normalize_frameworks()
+
         # Parse mask into json with default dict. If self.config.mask is empty list, default dict will be assigned
         self._parse_mask_to_resource_attributes_to_omit()
 
         if self.config.file:
             # it is passed as a list of lists
             self.config.file = list(itertools.chain.from_iterable(self.config.file))
+
+    def normalize_frameworks(self):
+        # frameworks come as arrays of arrays, e.g. --framework terraform arm --framework bicep,cloudformation
+        # becomes: [['terraform', 'arm'], ['bicep,cloudformation']]
+        # we'll collapse it into a single array (which is how it was before checkov3)
+
+        if self.config.framework:
+            logging.debug(f'Raw framework value: {self.config.framework}')
+            frameworks = flatten_csv(cast(List[List[str]], self.config.framework))
+            logging.debug(f'Flattened frameworks: {frameworks}')
+            if 'all' in frameworks:
+                self.config.framework = ['all']
+            else:
+                invalid = list(filter(lambda f: f not in checkov_runners, frameworks))
+                if invalid:
+                    self.parser.error(f'Invalid frameworks specified: {", ".join(invalid)}.{os.linesep}'
+                                      f'Valid values are: {", ".join(["all"] + checkov_runners)}')
+                self.config.framework = frameworks
+        else:
+            logging.debug('No framework specified; setting to `all`')
+            self.config.framework = ['all']
+
+        logging.debug(f'Normalized --framework value: {self.config.framework}')
+
+        if self.config.skip_framework:
+            logging.debug(f'Raw skip framework value: {self.config.skip_framework}')
+            frameworks = flatten_csv(cast(List[List[str]], self.config.skip_framework))
+            logging.debug(f'Flattened skip frameworks: {frameworks}')
+
+            invalid = list(filter(lambda f: f not in checkov_runners, frameworks))
+            if invalid:
+                self.parser.error(f'Invalid skip frameworks specified: {", ".join(invalid)}.{os.linesep}'
+                                  f'Valid values are: {", ".join(checkov_runners)}')
+            self.config.skip_framework = frameworks
+        else:
+            self.config.skip_framework = []
+
+        logging.debug(f'Normalized --skip-framework value: {self.config.skip_framework}')
+
+        duplicate = list(filter(lambda f: f in self.config.framework, self.config.skip_framework))
+        if duplicate:
+            self.parser.error(f'Frameworks listed for both --framework and --skip-framework: {", ".join(duplicate)}')
 
     def run(self, banner: str = checkov_banner, tool: str = checkov_tool, source_type: SourceType | None = None) -> int | None:
         self.run_metadata = {

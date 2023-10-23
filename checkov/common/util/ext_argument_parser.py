@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 from io import StringIO
-from typing import Any, TYPE_CHECKING, cast
+from typing import Any, TYPE_CHECKING, cast, List
 
 import configargparse
 
@@ -13,6 +13,17 @@ from checkov.version import version
 
 if TYPE_CHECKING:
     import argparse
+
+
+def flatten_csv(l: List[List[str]]) -> List[str]:
+    """
+    Flattens a list of list of strings into a list of strings, while also splitting out comma-separated values
+    Duplicates will be removed.
+    [['terraform', 'arm'], ['bicep,cloudformation,arm']] -> ['terraform', 'arm', 'bicep', 'cloudformation']
+    """
+    if not l:
+        return []
+    return list(set([s for sublist in l for val in sublist for s in val.split(',')]))
 
 
 class ExtArgumentParser(configargparse.ArgumentParser):
@@ -211,12 +222,13 @@ class ExtArgumentParser(configargparse.ArgumentParser):
         )
         self.add(
             "--framework",
-            help="Filter scan to run only on specific infrastructure code frameworks. Enter as a comma-separated list or "
-                 "repeat the flag multiple times. For example, --framework terraform,sca_package or --framework terraform "
-                 f"--framework sca_package. Possible values: {', '.join(['all'] + checkov_runners)}",
-            default=["all"],
+            help="Filter scan to run only on specific infrastructure code frameworks. Defaults to all frameworks. Enter as a "
+                 "comma-separated list or repeat the flag multiple times. For example, --framework terraform,sca_package "
+                 f"or --framework terraform --framework sca_package. Possible values: {', '.join(['all'] + checkov_runners)}",
             env_var="CKV_FRAMEWORK",
-            action='append'
+            action='append',
+            nargs='+'  # we will still allow the old way (eg: --framework terraform arm cloudformation), just not prefer it
+            # intentionally no default value - we will set it explicitly during normalization (it messes up the list of lists)
         )
         self.add(
             "--skip-framework",
@@ -225,9 +237,9 @@ class ExtArgumentParser(configargparse.ArgumentParser):
                  "are missing. Enter as a comma-separated list or repeat the flag multiple times. For example, "
                  "--skip-framework terraform,sca_package or --skip-framework terraform --skip-framework sca_package."
                  f"Possible values: {', '.join(checkov_runners)}",
-            choices=checkov_runners,
             default=None,
-            nargs="+",
+            action='append',
+            nargs='+'
         )
         self.add(
             "-c",
