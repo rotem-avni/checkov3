@@ -77,6 +77,7 @@ class Package(BaseModel):
 class File(BaseModel):
 	packages: Dict[str, Package]  # noqa: CCE003
 
+
 class Repositories(BaseModel):
 	files: Dict[str, File]  # noqa: CCE003
 
@@ -95,6 +96,7 @@ def create_empty_report(languages: List[SastLanguages]) -> PrismaReport:
     for lang in languages:
         matches[lang] = {}
     return PrismaReport(rule_match=matches, errors={}, profiler={}, run_metadata={}, imports={})
+
 
 def serialize_reachability_report(report: Dict[str, Repositories]) -> Dict[str, Any]:
     result = {}

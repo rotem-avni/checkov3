@@ -171,7 +171,7 @@ class PrismaEngine(SastEngine):
 
         reachability_data = None
         if report_reachability:
-            #TODO - run sast-core per src
+            # TODO - run sast-core per src
             for source_code in source_codes:
                 reachability_data = get_reachability_data(source_code)
 
@@ -309,7 +309,6 @@ class PrismaEngine(SastEngine):
                 report = SastReport(f'{self.check_type.lower()}_{lang.value}', prisma_report.run_metadata, lang)
                 report.sast_Reachability = prisma_report.reachability_report[lang]
                 reports.append(report)
-    
         return reports
 
     def get_policies(self, languages: Set[SastLanguages]) -> SastPolicies:
@@ -368,7 +367,7 @@ def get_machine() -> str:
 def get_reachability_data(repo_path):
     fetcher = SastReachabilityDataFetcher()
     reachability_data = fetcher.fetch(repository_name=repo_path, repository_root_dir=repo_path)
-    #TODO
+    # TODO
     alias_data = {}
     data = {"javascript": {"package_alias": alias_data}}
     return data
