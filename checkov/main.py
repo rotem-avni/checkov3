@@ -225,7 +225,7 @@ class Checkov:
             # it is passed as a list of lists
             self.config.file = list(itertools.chain.from_iterable(self.config.file))
 
-    def normalize_framework_arg(self, raw_framework_arg, handle_all=False):
+    def normalize_framework_arg(self, raw_framework_arg: List[List[str]], handle_all=False) -> List[str]:
         # frameworks come as arrays of arrays, e.g. --framework terraform arm --framework bicep,cloudformation
         # becomes: [['terraform', 'arm'], ['bicep,cloudformation']]
         # we'll collapse it into a single array (which is how it was before checkov3)
