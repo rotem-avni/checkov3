@@ -5,7 +5,7 @@ from typing import Any, TYPE_CHECKING, cast, List
 
 import configargparse
 
-from checkov.common.bridgecrew.check_type import checkov_runners, sast_types
+from checkov.common.bridgecrew.check_type import checkov_runners
 from checkov.common.runners.runner_registry import OUTPUT_CHOICES, SUMMARY_POSITIONS
 from checkov.common.util.consts import DEFAULT_EXTERNAL_MODULES_DIR
 from checkov.common.util.type_forcers import convert_str_to_bool
@@ -15,7 +15,7 @@ if TYPE_CHECKING:
     import argparse
 
 
-def flatten_csv(l: List[List[str]]) -> List[str]:
+def flatten_csv(list_to_flatten: List[List[str]]) -> List[str]:
     """
     Flattens a list of list of strings into a list of strings, while also splitting out comma-separated values
     Duplicates will be removed.
@@ -24,7 +24,7 @@ def flatten_csv(l: List[List[str]]) -> List[str]:
     """
     if not l:
         return []
-    return list(set([s for sublist in l for val in sublist for s in val.split(',')]))
+    return list(set([s for sublist in list_to_flatten for val in sublist for s in val.split(',')]))
 
 
 class ExtArgumentParser(configargparse.ArgumentParser):
