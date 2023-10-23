@@ -331,7 +331,8 @@ class PrismaEngine(SastEngine):
             'checks': [],
             'skip_checks': [],
             'skip_path': [],
-            'report_imports': False
+            'report_imports': False,
+            'report_reachability': False
         }
         prisma_result = self.run_go_library(**library_input)
         return prisma_result
@@ -365,7 +366,7 @@ def get_machine() -> str:
     return ''
 
 
-def get_reachability_data(repo_path) -> Dict[str, Any]:
+def get_reachability_data(repo_path: str) -> Dict[str, Any]:
     fetcher = SastReachabilityDataFetcher()
     reachability_data = fetcher.fetch(repository_name=repo_path, repository_root_dir=repo_path)
     data: Dict[str, Any] = {}

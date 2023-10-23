@@ -12,7 +12,7 @@ import signal
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Literal, Optional, List
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, List
 
 import argcomplete
 import configargparse
@@ -70,6 +70,7 @@ from checkov.kustomize.runner import Runner as kustomize_runner
 from checkov.logging_init import log_stream as logs_stream
 from checkov.openapi.runner import Runner as openapi_runner
 from checkov.runner_filter import RunnerFilter
+from checkov.sast.consts import SastLanguages
 from checkov.sast.prisma_models.report import serialize_reachability_report
 from checkov.sast.report import SastData, SastReport
 from checkov.sast.runner import Runner as sast_runner
@@ -725,7 +726,7 @@ class Checkov:
         if not bool(convert_str_to_bool(os.getenv('CKV_ENABLE_UPLOAD_SAST_REACHABILITY', False))):
             return
         sast_report = [scan_report for scan_report in scan_reports if isinstance(scan_report, SastReport)]
-        result = {}
+        result: Dict[SastLanguages, Any] = {}
         for rep in sast_report:
             if rep.sast_reachability:
                 result[rep.language] = {}
@@ -733,7 +734,7 @@ class Checkov:
         for rep in sast_report:
             if rep.sast_reachability:
                 result[rep.language] = {**result[rep.language], **serialize_reachability_report(rep.sast_reachability)}
-        
+
         self.sast_data.set_reachability_report(result)
 
     def print_results(
