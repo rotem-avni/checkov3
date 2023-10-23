@@ -364,10 +364,22 @@ def get_machine() -> str:
 
     return ''
 
+
 def get_reachability_data(repo_path):
     fetcher = SastReachabilityDataFetcher()
     reachability_data = fetcher.fetch(repository_name=repo_path, repository_root_dir=repo_path)
-    # TODO
-    alias_data = {}
-    data = {"javascript": {"package_alias": alias_data}}
+    data = {}
+    langs = reachability_data.aliasMapping.get("languages")
+    if not langs:
+        return {}
+    for lang, lang_data in langs.items():
+        if lang == "nodejs":
+            lang = "javascript"
+        data[lang] = {"package_alias": {}}
+        for _, files in lang_data.get("repositories", {}).items():
+            for _, files_data in files.get("files", {}).items():
+                for original_package_name, package_alias in files_data.get("packageAliases", {}).items():
+                    aliases = package_alias.get("packageAliases", [])
+                    if aliases:
+                        data[lang]["package_alias"][original_package_name] = aliases[0]
     return data
