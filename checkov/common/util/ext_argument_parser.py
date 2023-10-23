@@ -22,7 +22,7 @@ def flatten_csv(list_to_flatten: List[List[str]]) -> List[str]:
     [['terraform', 'arm'], ['bicep,cloudformation,arm']] -> ['terraform', 'arm', 'bicep', 'cloudformation']
     (Order is not guaranteed)
     """
-    if not l:
+    if not list_to_flatten:
         return []
     return list(set([s for sublist in list_to_flatten for val in sublist for s in val.split(',')]))
 
