@@ -75,11 +75,11 @@ class Package(BaseModel):
 
 
 class File(BaseModel):
-	packages: Dict[str, Package]  # noqa: CCE003
+    packages: Dict[str, Package]  # noqa: CCE003
 
 
 class Repositories(BaseModel):
-	files: Dict[str, File]  # noqa: CCE003
+    files: Dict[str, File]  # noqa: CCE003
 
 
 class PrismaReport(BaseModel):

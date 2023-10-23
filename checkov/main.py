@@ -730,7 +730,6 @@ class Checkov:
         for rep in sast_report:
             if rep.sast_reachability:
                 result[rep.language] = {}
-        
         for rep in sast_report:
             if rep.sast_reachability:
                 result[rep.language] = {**result[rep.language], **serialize_reachability_report(rep.sast_reachability)}
