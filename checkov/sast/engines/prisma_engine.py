@@ -242,6 +242,7 @@ class PrismaEngine(SastEngine):
 
             # convert our byte array to a string
             list_policies_string = list_policies_bytes.decode('utf-8')
+
             d = json.loads(list_policies_string)
         except Exception as e:
             logging.error(e)
