@@ -206,7 +206,17 @@ class Checkov:
                 '--policy-metadata-filter flag was used without a Prisma Cloud API key. Policy filtering will be skipped.'
             )
 
-        self.normalize_frameworks()
+        logging.debug('Normalizing --framework')
+        self.config.framework = self.normalize_framework_arg(self.config.framework, handle_all=True)
+        logging.debug(f'Normalized --framework value: {self.config.framework}')
+
+        logging.debug('Normalizing --skip-framework')
+        self.config.skip_framework = self.normalize_framework_arg(self.config.skip_framework)
+        logging.debug(f'Normalized --skip-framework value: {self.config.skip_framework}')
+
+        duplicate_frameworks = list(filter(lambda f: f in self.config.framework, self.config.skip_framework))
+        if duplicate_frameworks:
+            self.parser.error(f'Frameworks listed for both --framework and --skip-framework: {", ".join(duplicate_frameworks)}')
 
         # Parse mask into json with default dict. If self.config.mask is empty list, default dict will be assigned
         self._parse_mask_to_resource_attributes_to_omit()
@@ -215,47 +225,29 @@ class Checkov:
             # it is passed as a list of lists
             self.config.file = list(itertools.chain.from_iterable(self.config.file))
 
-    def normalize_frameworks(self):
+    def normalize_framework_arg(self, raw_framework_arg, handle_all=False):
         # frameworks come as arrays of arrays, e.g. --framework terraform arm --framework bicep,cloudformation
         # becomes: [['terraform', 'arm'], ['bicep,cloudformation']]
         # we'll collapse it into a single array (which is how it was before checkov3)
 
-        if self.config.framework:
-            logging.debug(f'Raw framework value: {self.config.framework}')
-            frameworks = flatten_csv(cast(List[List[str]], self.config.framework))
+        if raw_framework_arg:
+            logging.debug(f'Raw framework value: {raw_framework_arg}')
+            frameworks = flatten_csv(cast(List[List[str]], raw_framework_arg))
             logging.debug(f'Flattened frameworks: {frameworks}')
-            if 'all' in frameworks:
-                self.config.framework = ['all']
+            if handle_all and 'all' in frameworks:
+                return ['all']
             else:
                 invalid = list(filter(lambda f: f not in checkov_runners, frameworks))
                 if invalid:
                     self.parser.error(f'Invalid frameworks specified: {", ".join(invalid)}.{os.linesep}'
-                                      f'Valid values are: {", ".join(["all"] + checkov_runners)}')
-                self.config.framework = frameworks
-        else:
+                                      f'Valid values are: {", ".join(checkov_runners + ["all"] if handle_all else [])}')
+                return frameworks
+        elif handle_all:
             logging.debug('No framework specified; setting to `all`')
-            self.config.framework = ['all']
-
-        logging.debug(f'Normalized --framework value: {self.config.framework}')
-
-        if self.config.skip_framework:
-            logging.debug(f'Raw skip framework value: {self.config.skip_framework}')
-            frameworks = flatten_csv(cast(List[List[str]], self.config.skip_framework))
-            logging.debug(f'Flattened skip frameworks: {frameworks}')
-
-            invalid = list(filter(lambda f: f not in checkov_runners, frameworks))
-            if invalid:
-                self.parser.error(f'Invalid skip frameworks specified: {", ".join(invalid)}.{os.linesep}'
-                                  f'Valid values are: {", ".join(checkov_runners)}')
-            self.config.skip_framework = frameworks
+            return ['all']
         else:
-            self.config.skip_framework = []
-
-        logging.debug(f'Normalized --skip-framework value: {self.config.skip_framework}')
-
-        duplicate = list(filter(lambda f: f in self.config.framework, self.config.skip_framework))
-        if duplicate:
-            self.parser.error(f'Frameworks listed for both --framework and --skip-framework: {", ".join(duplicate)}')
+            logging.debug('No framework specified; setting to none')
+            return []
 
     def run(self, banner: str = checkov_banner, tool: str = checkov_tool, source_type: SourceType | None = None) -> int | None:
         self.run_metadata = {

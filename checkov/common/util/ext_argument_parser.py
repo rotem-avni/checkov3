@@ -20,6 +20,7 @@ def flatten_csv(l: List[List[str]]) -> List[str]:
     Flattens a list of list of strings into a list of strings, while also splitting out comma-separated values
     Duplicates will be removed.
     [['terraform', 'arm'], ['bicep,cloudformation,arm']] -> ['terraform', 'arm', 'bicep', 'cloudformation']
+    (Order is not guaranteed)
     """
     if not l:
         return []
