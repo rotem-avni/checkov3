@@ -179,6 +179,10 @@ class Checkov:
         sys.exit(0)
 
     def normalize_config(self) -> None:
+
+        logging.error('Config:')
+        logging.error(self.config)
+
         if self.config.no_guide:
             logger.warning(
                 '--no-guide is deprecated and will be removed in a future release. Use --skip-download instead'
