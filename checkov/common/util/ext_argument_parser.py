@@ -328,7 +328,7 @@ class ExtArgumentParser(configargparse.ArgumentParser):
         )
         self.add(
             "--repo-id",
-            help="Identity string of the repository, with form <repo_owner>/<repo_name>. Required when using the platform integration.",
+            help="Identity string of the repository, with form <repo_owner>/<repo_name>. Required when using the platform integration (API key).",
         )
         self.add(
             "-b",
