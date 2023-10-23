@@ -214,7 +214,7 @@ class Checkov:
         self.config.skip_framework = self.normalize_framework_arg(self.config.skip_framework)
         logging.debug(f'Normalized --skip-framework value: {self.config.skip_framework}')
 
-        duplicate_frameworks = list(filter(lambda f: f in self.config.framework, self.config.skip_framework))
+        duplicate_frameworks = set(self.config.skip_framework).intersection(self.config.framework)
         if duplicate_frameworks:
             self.parser.error(f'Frameworks listed for both --framework and --skip-framework: {", ".join(duplicate_frameworks)}')
 
