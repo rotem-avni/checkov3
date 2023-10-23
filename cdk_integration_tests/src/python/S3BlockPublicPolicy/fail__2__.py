@@ -4,7 +4,6 @@ from aws_cdk import (
     aws_s3 as s4
 )
 
-
 class MyS3Stack(Stack):
 
     def __init__(self, scope: Construct, id: str, **kwargs) -> None:
