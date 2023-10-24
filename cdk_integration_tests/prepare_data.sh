@@ -13,7 +13,7 @@ for file in "checkov/cdk/checks/python"/*; do
       fi
       # create a report for this check
       echo "creating report for check: $filename, id: $check_id"
-      pipenv run checkov -s --framework cdk -o json --check $check_id \
+      pipenv run checkov -s --framework cdk --repo-id cli/cdk -o json --check $check_id \
         -d "cdk_integration_tests/src/python/$filename"  > "checkov_report_cdk_python_$filename.json"
   fi
 done

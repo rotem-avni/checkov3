@@ -12,7 +12,7 @@ import signal
 import sys
 from collections import defaultdict
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, List
+from typing import TYPE_CHECKING, Any, Dict, Literal, Optional, List, cast
 
 import argcomplete
 import configargparse
@@ -53,7 +53,7 @@ from checkov.common.util import prompt
 from checkov.common.util.banner import banner as checkov_banner, tool as checkov_tool
 from checkov.common.util.config_utils import get_default_config_paths
 from checkov.common.util.consts import CHECKOV_RUN_SCA_PACKAGE_SCAN_V2
-from checkov.common.util.ext_argument_parser import ExtArgumentParser
+from checkov.common.util.ext_argument_parser import ExtArgumentParser, flatten_csv
 from checkov.common.util.runner_dependency_handler import RunnerDependencyHandler
 from checkov.common.util.type_forcers import convert_str_to_bool
 from checkov.contributor_metrics import report_contributor_metrics
@@ -177,23 +177,7 @@ class Checkov:
         self.normalize_config()
 
     def normalize_config(self) -> None:
-        if self.config.no_guide:
-            logger.warning(
-                '--no-guide is deprecated and will be removed in a future release. Use --skip-download instead'
-            )
-            self.config.skip_download = True
-        if self.config.skip_suppressions:
-            logger.warning(
-                '--skip-suppressions is deprecated and will be removed in a future release. Use --skip-download instead'
-            )
-            self.config.skip_download = True
-        if self.config.skip_policy_download:
-            logger.warning(
-                '--skip-policy-download is deprecated and will be removed in a future release. Use --skip-download instead'
-            )
-            self.config.skip_download = True
-
-        elif not self.config.bc_api_key and not self.config.include_all_checkov_policies:
+        if not self.config.bc_api_key and not self.config.include_all_checkov_policies:
             # makes it easier to pick out policies later if we can just always rely on this flag without other context
             logger.debug('No API key present; setting include_all_checkov_policies to True')
             self.config.include_all_checkov_policies = True
@@ -201,10 +185,25 @@ class Checkov:
         if self.config.use_enforcement_rules and not self.config.bc_api_key:
             self.parser.error('Must specify an API key with --use-enforcement-rules')
 
+        if self.config.bc_api_key and not self.config.repo_id:
+            self.parser.error('--repo-id is required when using a platform API key')
+
         if self.config.policy_metadata_filter and not (self.config.bc_api_key and self.config.prisma_api_url):
             logger.warning(
                 '--policy-metadata-filter flag was used without a Prisma Cloud API key. Policy filtering will be skipped.'
             )
+
+        logging.debug('Normalizing --framework')
+        self.config.framework = self.normalize_framework_arg(self.config.framework, handle_all=True)
+        logging.debug(f'Normalized --framework value: {self.config.framework}')
+
+        logging.debug('Normalizing --skip-framework')
+        self.config.skip_framework = self.normalize_framework_arg(self.config.skip_framework)
+        logging.debug(f'Normalized --skip-framework value: {self.config.skip_framework}')
+
+        duplicate_frameworks = set(self.config.skip_framework).intersection(self.config.framework)
+        if duplicate_frameworks:
+            self.parser.error(f'Frameworks listed for both --framework and --skip-framework: {", ".join(duplicate_frameworks)}')
 
         # Parse mask into json with default dict. If self.config.mask is empty list, default dict will be assigned
         self._parse_mask_to_resource_attributes_to_omit()
@@ -212,6 +211,30 @@ class Checkov:
         if self.config.file:
             # it is passed as a list of lists
             self.config.file = list(itertools.chain.from_iterable(self.config.file))
+
+    def normalize_framework_arg(self, raw_framework_arg: List[List[str]], handle_all=False) -> List[str]:
+        # frameworks come as arrays of arrays, e.g. --framework terraform arm --framework bicep,cloudformation
+        # becomes: [['terraform', 'arm'], ['bicep,cloudformation']]
+        # we'll collapse it into a single array (which is how it was before checkov3)
+
+        if raw_framework_arg:
+            logging.debug(f'Raw framework value: {raw_framework_arg}')
+            frameworks = flatten_csv(cast(List[List[str]], raw_framework_arg))
+            logging.debug(f'Flattened frameworks: {frameworks}')
+            if handle_all and 'all' in frameworks:
+                return ['all']
+            else:
+                invalid = list(filter(lambda f: f not in checkov_runners, frameworks))
+                if invalid:
+                    self.parser.error(f'Invalid frameworks specified: {", ".join(invalid)}.{os.linesep}'
+                                      f'Valid values are: {", ".join(checkov_runners + ["all"] if handle_all else [])}')
+                return frameworks
+        elif handle_all:
+            logging.debug('No framework specified; setting to `all`')
+            return ['all']
+        else:
+            logging.debug('No framework specified; setting to none')
+            return []
 
     def run(self, banner: str = checkov_banner, tool: str = checkov_tool, source_type: SourceType | None = None) -> int | None:
         self.run_metadata = {
@@ -372,7 +395,7 @@ class Checkov:
                 try:
                     bc_integration.bc_api_key = self.config.bc_api_key
                     bc_integration.setup_bridgecrew_credentials(repo_id=self.config.repo_id,
-                                                                skip_fixes=self.config.skip_fixes,
+                                                                skip_fixes=False,  # will be set to True if this run is not eligible for fixes
                                                                 skip_download=self.config.skip_download,
                                                                 source=source,
                                                                 source_version=source_version,
